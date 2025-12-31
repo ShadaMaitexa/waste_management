@@ -6,10 +6,10 @@ import '../../services/auth_service.dart';
 import '../../services/pickup_service.dart';
 import '../../services/reward_service.dart';
 import '../../theme/app_theme.dart';
-
 import 'book_pickup_screen.dart';
 import 'rewards_screen.dart';
 import 'profile_screen.dart';
+
 
 class ResidentHomeScreen extends StatefulWidget {
   const ResidentHomeScreen({super.key});
@@ -50,7 +50,7 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.notifications_outlined),
-              onPressed: _showNotifications,
+              onPressed: () => Navigator.pushNamed(context, '/notifications'),
             ),
             IconButton(
               icon: const Icon(Icons.logout),
