@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../theme/app_theme.dart';
+import 'package:intl/intl.dart';
 
 class WorkerAttendanceScreen extends StatefulWidget {
   const WorkerAttendanceScreen({super.key});
@@ -22,29 +22,31 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
   }
 
   void _checkIn() {
+    if (_isOnDuty) return;
     setState(() {
       _isOnDuty = true;
       _checkInTime = DateTime.now();
+      _checkOutTime = null;
     });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Checked in successfully!'),
-        backgroundColor: AppTheme.success,
-      ),
-    );
+    _showSuccessMessage('Checked in successfully!');
   }
 
   void _checkOut() {
+    if (!_isOnDuty) return;
     setState(() {
       _isOnDuty = false;
       _checkOutTime = DateTime.now();
     });
-    
+    _showSuccessMessage('Checked out successfully!');
+  }
+
+  void _showSuccessMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Checked out successfully!'),
+      SnackBar(
+        content: Text(message),
         backgroundColor: AppTheme.success,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -57,320 +59,299 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              // Show filter options
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppTheme.spacingM),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildAttendanceCard(),
+            _buildMainAttendanceCard(),
             const SizedBox(height: AppTheme.spacingL),
-            _buildTodayStats(),
+            _buildQuickStats(),
             const SizedBox(height: AppTheme.spacingL),
-            _buildAttendanceHistory(),
+            _buildHistorySection(),
           ],
         ),
       ),
-      floatingActionButton: _buildFAB(),
-    );
-  }
-
-  Widget _buildAttendanceCard() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingM),
-              decoration: BoxDecoration(
-                color: _isOnDuty ? AppTheme.success.withOpacity(0.1) : AppTheme.grey100,
-                borderRadius: BorderRadius.circular(AppTheme.radiusM),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    _isOnDuty ? Icons.check_circle : Icons.schedule,
-                    color: _isOnDuty ? AppTheme.success : AppTheme.grey600,
-                    size: 32,
-                  ),
-                  const SizedBox(width: AppTheme.spacingM),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _isOnDuty ? 'Currently On Duty' : 'Not Checked In',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: _isOnDuty ? AppTheme.success : AppTheme.grey700,
-                          ),
-                        ),
-                        const SizedBox(height: AppTheme.spacingXS),
-                        Text(
-                          _isOnDuty 
-                              ? 'Started at ${_checkInTime != null ? DateFormat('h:mm a').format(_checkInTime!) : 'Unknown'}'
-                              : 'Click check-in to start your shift',
-                          style: TextStyle(
-                            color: AppTheme.grey600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Switch(
-                    value: _isOnDuty,
-                    onChanged: (value) {
-                      if (value) {
-                        _checkIn();
-                      } else {
-                        _checkOut();
-                      }
-                    },
-                    activeColor: AppTheme.success,
-                  ),
-                ],
-              ),
-            ),
-            if (_checkInTime != null) ...[
-              const SizedBox(height: AppTheme.spacingM),
-              Row(
-                children: [
-                  _timeInfo('Check In', _checkInTime!),
-                  const SizedBox(width: AppTheme.spacingL),
-                  if (_checkOutTime != null)
-                    _timeInfo('Check Out', _checkOutTime!)
-                  else
-                    const Expanded(
-                      child: Text(
-                        'Still working...',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: AppTheme.warning,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ],
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Request leave or other actions
+        },
+        backgroundColor: AppTheme.primaryGreen,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _timeInfo(String label, DateTime time) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: AppTheme.grey600,
-              fontSize: 12,
-            ),
-          ),
-          Text(
-            DateFormat('h:mm a').format(time),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+  Widget _buildMainAttendanceCard() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusL),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTodayStats() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Today\'s Summary',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingM),
-        Row(
-          children: [
-            Expanded(
-              child: _statCard(
-                'Hours Worked',
-                '7.5',
-                Icons.access_time,
-                AppTheme.info,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppTheme.spacingL),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: _isOnDuty 
+                    ? [AppTheme.success, AppTheme.success.withOpacity(0.8)]
+                    : [AppTheme.grey700, AppTheme.grey600],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusL)),
             ),
-            const SizedBox(width: AppTheme.spacingM),
-            Expanded(
-              child: _statCard(
-                'Pickups Completed',
-                '12',
-                Icons.recycling,
-                AppTheme.success,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingM),
-            Expanded(
-              child: _statCard(
-                'Performance',
-                '98%',
-                Icons.trending_up,
-                AppTheme.primaryGreen,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _statCard(String title, String value, IconData icon, Color color) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: AppTheme.spacingS),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingXS),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppTheme.grey600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAttendanceHistory() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Recent Attendance',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingM),
-        Card(
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _attendanceHistory.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (_, index) {
-              final record = _attendanceHistory[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: record['status'] == 'Present' 
-                      ? AppTheme.success.withOpacity(0.1)
-                      : AppTheme.error.withOpacity(0.1),
-                  child: Icon(
-                    record['status'] == 'Present' ? Icons.check : Icons.close,
-                    color: record['status'] == 'Present' ? AppTheme.success : AppTheme.error,
-                  ),
-                ),
-                title: Text(DateFormat('EEEE, MMM d').format(record['date'])),
-                subtitle: Text(
-                  '${record['checkIn']} - ${record['checkOut']} (${record['hours']} hours)',
-                ),
-                trailing: Text(
-                  record['status'],
-                  style: TextStyle(
-                    color: record['status'] == 'Present' ? AppTheme.success : AppTheme.error,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFAB() {
-    return FloatingActionButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Quick Actions'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Column(
               children: [
-                ListTile(
-                  leading: const Icon(Icons.edit),
-                  title: const Text('Request Leave'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showLeaveRequestDialog();
-                  },
+                Icon(
+                  _isOnDuty ? Icons.check_circle_outline : Icons.access_time,
+                  size: 48,
+                  color: Colors.white,
                 ),
-                ListTile(
-                  leading: const Icon(Icons.report_problem),
-                  title: const Text('Report Issue'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showIssueReportDialog();
-                  },
+                const SizedBox(height: AppTheme.spacingM),
+                Text(
+                  _isOnDuty ? 'YOU ARE ON DUTY' : 'NOT CHECKED IN',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingS),
+                Text(
+                  DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now()),
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                  ),
                 ),
               ],
             ),
           ),
-        );
-      },
-      backgroundColor: AppTheme.primaryGreen,
-      foregroundColor: Colors.white,
-      child: const Icon(Icons.more_horiz),
-    );
-  }
-
-  void _showLeaveRequestDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Request Leave'),
-        content: const Text('Leave request feature coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+          Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingL),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildTimeDisplay('Check In', _checkInTime),
+                    Container(height: 40, width: 1, color: AppTheme.grey300),
+                    _buildTimeDisplay('Check Out', _checkOutTime),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingL),
+                _buildActionSlider(),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  void _showIssueReportDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Report Issue'),
-        content: const Text('Issue reporting feature coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+  Widget _buildTimeDisplay(String label, DateTime? time) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: AppTheme.grey500,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
           ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          time != null ? DateFormat('h:mm a').format(time) : '--:--',
+          style: TextStyle(
+            color: AppTheme.grey900,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionSlider() {
+    return GestureDetector(
+      onTap: _isOnDuty ? _checkOut : _checkIn,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        height: 56,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          color: _isOnDuty ? Colors.red.shade50 : AppTheme.primaryGreen.withOpacity(0.1),
+          border: Border.all(
+            color: _isOnDuty ? Colors.red : AppTheme.primaryGreen,
+            width: 1.5
+          ),
+        ),
+        child: Center(
+          child: Text(
+            _isOnDuty ? 'Tap to Check Out' : 'Tap to Check In',
+            style: TextStyle(
+              color: _isOnDuty ? Colors.red : AppTheme.primaryGreen,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickStats() {
+    return Row(
+      children: [
+        Expanded(child: _buildStatItem('Present', '22', Colors.green)),
+        const SizedBox(width: AppTheme.spacingM),
+        Expanded(child: _buildStatItem('Absent', '2', Colors.red)),
+        const SizedBox(width: AppTheme.spacingM),
+        Expanded(child: _buildStatItem('Late', '1', Colors.orange)),
+      ],
+    );
+  }
+
+  Widget _buildStatItem(String label, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingM),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: color.withOpacity(0.8),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistorySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recent History',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.grey900,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingM),
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _attendanceHistory.length,
+          separatorBuilder: (_, __) => const SizedBox(height: AppTheme.spacingS),
+          itemBuilder: (_, index) {
+            final record = _attendanceHistory[index];
+            return _buildHistoryCard(record);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHistoryCard(Map<String, dynamic> record) {
+    final isPresent = record['status'] == 'Present';
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingM),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        border: Border.all(color: AppTheme.grey200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isPresent ? Colors.green.shade50 : Colors.red.shade50,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              isPresent ? Icons.check : Icons.close,
+              color: isPresent ? Colors.green : Colors.red,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacingM),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  DateFormat('MMM d, yyyy').format(record['date']),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  isPresent 
+                      ? '${record['checkIn']} - ${record['checkOut']}'
+                      : 'Absent',
+                  style: TextStyle(
+                    color: AppTheme.grey600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isPresent)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${record['hours']}h',
+                style: TextStyle(
+                  color: Colors.blue.shade800,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -378,15 +359,15 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
 
   List<Map<String, dynamic>> _getMockAttendanceHistory() {
     final today = DateTime.now();
-    return List.generate(7, (index) {
+    return List.generate(5, (index) {
       final date = today.subtract(Duration(days: index + 1));
       return {
         'date': date,
         'checkIn': '08:00 AM',
-        'checkOut': index == 0 ? 'Not yet' : '05:30 PM',
-        'hours': index == 0 ? 'In progress' : '8.5',
-        'status': 'Present',
+        'checkOut': '05:30 PM',
+        'hours': '9.5',
+        'status': index == 2 ? 'Absent' : 'Present',
       };
-    }).reversed.toList();
+    });
   }
 }

@@ -11,7 +11,7 @@ import 'screens/resident/pickup_history_screen.dart';
 import 'screens/resident/rewards_screen.dart';
 import 'screens/resident/profile_screen.dart';
 import 'screens/worker/worker_home_screen.dart';
-import 'screens/worker/today_route_screen.dart';
+import 'screens/worker/worker_route_planner_screen.dart';
 import 'screens/worker/worker_attendance_screen.dart';
 import 'screens/worker/worker_schedule_screen.dart';
 import 'screens/admin/admin_home_screen.dart';
@@ -25,6 +25,8 @@ import 'screens/common/help_screen.dart';
 import 'screens/common/notifications_screen.dart';
 import 'screens/common/contact_support_screen.dart';
 import 'services/auth_service.dart';
+import 'services/pickup_service.dart';
+import 'services/reward_service.dart';
 
 void main() {
   runApp(const GreenLoopApp());
@@ -38,6 +40,8 @@ class GreenLoopApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => PickupService()),
+        ChangeNotifierProvider(create: (_) => RewardService()),
       ],
       child: MaterialApp(
         title: 'GreenLoop - Smart Waste Management',
@@ -61,7 +65,7 @@ class GreenLoopApp extends StatelessWidget {
           
           // Worker Routes
           '/worker': (_) => const WorkerHomeScreen(),
-          '/worker/today-route': (_) => const TodayRouteScreen(),
+          '/worker/today-route': (_) => const WorkerRoutePlannerScreen(),
           '/worker/attendance': (_) => const WorkerAttendanceScreen(),
           '/worker/schedule': (_) => const WorkerScheduleScreen(),
           

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
+import 'worker_route_planner_screen.dart';
+import 'worker_attendance_screen.dart';
+import 'worker_profile_screen.dart';
 
 class WorkerHomeScreen extends StatefulWidget {
   const WorkerHomeScreen({super.key});
@@ -41,275 +44,313 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
             _selectedIndex = index;
           });
         },
+        physics: const NeverScrollableScrollPhysics(), // Disable swipe to prevent conflict with maps
         children: [
-          _buildDashboardTab(),
-          _buildRoutePlannerTab(),
-          _buildAttendanceTab(),
-          _buildProfileTab(),
+          _DashboardTab(onNavigate: _onItemTapped), // Dashboard is internal class
+          const WorkerRoutePlannerScreen(),
+          const WorkerAttendanceScreen(),
+          const WorkerProfileScreen(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppTheme.primaryGreen,
-        unselectedItemColor: AppTheme.grey500,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.route_outlined),
-            activeIcon: Icon(Icons.route),
-            label: 'Routes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.check_circle_outline),
-            activeIcon: Icon(Icons.check_circle),
-            label: 'Attendance',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDashboardTab() {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('HKS Worker Portal'),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              Provider.of<AuthService>(context, listen: false).logout();
-              Navigator.of(context).pushReplacementNamed('/login');
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Welcome Card
-            _buildWelcomeCard(),
-            const SizedBox(height: AppTheme.spacingM),
-            // Today's Summary
-            _buildTodaySummary(),
-            const SizedBox(height: AppTheme.spacingM),
-            // Current Route
-            _buildCurrentRoute(),
-            const SizedBox(height: AppTheme.spacingM),
-            // Quick Actions
-            _buildQuickActions(),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: _onItemTapped,
+          backgroundColor: Colors.white,
+          indicatorColor: AppTheme.primaryGreen.withOpacity(0.1),
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.dashboard_outlined),
+              selectedIcon: Icon(Icons.dashboard, color: AppTheme.primaryGreen),
+              label: 'Dashboard',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.map_outlined),
+              selectedIcon: Icon(Icons.map, color: AppTheme.primaryGreen),
+              label: 'Route',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.fact_check_outlined),
+              selectedIcon: Icon(Icons.fact_check, color: AppTheme.primaryGreen),
+              label: 'Attendance',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person, color: AppTheme.primaryGreen),
+              label: 'Profile',
+            ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildWelcomeCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingL),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+class _DashboardTab extends StatelessWidget {
+  final Function(int) onNavigate;
+
+  const _DashboardTab({required this.onNavigate});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.grey50,
+      body: CustomScrollView(
+        slivers: [
+          _buildSliverAppBar(context),
+          SliverPadding(
+            padding: const EdgeInsets.all(AppTheme.spacingM),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _buildWelcomeSection(context),
+                const SizedBox(height: AppTheme.spacingL),
+                _buildStatsGrid(context),
+                const SizedBox(height: AppTheme.spacingL),
+                _buildCurrentTaskCard(context),
+                const SizedBox(height: AppTheme.spacingL),
+                _buildQuickActions(context),
+                const SizedBox(height: AppTheme.spacingL), // Bottom padding
+              ]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 80.0,
+      floating: true,
+      pinned: true,
+      elevation: 0,
+      backgroundColor: AppTheme.primaryGreen,
+      title: const Text('GreenLoop Worker'),
+      centerTitle: false,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.notifications_outlined),
+          onPressed: () {},
         ),
-        borderRadius: BorderRadius.circular(AppTheme.radiusL),
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            Provider.of<AuthService>(context, listen: false).logout();
+            Navigator.of(context).pushReplacementNamed('/login');
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWelcomeSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Good Morning,',
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppTheme.grey600,
+              ),
+        ),
+        Text(
+          'Mohammed Rafi',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppTheme.grey900,
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatsGrid(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildStatCard(
+            context,
+            'Pending',
+            '12',
+            Icons.pending_actions,
+            AppTheme.warning,
+            Colors.orange.shade50,
+          ),
+        ),
+        const SizedBox(width: AppTheme.spacingM),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            'Completed',
+            '28',
+            Icons.task_alt,
+            AppTheme.success,
+            Colors.green.shade50,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(BuildContext context, String title, String value,
+      IconData icon, Color color, Color bgColor) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingM),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Good Morning, HKS Worker!',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: AppTheme.spacingS),
-          Text(
-            'Ward 15, Kozhikode',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white70,
-                ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: AppTheme.spacingM),
-          Row(
-            children: [
-              const Icon(Icons.work, color: Colors.white, size: 16),
-              const SizedBox(width: AppTheme.spacingS),
-              Text(
-                'Active Status: Ready for Collection',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-            ],
+          Text(
+            value,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.grey900,
+                ),
+          ),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppTheme.grey600,
+                ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTodaySummary() {
-    return Row(
+  Widget _buildCurrentTaskCard(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: _buildStatCard(
-            'Pickups Today',
-            '12',
-            Icons.recycling,
-            AppTheme.secondaryGreen,
-          ),
-        ),
-        const SizedBox(width: AppTheme.spacingM),
-        Expanded(
-          child: _buildStatCard(
-            'Completed',
-            '8',
-            Icons.check_circle,
-            AppTheme.success,
-          ),
-        ),
-        const SizedBox(width: AppTheme.spacingM),
-        Expanded(
-          child: _buildStatCard(
-            'Remaining',
-            '4',
-            Icons.schedule,
-            AppTheme.warning,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: Column(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: AppTheme.spacingS),
             Text(
-              value,
+              'Current Route',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: color,
                   ),
             ),
-            const SizedBox(height: AppTheme.spacingXS),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.grey600,
-                  ),
-              textAlign: TextAlign.center,
+            TextButton(
+              onPressed: () => onNavigate(1), // Go to Route tab
+              child: const Text('View All'),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildCurrentRoute() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Current Route: Ward 15',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+        const SizedBox(height: AppTheme.spacingS),
+        Container(
+          padding: const EdgeInsets.all(AppTheme.spacingM),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(height: AppTheme.spacingM),
-            _buildRouteItem('123/A, Beach Road', 'Dry & Wet Waste', true),
-            const Divider(),
-            _buildRouteItem('456/B, Marine Drive', 'Dry Waste Only', true),
-            const Divider(),
-            _buildRouteItem('789/C, Calicut Beach', 'E-waste', false),
-            const SizedBox(height: AppTheme.spacingM),
-            ElevatedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.navigation, size: 16),
-              label: const Text('Start Navigation'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGreen,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 48),
+            borderRadius: BorderRadius.circular(AppTheme.radiusL),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryGreen.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 8),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRouteItem(String address, String wasteType, bool completed) {
-    return Row(
-      children: [
-        Icon(
-          completed ? Icons.check_circle : Icons.radio_button_unchecked,
-          color: completed ? AppTheme.success : AppTheme.grey400,
-          size: 20,
-        ),
-        const SizedBox(width: AppTheme.spacingM),
-        Expanded(
+            ],
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                address,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    child: const Text(
+                      'Ward 15',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios,
+                      color: Colors.white, size: 16),
+                ],
               ),
-              const SizedBox(height: AppTheme.spacingXS),
-              Text(
-                wasteType,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.grey600,
-                    ),
+              const SizedBox(height: AppTheme.spacingL),
+              const Text(
+                'Next Pickup: 123/A, Beach Road',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingS),
+              Row(
+                children: [
+                  const Icon(Icons.access_time, color: Colors.white70, size: 16),
+                  const SizedBox(width: 4),
+                  const Text(
+                    'Est. 10:30 AM',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  const SizedBox(width: 16),
+                  const Icon(Icons.delete_outline,
+                      color: Colors.white70, size: 16),
+                  const SizedBox(width: 4),
+                  const Text(
+                    'Dry Waste',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ],
               ),
             ],
           ),
         ),
-        if (!completed)
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryGreen,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingM,
-                vertical: AppTheme.spacingXS,
-              ),
-            ),
-            child: const Text('Complete'),
-          ),
       ],
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(BuildContext context) {
+    final actions = [
+      {'icon': Icons.qr_code_scanner, 'label': 'Scan QR', 'route': ''},
+      {'icon': Icons.add_a_photo, 'label': 'Report', 'route': ''},
+      {'icon': Icons.history, 'label': 'History', 'route': ''},
+      {'icon': Icons.support_agent, 'label': 'Support', 'route': ''},
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -321,67 +362,44 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
         ),
         const SizedBox(height: AppTheme.spacingM),
         Row(
-          children: [
-            Expanded(
-              child: _buildQuickActionCard(
-                'Mark Attendance',
-                Icons.fingerprint,
-                AppTheme.info,
-                () {},
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingM),
-            Expanded(
-              child: _buildQuickActionCard(
-                'Report Issue',
-                Icons.report_problem,
-                AppTheme.warning,
-                () {},
-              ),
-            ),
-          ],
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: actions.map((action) {
+            return Column(
+              children: [
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      action['icon'] as IconData,
+                      color: AppTheme.primaryGreen,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingS),
+                Text(
+                  action['label'] as String,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+              ],
+            );
+          }).toList(),
         ),
       ],
     );
-  }
-
-  Widget _buildQuickActionCard(String title, IconData icon, Color color, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.radiusM),
-      child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        decoration: BoxDecoration(
-          border: Border.all(color: color.withOpacity(0.3)),
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(height: AppTheme.spacingS),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Placeholder methods for other tabs
-  Widget _buildRoutePlannerTab() {
-    return const Center(child: Text('Route Planner Tab - Coming Soon'));
-  }
-
-  Widget _buildAttendanceTab() {
-    return const Center(child: Text('Attendance Tab - Coming Soon'));
-  }
-
-  Widget _buildProfileTab() {
-    return const Center(child: Text('Profile Tab - Coming Soon'));
   }
 }

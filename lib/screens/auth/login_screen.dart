@@ -123,29 +123,46 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: const BoxDecoration(
           gradient: AppTheme.primaryGradient,
         ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppTheme.spacingL),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: AppTheme.spacingXL),
-                  _buildLogo(),
-                  const SizedBox(height: AppTheme.spacingXL),
-                  _buildWelcomeText(),
-                  const SizedBox(height: AppTheme.spacingL),
-                  _buildUserTypeSelector(),
-                  const SizedBox(height: AppTheme.spacingM),
-                  _buildLoginForm(),
-                  const SizedBox(height: AppTheme.spacingL),
-                  _buildLoginButton(),
-                  const SizedBox(height: AppTheme.spacingM),
-                  _buildForgotPassword(),
-                  const SizedBox(height: AppTheme.spacingXL),
-                  _buildSignUpPrompt(),
-                ],
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingM),
+                child: Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppTheme.radiusXL),
+                  ),
+                  color: Colors.white.withOpacity(0.1), // Glassmorphism base
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(AppTheme.spacingL),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min, // Shrink to fit content
+                        children: [
+                          const SizedBox(height: AppTheme.spacingL),
+                          _buildLogo(),
+                          const SizedBox(height: AppTheme.spacingXL),
+                          _buildWelcomeText(),
+                          const SizedBox(height: AppTheme.spacingL),
+                          _buildUserTypeSelector(),
+                          const SizedBox(height: AppTheme.spacingM),
+                          _buildLoginForm(),
+                          const SizedBox(height: AppTheme.spacingL),
+                          _buildLoginButton(),
+                          const SizedBox(height: AppTheme.spacingM),
+                          _buildForgotPassword(),
+                          const SizedBox(height: AppTheme.spacingL),
+                          _buildSignUpPrompt(),
+                          const SizedBox(height: AppTheme.spacingL),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

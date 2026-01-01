@@ -9,69 +9,91 @@ class RewardsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Rewards & Points'),
+        title: const Text('Green Rewards'),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppTheme.grey900,
         elevation: 0,
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
       ),
       body: Consumer<RewardService>(
         builder: (context, rewardService, child) {
           final stats = rewardService.getRewardsStatistics('user1');
-          final recentRewards = rewardService.getRecentActivity('user1', limit: 10);
           
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppTheme.spacingM),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPointsCard(stats, context),
-                const SizedBox(height: AppTheme.spacingM),
-                _buildLevelProgress(stats, context),
-                const SizedBox(height: AppTheme.spacingM),
-                _buildRewardsList(recentRewards, context),
-              ],
-            ),
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingM),
+                  child: Column(
+                    children: [
+                      _buildBalanceCard(stats),
+                      const SizedBox(height: AppTheme.spacingL),
+                      _buildSectionTitle('Redeem Points'),
+                      _buildRewardsGrid(),
+                      const SizedBox(height: AppTheme.spacingL),
+                      _buildSectionTitle('History'),
+                    ],
+                  ),
+                ),
+              ),
+              _buildHistoryList(rewardService),
+              const SliverPadding(padding: EdgeInsets.only(bottom: 20)),
+            ],
           );
         },
       ),
     );
   }
 
-  Widget _buildPointsCard(Map<String, dynamic> stats, BuildContext context) {
+  Widget _buildBalanceCard(Map<String, dynamic> stats) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingL),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.circular(AppTheme.radiusL),
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFD700), Color(0xFFFFA000)], // Gold gradient
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFFA000).withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
           const Icon(Icons.stars, color: Colors.white, size: 48),
-          const SizedBox(height: AppTheme.spacingS),
+          const SizedBox(height: 12),
           Text(
             '${stats['totalPoints']}',
             style: const TextStyle(
               fontSize: 48,
               fontWeight: FontWeight.bold,
               color: Colors.white,
+              height: 1,
             ),
           ),
           const Text(
-            'GreenLeaf Points',
+            'Green Points Balance',
             style: TextStyle(
-              fontSize: 18,
-              color: Colors.white70,
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: AppTheme.spacingM),
+          const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildStat('Level', '${stats['level']}'),
-              _buildStat('Badges', '${stats['badgesEarned']}'),
-              _buildStat('Saved', '₹${stats['totalSavings']}'),
+              _buildMiniStat('Lifetime Earned', '5,400'),
+              Container(width: 1, height: 30, color: Colors.white30, margin: const EdgeInsets.symmetric(horizontal: 24)),
+              _buildMiniStat('Level', '${stats['level']}'),
             ],
           ),
         ],
@@ -79,107 +101,149 @@ class RewardsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStat(String label, String value) {
+  Widget _buildMiniStat(String label, String value) {
     return Column(
       children: [
         Text(
           value,
           style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
             color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
         ),
         Text(
           label,
           style: const TextStyle(
             color: Colors.white70,
+            fontSize: 12,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildLevelProgress(Map<String, dynamic> stats, BuildContext context) {
-    final nextLevelPoints = stats['nextLevelPoints'];
-    final progress = ((500 - nextLevelPoints) / 500).clamp(0.0, 1.0);
-    
-    return Card(
+  Widget _buildSectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Level Progress',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            LinearProgressIndicator(
-              value: progress,
-              backgroundColor: AppTheme.grey300,
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
-            ),
-            const SizedBox(height: AppTheme.spacingS),
-            Text(
-              '$nextLevelPoints points to next level',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.grey600,
-              ),
-            ),
-          ],
+        padding: const EdgeInsets.only(bottom: 12, left: 4),
+        child: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.grey900,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildRewardsList(List<dynamic> rewards, BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Recent Rewards',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            if (rewards.isEmpty)
-              const Text('No rewards yet. Book a pickup to start earning!')
-            else
-              ...rewards.map((reward) => ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: AppTheme.accentGreen,
-                  child: Icon(
-                    _getRewardIcon(reward.type),
-                    color: Colors.white,
-                  ),
+  Widget _buildRewardsGrid() {
+    final rewards = [
+      {'name': '₹50 OFF Bill', 'points': 500, 'icon': Icons.receipt_long, 'color': Colors.blue},
+      {'name': 'Eco Bag', 'points': 800, 'icon': Icons.shopping_bag, 'color': Colors.green},
+      {'name': 'Movie Ticket', 'points': 1500, 'icon': Icons.movie, 'color': Colors.purple},
+      {'name': 'Gift Card', 'points': 2000, 'icon': Icons.card_giftcard, 'color': Colors.red},
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: rewards.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.1,
+      ),
+      itemBuilder: (context, index) {
+        final item = rewards[index];
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppTheme.grey200),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: (item['color'] as Color).withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
-                title: Text(reward.title),
-                subtitle: Text(reward.description),
-                trailing: Text('+${reward.points} pts'),
-              )),
-          ],
-        ),
-      ),
+                child: Icon(item['icon'] as IconData, color: item['color'] as Color, size: 28),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                item['name'] as String,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${item['points']} pts',
+                style: const TextStyle(
+                  color: AppTheme.primaryGreen,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  IconData _getRewardIcon(dynamic type) {
-    switch (type.toString()) {
-      case 'RewardType.points':
-        return Icons.stars;
-      case 'RewardType.badge':
-        return Icons.workspace_premium;
-      case 'RewardType.coupon':
-        return Icons.local_offer;
-      default:
-        return Icons.card_giftcard;
-    }
+  Widget _buildHistoryList(RewardService rewardService) {
+    // Mock Data
+    final history = [
+      {'title': 'Pickup Bonus', 'date': 'Today', 'points': '+50', 'isCredit': true},
+      {'title': 'Redeemed Eco Bag', 'date': 'Yesterday', 'points': '-800', 'isCredit': false},
+      {'title': 'Weekly Streak', 'date': 'Aug 20', 'points': '+100', 'isCredit': true},
+    ];
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final item = history[index];
+          final isCredit = item['isCredit'] as bool;
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isCredit ? AppTheme.success.withOpacity(0.1) : AppTheme.error.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  isCredit ? Icons.arrow_downward : Icons.arrow_upward,
+                  color: isCredit ? AppTheme.success : AppTheme.error,
+                  size: 20,
+                ),
+              ),
+              title: Text(item['title'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(item['date'] as String),
+              trailing: Text(
+                item['points'] as String,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: isCredit ? AppTheme.success : AppTheme.grey900,
+                ),
+              ),
+            ),
+          );
+        },
+        childCount: history.length,
+      ),
+    );
   }
 }
