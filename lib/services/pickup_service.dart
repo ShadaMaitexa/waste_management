@@ -54,7 +54,7 @@ class PickupService extends ChangeNotifier {
         userPhone: '+91 8765432109',
         address: '456 Eco Avenue, Ward 15',
         wardNumber: '15',
-        type: PickupType.bulk,
+        type: PickupType.regular,
         status: PickupStatus.inProgress,
         scheduledDate: now,
         scheduledTime: const TimeOfDay(hour: 14, minute: 0),

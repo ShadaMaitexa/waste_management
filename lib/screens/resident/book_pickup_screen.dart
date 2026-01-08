@@ -164,7 +164,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   double _getEstimatedDuration() {
     int baseDuration = 30;
-    if (_selectedType == PickupType.bulk) baseDuration += 30;
     if (_selectedType == PickupType.emergency) baseDuration -= 10;
     baseDuration += _selectedWasteTypes.length * 5;
     return baseDuration.toDouble();
@@ -485,8 +484,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     switch (type) {
       case PickupType.regular: return Icons.local_shipping_outlined;
       case PickupType.emergency: return Icons.notifications_active_outlined;
-      case PickupType.bulk: return Icons.table_restaurant_outlined; // approximate for furniture/bulk
-      case PickupType.special: return Icons.science_outlined;
     }
   }
 
@@ -506,8 +503,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     switch (type) {
       case PickupType.regular: return 'Regular';
       case PickupType.emergency: return 'Express';
-      case PickupType.bulk: return 'Bulk Waste';
-      case PickupType.special: return 'Special';
     }
   }
 

@@ -423,7 +423,7 @@ class _LoginScreenState extends State<LoginScreen> {
       case UserType.worker:
         return 'Collection Worker';
       case UserType.admin:
-        return 'ULB Admin';
+        return 'Super Admin';
       case UserType.recycler:
         return 'Recycling Partner';
     }

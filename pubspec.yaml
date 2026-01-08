@@ -24,7 +24,7 @@ dependencies:
   
   # QR Code & Scanner
   qr_flutter: ^4.1.0
-  qr_code_scanner: ^1.0.1
+  qr_code_scanner_plus: ^2.0.1
   
   # Maps & Location
   google_maps_flutter: ^2.9.0

@@ -168,6 +168,6 @@ class Pickup {
   bool get isCancelled => status == PickupStatus.cancelled;
 }
 
-enum PickupType { regular, emergency, bulk, special }
+enum PickupType { regular, emergency }
 enum PickupStatus { scheduled, inProgress, completed, cancelled, failed }
 enum WasteType { mixed, dry, wet, organic, recyclable, electronic, hazardous }
