@@ -345,7 +345,6 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildQuickActions(BuildContext context) {
     final actions = [
-      {'icon': Icons.qr_code_scanner, 'label': 'Scan QR', 'route': ''},
       {'icon': Icons.add_a_photo, 'label': 'Report', 'route': ''},
       {'icon': Icons.history, 'label': 'History', 'route': ''},
       {'icon': Icons.support_agent, 'label': 'Support', 'route': ''},
