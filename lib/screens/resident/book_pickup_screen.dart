@@ -198,12 +198,14 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
               _buildWasteTypeGrid(),
               const SizedBox(height: AppTheme.spacingL),
 
-              _buildStepHeader('3', 'Date & Time'),
-              const SizedBox(height: AppTheme.spacingM),
-              _buildDateTimeSelector(),
-              const SizedBox(height: AppTheme.spacingL),
+              if (_selectedType != PickupType.instant) ...[
+                _buildStepHeader('3', 'Date & Time'),
+                const SizedBox(height: AppTheme.spacingM),
+                _buildDateTimeSelector(),
+                const SizedBox(height: AppTheme.spacingL),
+              ],
 
-              _buildStepHeader('4', 'Address & Details'),
+              _buildStepHeader(_selectedType == PickupType.instant ? '3' : '4', 'Address & Details'),
               const SizedBox(height: AppTheme.spacingM),
               _buildAddressSection(),
               const SizedBox(height: AppTheme.spacingXL),
@@ -472,9 +474,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                 height: 24, width: 24,
                 child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
               )
-            : const Text(
-                'Schedule Pickup',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            : Text(
+                _selectedType == PickupType.instant ? 'Release Waste Now' : 'Schedule Pickup',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
       ),
      );
@@ -482,8 +484,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   IconData _getPickupIcon(PickupType type) {
     switch (type) {
-      case PickupType.regular: return Icons.local_shipping_outlined;
-      case PickupType.emergency: return Icons.notifications_active_outlined;
+      case PickupType.regular: return Icons.calendar_month_outlined;
+      case PickupType.emergency: return Icons.bolt_outlined;
+      case PickupType.instant: return Icons.local_shipping_outlined;
     }
   }
 
@@ -501,8 +504,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   String _getPickupTypeTitle(PickupType type) {
     switch (type) {
-      case PickupType.regular: return 'Regular';
-      case PickupType.emergency: return 'Express';
+      case PickupType.regular: return 'Pre-book\n(Scheduled)';
+      case PickupType.emergency: return 'Express\n(Priority)';
+      case PickupType.instant: return 'Instant\n(Release Now)';
     }
   }
 
