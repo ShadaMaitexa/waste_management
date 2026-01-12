@@ -13,7 +13,7 @@ class RewardsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Green Rewards'),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppTheme.primaryGreen,
         foregroundColor: AppTheme.grey900,
         elevation: 0,
       ),

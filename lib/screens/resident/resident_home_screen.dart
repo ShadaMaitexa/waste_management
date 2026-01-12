@@ -394,13 +394,7 @@ class _DashboardTab extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _statCard(
-            context,
-            'Green Points',
-            '${stats['totalPoints'] ?? 0}',
-            Icons.eco,
-            AppTheme.primaryGreen,
-          ),
+          child: _expressCard(context),
         ),
         const SizedBox(width: AppTheme.spacingM),
         Expanded(
@@ -413,6 +407,115 @@ class _DashboardTab extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _expressCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // TODO: Navigate to live map screen showing truck location
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Opening live truck tracking map...'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(AppTheme.spacingM),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF1976D2), Color(0xFF42A5F5)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(AppTheme.radiusM),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF1976D2).withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.local_shipping,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: Colors.greenAccent,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Text(
+                        'LIVE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.spacingM),
+            const Text(
+              'Express',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Text(
+                  'Track Truck',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white70,
+                  size: 12,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -465,7 +568,6 @@ class _DashboardTab extends StatelessWidget {
   Widget _buildQuickActionsGrid(BuildContext context) {
     final actions = [
       {'icon': Icons.add_circle_outline, 'label': 'Book', 'index': 1},
-      {'icon': Icons.qr_code_scanner, 'label': 'Scan QR', 'index': -1},
       {'icon': Icons.history, 'label': 'History', 'index': -1}, // TODO: Link to history
       {'icon': Icons.support_agent, 'label': 'Support', 'index': -1},
     ];

@@ -177,9 +177,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         title: const Text('Book Waste Pickup'),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: AppTheme.grey900,
-        iconTheme: const IconThemeData(color: AppTheme.grey900),
+        backgroundColor: AppTheme.primaryGreen,
+        foregroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppTheme.spacingM),
