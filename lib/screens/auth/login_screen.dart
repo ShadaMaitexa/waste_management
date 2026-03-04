@@ -84,36 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _showForgotPasswordDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Forgot Password'),
-        content: const Text('Please contact support to reset your password'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+  void _navigateToForgotPassword() {
+    Navigator.pushNamed(context, '/forgot-password');
   }
 
-  void _showSignUpDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sign Up'),
-        content: const Text('Registration feature coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+  void _navigateToSignUp() {
+    Navigator.pushNamed(context, '/register');
   }
 
   @override
@@ -256,6 +232,25 @@ class _LoginScreenState extends State<LoginScreen> {
               contentPadding: EdgeInsets.zero,
             );
           }).toList(),
+          if (_selectedUserType == UserType.admin)
+            Padding(
+              padding: const EdgeInsets.only(top: AppTheme.spacingS),
+              child: Container(
+                padding: const EdgeInsets.all(AppTheme.spacingS),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                ),
+                child: const Text(
+                  'Demo: admin@greenloop.com / admin123',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -386,8 +381,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForgotPassword() {
     return TextButton(
-      onPressed: _showForgotPasswordDialog,
-      child: Text(
+      onPressed: _navigateToForgotPassword,
+      child: const Text(
         'Forgot Password?',
         style: TextStyle(color: Colors.white70),
       ),
@@ -398,12 +393,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           'Don\'t have an account? ',
           style: TextStyle(color: Colors.white70),
         ),
         TextButton(
-          onPressed: _showSignUpDialog,
+          onPressed: _navigateToSignUp,
           child: const Text(
             'Sign Up',
             style: TextStyle(

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../models/pickup.dart';
 import '../../services/pickup_service.dart';
-import '../../services/reward_service.dart';
 import '../../theme/app_theme.dart';
 
 class BookPickupScreen extends StatefulWidget {
@@ -106,7 +105,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
     try {
       final pickupService = Provider.of<PickupService>(context, listen: false);
-      final rewardService = Provider.of<RewardService>(context, listen: false);
 
       final pickup = Pickup(
         id: pickupService.generatePickupId(),
@@ -131,17 +129,10 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
       final success = await pickupService.createPickup(pickup);
 
       if (success) {
-        await rewardService.addPoints(
-          'user1',
-          10,
-          'Pickup Scheduled',
-          'Points earned for scheduling a waste pickup',
-        );
-
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Pickup scheduled successfully! +10 points earned'),
+              content: Text('Pickup scheduled successfully!'),
               backgroundColor: AppTheme.success,
             ),
           );

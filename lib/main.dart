@@ -4,11 +4,13 @@ import 'theme/app_theme.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/onboarding_screen.dart';
+import 'screens/auth/registration_screen.dart';
+import 'screens/auth/forgot_password_screen.dart';
 import 'screens/resident/resident_home_screen.dart';
 import 'screens/resident/book_pickup_screen.dart';
 import 'screens/resident/my_pickups_screen.dart';
 import 'screens/resident/pickup_history_screen.dart';
-import 'screens/resident/rewards_screen.dart';
+import 'screens/resident/referral_screen.dart';
 import 'screens/resident/profile_screen.dart';
 import 'screens/worker/worker_home_screen.dart';
 import 'screens/worker/worker_route_planner_screen.dart';
@@ -27,6 +29,7 @@ import 'screens/common/contact_support_screen.dart';
 import 'services/auth_service.dart';
 import 'services/pickup_service.dart';
 import 'services/reward_service.dart';
+import 'services/referral_service.dart';
 
 void main() {
   runApp(const GreenLoopApp());
@@ -42,6 +45,7 @@ class GreenLoopApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => PickupService()),
         ChangeNotifierProvider(create: (_) => RewardService()),
+        ChangeNotifierProvider(create: (_) => ReferralService()),
       ],
       child: MaterialApp(
         title: 'GreenLoop - Smart Waste Management',
@@ -54,13 +58,15 @@ class GreenLoopApp extends StatelessWidget {
           '/splash': (_) => const SplashScreen(),
           '/onboarding': (_) => const OnboardingScreen(),
           '/login': (_) => const LoginScreen(),
+          '/register': (_) => const RegistrationScreen(),
+          '/forgot-password': (_) => const ForgotPasswordScreen(),
           
           // Resident Routes
           '/resident': (_) => const ResidentHomeScreen(),
           '/resident/book-pickup': (_) => const BookPickupScreen(),
           '/resident/my-pickups': (_) => const MyPickupsScreen(),
           '/resident/pickup-history': (_) => const PickupHistoryScreen(),
-          '/resident/rewards': (_) => const RewardsScreen(),
+          '/resident/rewards': (_) => const ReferralScreen(),
           '/resident/profile': (_) => const ProfileScreen(),
           
           // Worker Routes

@@ -5,10 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../services/auth_service.dart';
 import '../../services/pickup_service.dart';
-import '../../services/reward_service.dart';
+import '../../services/referral_service.dart';
 import '../../theme/app_theme.dart';
 import 'book_pickup_screen.dart';
-import 'rewards_screen.dart';
+import 'referral_screen.dart';
 import 'profile_screen.dart';
 
 
@@ -43,7 +43,7 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PickupService()),
-        ChangeNotifierProvider(create: (_) => RewardService()),
+        ChangeNotifierProvider(create: (_) => ReferralService()),
       ],
       child: Scaffold(
         body: PageView(
@@ -55,7 +55,7 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
           children: [
             _DashboardTab(onNavigate: _onItemTapped),
             const BookPickupScreen(),
-            const RewardsScreen(),
+            const ReferralScreen(),
             const ProfileScreen(),
           ],
         ),
@@ -76,9 +76,9 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
               label: 'Book Pickup',
             ),
             NavigationDestination(
-              icon: Icon(Icons.stars_outlined),
-              selectedIcon: Icon(Icons.stars, color: AppTheme.primaryGreen),
-              label: 'Rewards',
+              icon: Icon(Icons.share_outlined),
+              selectedIcon: Icon(Icons.share, color: AppTheme.primaryGreen),
+              label: 'Refer & Earn',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline),
@@ -99,11 +99,14 @@ class _DashboardTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<PickupService, RewardService>(
-      builder: (context, pickupService, rewardService, _) {
+    return Consumer2<PickupService, ReferralService>(
+      builder: (context, pickupService, referralService, _) {
         // Mock data if service returns empty (for UI testing)
         final pickups = pickupService.getUpcomingPickupsForUser('user1');
-        final stats = rewardService.getRewardsStatistics('user1');
+        final stats = {
+          'referralCount': referralService.referralCount,
+          'totalEarned': referralService.totalEarned,
+        };
 
         return Scaffold(
           backgroundColor: AppTheme.grey50,
@@ -120,7 +123,7 @@ class _DashboardTab extends StatelessWidget {
                     const SizedBox(height: AppTheme.spacingL),
                     _buildQuickActionsGrid(context),
                     const SizedBox(height: AppTheme.spacingL),
-                    _buildRecentActivity(context, rewardService),
+                    _buildRecentActivity(context, referralService),
                     const SizedBox(height: AppTheme.spacingL), // Bottom padding
                   ]),
                 ),
@@ -643,9 +646,8 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivity(BuildContext context, RewardService rewardService) {
-    // Mock activity if empty
-    final activities = rewardService.getRecentActivity('user1', limit: 3);
+  Widget _buildRecentActivity(BuildContext context, ReferralService referralService) {
+    final activities = referralService.getReferralHistory();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -678,32 +680,17 @@ class _DashboardTab extends StatelessWidget {
             itemCount: activities.isEmpty ? 3 : activities.length,
             separatorBuilder: (_, __) => Divider(color: AppTheme.grey100, height: 1),
             itemBuilder: (context, index) {
-              if (activities.isEmpty) {
-                // Mock item
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppTheme.primaryGreen.withOpacity(0.1),
-                    child: const Icon(Icons.star, color: AppTheme.primaryGreen, size: 20),
-                  ),
-                  title: const Text('Earned 50 points'),
-                  subtitle: const Text('Dry waste recycling'),
-                  trailing: const Text(
-                    '2h ago',
-                    style: TextStyle(color: AppTheme.grey500, fontSize: 12),
-                  ),
-                );
-              }
               final item = activities[index];
               return ListTile(
                 leading: CircleAvatar(
                   backgroundColor: AppTheme.primaryGreen.withOpacity(0.1),
-                  child: const Icon(Icons.star, color: AppTheme.primaryGreen, size: 20),
+                  child: const Icon(Icons.person_add_rounded, color: AppTheme.primaryGreen, size: 20),
                 ),
-                title: Text(item.title),
-                subtitle: Text(item.description),
-                trailing: const Text(
-                  'Now', // Mock time
-                  style: TextStyle(color: AppTheme.grey500, fontSize: 12),
+                title: Text(item.name),
+                subtitle: Text('Status: ${item.status}'),
+                trailing: Text(
+                  item.date,
+                  style: const TextStyle(color: AppTheme.grey500, fontSize: 12),
                 ),
               );
             },
