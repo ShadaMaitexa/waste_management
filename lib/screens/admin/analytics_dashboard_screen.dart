@@ -23,10 +23,13 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Analytics Dashboard'),
+        title: const Text('Analytics Dashboard', style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5)),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+        ),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -151,7 +154,18 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
   }
 
   Widget _buildLineChart() {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingM),
         child: SizedBox(
@@ -190,7 +204,18 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
   }
 
   Widget _buildPieChart() {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingM),
         child: SizedBox(
@@ -233,9 +258,20 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
   // ---------------- WARD PERFORMANCE ----------------
 
   Widget _buildWardPerformanceSection() {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(AppTheme.spacingL),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
@@ -260,9 +296,20 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
   // ---------------- ALERTS ----------------
 
   Widget _buildRecentAlertsSection() {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(AppTheme.spacingL),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
@@ -310,35 +357,74 @@ class _MetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isPositive = change.startsWith('+');
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(icon, color: color),
-                Text(
-                  change,
-                  style: TextStyle(
-                    color: isPositive ? AppTheme.success : AppTheme.error,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: color, size: 24),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isPositive 
+                        ? AppTheme.success.withOpacity(0.1)
+                        : AppTheme.error.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    change,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isPositive ? AppTheme.success : AppTheme.error,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const Spacer(),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.grey900,
+                    letterSpacing: -0.5,
+                  ),
             ),
-            Text(title, style: const TextStyle(fontSize: 13)),
+            const SizedBox(height: 2),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: AppTheme.grey600,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
           ],
         ),
       ),
@@ -408,10 +494,38 @@ class _AlertItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: color, size: 20),
-        const SizedBox(width: 12),
-        Expanded(child: Text(text)),
-        Text(time, style: const TextStyle(fontSize: 12)),
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 22),
+        ),
+        const SizedBox(width: AppTheme.spacingM),
+        Expanded(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: AppTheme.grey800,
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppTheme.grey100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            time,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppTheme.grey600,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ),
       ],
     );
   }

@@ -141,12 +141,17 @@ class _DashboardTab extends StatelessWidget {
       floating: false,
       pinned: true,
       backgroundColor: AppTheme.primaryGreen,
+      elevation: 0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+      ),
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
           fit: StackFit.expand,
           children: [
             Container(
               decoration: const BoxDecoration(
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
                 gradient: LinearGradient(
                   colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
                   begin: Alignment.topLeft,
@@ -155,12 +160,12 @@ class _DashboardTab extends StatelessWidget {
               ),
             ),
             Positioned(
-              right: -50,
-              top: -50,
+              right: -30,
+              top: -20,
               child: Icon(
-                Icons.eco,
-                size: 200,
-                color: Colors.white.withOpacity(0.1),
+                Icons.eco_rounded,
+                size: 180,
+                color: Colors.white.withOpacity(0.08),
               ),
             ),
             Padding(
@@ -225,27 +230,27 @@ class _DashboardTab extends StatelessWidget {
     if (pickup == null) {
       return Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(AppTheme.radiusL),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: AppTheme.grey300.withOpacity(0.4),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: AppTheme.primaryGreen.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.schedule, color: AppTheme.primaryGreen),
+              child: const Icon(Icons.schedule_rounded, color: AppTheme.primaryGreen, size: 28),
             ),
             const SizedBox(width: AppTheme.spacingM),
             Expanded(
@@ -255,12 +260,15 @@ class _DashboardTab extends StatelessWidget {
                   Text(
                     'No Pending Pickups',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.grey900,
+                          letterSpacing: -0.5,
                         ),
                   ),
+                  const SizedBox(height: 2),
                   const Text(
                     'Schedule a waste pickup now.',
-                    style: TextStyle(color: AppTheme.grey600, fontSize: 12),
+                    style: TextStyle(color: AppTheme.grey600, fontSize: 13, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -282,17 +290,17 @@ class _DashboardTab extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF2E7D32), Color(0xFF43A047)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(AppTheme.radiusL),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryGreen.withOpacity(0.3),
+            color: AppTheme.primaryGreen.withOpacity(0.4),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -425,19 +433,19 @@ class _DashboardTab extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [Color(0xFF1976D2), Color(0xFF42A5F5)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF1976D2).withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: const Color(0xFF1976D2).withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -524,15 +532,15 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _statCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -540,12 +548,12 @@ class _DashboardTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: color.withOpacity(0.15),
+              shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 26),
           ),
           const SizedBox(height: AppTheme.spacingM),
           Text(
@@ -608,26 +616,26 @@ class _DashboardTab extends StatelessWidget {
               child: Column(
                 children: [
                   Container(
-                    width: 50,
-                    height: 50,
+                    width: 56,
+                    height: 56,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 5,
-                          offset: const Offset(0, 2),
+                          color: AppTheme.grey300.withOpacity(0.4),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Icon(
                       action['icon'] as IconData,
                       color: AppTheme.primaryGreen,
-                      size: 24,
+                      size: 26,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   Text(
                     action['label'] as String,
                     style: const TextStyle(

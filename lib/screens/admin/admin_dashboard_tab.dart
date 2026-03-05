@@ -19,18 +19,23 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 120.0,
+            expandedHeight: 140.0,
             floating: true,
             pinned: true,
             backgroundColor: AppTheme.primaryGreen,
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+            ),
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text('ULB Admin Portal'),
+              title: const Text('ULB Admin Portal', style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5)),
               background: Container(
                 decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
                   gradient: LinearGradient(
                     colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
                     begin: Alignment.topLeft,
-                    end: Alignment.centerRight,
+                    end: Alignment.bottomRight,
                   ),
                 ),
               ),
@@ -77,15 +82,15 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   Widget _buildHeaderInfo() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingL, vertical: AppTheme.spacingM),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        borderRadius: BorderRadius.circular(20),
          boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppTheme.grey300.withOpacity(0.5),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -95,23 +100,32 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           Text(
             'Kozhikode Municipal Corporation',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                   color: AppTheme.grey900,
+                  letterSpacing: -0.5,
                 ),
           ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Icon(Icons.check_circle, color: AppTheme.success, size: 16),
-              const SizedBox(width: 8),
-              Text(
-                'System Status: All Operations Normal',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.success,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            ],
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppTheme.success.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.check_circle_rounded, color: AppTheme.success, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  'System Status: All Operations Normal',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: AppTheme.success,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -172,53 +186,72 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   }
 
   Widget _buildMetricCard(String title, String value, String change, IconData icon, Color color) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusM)),
-      color: Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(icon, color: color, size: 24),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: color, size: 24),
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingS,
-                    vertical: AppTheme.spacingXS,
+                    horizontal: 8,
+                    vertical: 4,
                   ),
                   decoration: BoxDecoration(
                     color: change.startsWith('+') 
                         ? AppTheme.success.withOpacity(0.1)
                         : AppTheme.error.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     change,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: change.startsWith('+') ? AppTheme.success : AppTheme.error,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: change.startsWith('+') ? AppTheme.success : AppTheme.error,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingS),
+            const Spacer(),
             Text(
               value,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.grey900,
+                    letterSpacing: -0.5,
                   ),
             ),
-            const SizedBox(height: AppTheme.spacingXS),
+            const SizedBox(height: 2),
             Text(
               title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: AppTheme.grey600,
+                    fontWeight: FontWeight.w600,
                   ),
             ),
           ],
@@ -228,10 +261,18 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   }
 
   Widget _buildWardPerformance() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusM)),
-      color: Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingL),
         child: Column(
@@ -241,6 +282,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               'Ward-wise Performance',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
                   ),
             ),
             const SizedBox(height: AppTheme.spacingM),
@@ -286,16 +328,17 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
             Text(
               percentage,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                     color: color,
                   ),
             ),
+            const SizedBox(height: 6),
             Container(
-              width: 60,
-              height: 4,
+              width: 80,
+              height: 6,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(2),
+                color: color.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(3),
               ),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,
@@ -303,7 +346,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: color,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(3),
                   ),
                 ),
               ),
@@ -315,10 +358,18 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   }
 
   Widget _buildRecentAlerts() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusM)),
-      color: Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingL),
         child: Column(
@@ -328,6 +379,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               'Recent Alerts',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
                   ),
             ),
             const SizedBox(height: AppTheme.spacingM),
@@ -360,19 +412,37 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   Widget _buildAlertItem(String message, String time, IconData icon, Color color) {
     return Row(
       children: [
-        Icon(icon, color: color, size: 20),
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 22),
+        ),
         const SizedBox(width: AppTheme.spacingM),
         Expanded(
           child: Text(
             message,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: AppTheme.grey800,
+            ),
           ),
         ),
-        Text(
-          time,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppTheme.grey500,
-              ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppTheme.grey100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            time,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppTheme.grey600,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
         ),
       ],
     );
@@ -417,21 +487,37 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   Widget _buildQuickActionCard(String title, IconData icon, Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.radiusM),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         decoration: BoxDecoration(
-          border: Border.all(color: color.withOpacity(0.3)),
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
+          color: color.withOpacity(0.05),
+          border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(height: AppTheme.spacingS),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(icon, color: color, size: 30),
+            ),
+            const SizedBox(height: 16),
             Text(
               title,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.grey900,
                   ),
               textAlign: TextAlign.center,
             ),

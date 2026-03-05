@@ -11,14 +11,18 @@ class ProfileScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 320.0,
+            expandedHeight: 340.0,
             floating: false,
             pinned: true,
             backgroundColor: AppTheme.primaryGreen,
             elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+            ),
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
                   gradient: LinearGradient(
                     colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
                     begin: Alignment.topCenter,
@@ -124,26 +128,26 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildStatsRow() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppTheme.grey300.withOpacity(0.5),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildStatItem('1,250', 'Points', Icons.stars, Colors.amber),
+          _buildStatItem('1,250', 'Points', Icons.stars_rounded, Colors.amber),
           _verticalDivider(),
-          _buildStatItem('24', 'Cleanups', Icons.delete_outline, AppTheme.primaryGreen),
+          _buildStatItem('24', 'Cleanups', Icons.delete_outline_rounded, AppTheme.primaryGreen),
           _verticalDivider(),
-          _buildStatItem('12kg', 'CO2 Saved', Icons.cloud_outlined, Colors.blue),
+          _buildStatItem('12kg', 'CO2 Saved', Icons.eco_rounded, Colors.blue),
         ],
       ),
     );
@@ -152,21 +156,31 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildStatItem(String value, String label, IconData icon, Color color) {
     return Column(
       children: [
-        Icon(icon, color: color, size: 28),
-        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.15),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 28),
+        ),
+        const SizedBox(height: 12),
         Text(
           value,
           style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
             color: AppTheme.grey900,
+            letterSpacing: -0.5,
           ),
         ),
+        const SizedBox(height: 4),
         Text(
           label,
           style: const TextStyle(
             color: AppTheme.grey600,
-            fontSize: 12,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],
@@ -185,13 +199,14 @@ class ProfileScreen extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 12, left: 4),
+        padding: const EdgeInsets.only(bottom: 16, left: 8, top: 8),
         child: Text(
           title,
           style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
             color: AppTheme.grey900,
+            letterSpacing: -0.5,
           ),
         ),
       ),
@@ -202,12 +217,12 @@ class ProfileScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -218,22 +233,39 @@ class ProfileScreen extends StatelessWidget {
           return Column(
             children: [
               ListTile(
-                leading: Icon(
-                  item.icon,
-                  color: item.isDestructive ? AppTheme.error : AppTheme.grey600,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: (item.isDestructive ? AppTheme.error : AppTheme.primaryGreen).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    item.icon,
+                    color: item.isDestructive ? AppTheme.error : AppTheme.primaryGreen,
+                    size: 22,
+                  ),
                 ),
                 title: Text(
                   item.title,
                   style: TextStyle(
                     color: item.isDestructive ? AppTheme.error : AppTheme.grey900,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
                   ),
                 ),
-                trailing: const Icon(Icons.chevron_right, size: 20, color: AppTheme.grey400),
+                trailing: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppTheme.grey50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey600),
+                ),
                 onTap: item.onTap,
               ),
               if (index != items.length - 1)
-                Divider(height: 1, color: AppTheme.grey100),
+                Divider(height: 1, color: AppTheme.grey100, indent: 64, endIndent: 20),
             ],
           );
         }).toList(),

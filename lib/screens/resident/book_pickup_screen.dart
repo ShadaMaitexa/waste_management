@@ -165,12 +165,12 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     return Scaffold(
       backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Book Waste Pickup'),
+        title: const Text('New Pickup Request', style: TextStyle(fontWeight: FontWeight.w600)),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppTheme.primaryGreen,
+        iconTheme: const IconThemeData(color: AppTheme.primaryGreen),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppTheme.spacingM),
@@ -214,29 +214,41 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     return Row(
       children: [
         Container(
-          width: 28,
-          height: 28,
+          width: 32,
+          height: 32,
           alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            color: AppTheme.primaryGreen,
-            shape: BoxShape.circle,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppTheme.primaryGreen, AppTheme.lightGreen],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryGreen.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Text(
             step,
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 16,
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 14),
         Text(
           title,
           style: const TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w700,
             color: AppTheme.grey900,
+            letterSpacing: -0.5,
           ),
         ),
       ],
@@ -257,28 +269,38 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
               margin: const EdgeInsets.only(right: 12),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primaryGreen.withOpacity(0.05) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isSelected ? AppTheme.primaryGreen : AppTheme.grey200,
-                  width: isSelected ? 2 : 1,
-                ),
+                color: isSelected ? AppTheme.primaryGreen : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: (isSelected ? AppTheme.primaryGreen : AppTheme.grey300).withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                   Icon(
-                    _getPickupIcon(type),
-                    color: isSelected ? AppTheme.primaryGreen : AppTheme.grey600,
-                    size: 32,
-                  ),
-                  const SizedBox(height: 8),
+                   Container(
+                     padding: const EdgeInsets.all(8),
+                     decoration: BoxDecoration(
+                       color: isSelected ? Colors.white.withOpacity(0.2) : AppTheme.primaryGreen.withOpacity(0.1),
+                       shape: BoxShape.circle,
+                     ),
+                     child: Icon(
+                      _getPickupIcon(type),
+                      color: isSelected ? Colors.white : AppTheme.primaryGreen,
+                      size: 28,
+                    ),
+                   ),
+                  const SizedBox(height: 10),
                   Text(
                     _getPickupTypeTitle(type),
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? AppTheme.primaryGreen : AppTheme.grey800,
+                      fontSize: 13,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                      color: isSelected ? Colors.white : AppTheme.grey800,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -304,33 +326,47 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
              width: (MediaQuery.of(context).size.width - 48 - 12) / 2, // 2 column grid
              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
              decoration: BoxDecoration(
-               color: isSelected ? AppTheme.primaryGreen.withOpacity(0.1) : Colors.white,
-               borderRadius: BorderRadius.circular(12),
+               color: isSelected ? AppTheme.primaryGreen.withOpacity(0.05) : Colors.white,
+               borderRadius: BorderRadius.circular(16),
                border: Border.all(
-                 color: isSelected ? AppTheme.primaryGreen : AppTheme.grey200,
+                 color: isSelected ? AppTheme.primaryGreen : Colors.transparent,
                  width: 1.5,
                ),
+               boxShadow: isSelected ? [] : [
+                 BoxShadow(
+                   color: AppTheme.grey300.withOpacity(0.3),
+                   blurRadius: 10,
+                   offset: const Offset(0, 4),
+                 ),
+               ],
              ),
              child: Row(
                children: [
-                 Icon(
-                   _getWasteIcon(type),
-                   size: 20,
-                   color: isSelected ? AppTheme.primaryGreen : AppTheme.grey600,
+                 Container(
+                   padding: const EdgeInsets.all(6),
+                   decoration: BoxDecoration(
+                     color: isSelected ? AppTheme.primaryGreen.withOpacity(0.1) : AppTheme.grey100,
+                     borderRadius: BorderRadius.circular(8),
+                   ),
+                   child: Icon(
+                     _getWasteIcon(type),
+                     size: 20,
+                     color: isSelected ? AppTheme.primaryGreen : AppTheme.grey600,
+                   ),
                  ),
-                 const SizedBox(width: 8),
+                 const SizedBox(width: 10),
                  Expanded(
                    child: Text(
                      _getWasteTypeTitle(type),
                      style: TextStyle(
-                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                       fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                        color: isSelected ? AppTheme.primaryGreen : AppTheme.grey800,
                        fontSize: 14,
                      ),
                    ),
                  ),
                  if (isSelected) 
-                   const Icon(Icons.check_circle, size: 16, color: AppTheme.primaryGreen),
+                   const Icon(Icons.check_circle, size: 18, color: AppTheme.primaryGreen),
                ],
              ),
           ),
@@ -409,15 +445,14 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   Widget _buildAddressSection() {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppTheme.grey300.withOpacity(0.4),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -425,22 +460,64 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         children: [
           TextFormField(
             controller: _addressController,
-            decoration: const InputDecoration(
-              labelText: 'Pickup Address',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.location_on_outlined),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: InputDecoration(
+              labelText: 'Location',
+              labelStyle: const TextStyle(color: AppTheme.grey600),
+              border: OutlineInputBorder(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryGreen.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.location_on_rounded, color: AppTheme.primaryGreen, size: 20),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             ),
             validator: (value) => value!.isEmpty ? 'Address is required' : null,
           ),
-          const SizedBox(height: 16),
+          Divider(height: 1, color: AppTheme.grey200, indent: 16, endIndent: 16),
           TextFormField(
             controller: _notesController,
-             decoration: const InputDecoration(
-              labelText: 'Notes (Optional)',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.note_alt_outlined),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: InputDecoration(
+              labelText: 'Instructions for driver (optional)',
+              labelStyle: const TextStyle(color: AppTheme.grey600),
+              border: OutlineInputBorder(
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.info.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.note_alt_rounded, color: AppTheme.info, size: 20),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             ),
           ),
         ],
@@ -452,23 +529,47 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
      return SizedBox(
       width: double.infinity,
       height: 54,
-       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryGreen,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 2,
+       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: const LinearGradient(
+            colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryGreen.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
-        onPressed: _isLoading ? null : _submitPickup,
-        child: _isLoading
-            ? const SizedBox(
-                height: 24, width: 24,
-                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-              )
-            : Text(
-                _selectedType == PickupType.instant ? 'Release Waste Now' : 'Schedule Pickup',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          ),
+          onPressed: _isLoading ? null : _submitPickup,
+          child: _isLoading
+              ? const SizedBox(
+                  height: 24, width: 24,
+                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _selectedType == PickupType.instant ? 'Find a Driver Now' : 'Confirm Scheduling',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward_rounded, size: 22),
+                  ],
+                ),
+        ),
       ),
      );
   }
