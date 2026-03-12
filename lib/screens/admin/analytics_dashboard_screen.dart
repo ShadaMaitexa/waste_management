@@ -22,14 +22,15 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Analytics Dashboard', style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5)),
+        title: const Text(
+          'Strategic Analytics',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-        ),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -39,29 +40,30 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                 .map(
                   (p) => PopupMenuItem(
                     value: p,
-                    child: Text(p),
+                    child: Text(p, style: const TextStyle(fontWeight: FontWeight.w500)),
                   ),
                 )
                 .toList(),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(20),
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white24),
               ),
               child: Row(
                 children: [
                   Text(
                     _selectedPeriod,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
                   ),
-                  const Icon(Icons.arrow_drop_down, color: Colors.white),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 20),
                 ],
               ),
             ),
           ),
-          const SizedBox(width: 12),
         ],
       ),
       body: SingleChildScrollView(
@@ -88,45 +90,58 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Key Performance Metrics',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryGreen.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.insert_chart_outlined_rounded, color: AppTheme.primaryGreen, size: 20),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Key Performance Metrics',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.grey900, letterSpacing: -0.5),
+            ),
+          ],
         ),
-        const SizedBox(height: AppTheme.spacingM),
+        const SizedBox(height: 20),
         GridView.count(
           primary: false,
           shrinkWrap: true,
           crossAxisCount: 2,
-          crossAxisSpacing: AppTheme.spacingM,
-          mainAxisSpacing: AppTheme.spacingM,
-          childAspectRatio: 1.3,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 1.2,
           children: const [
             _MetricCard(
-              title: 'Total Pickups',
+              title: 'TOTAL PICKUPS',
               value: '2,456',
               change: '+12%',
-              icon: Icons.recycling,
-              color: AppTheme.secondaryGreen,
+              icon: Icons.recycling_rounded,
+              color: Color(0xFF6366F1),
             ),
             _MetricCard(
-              title: 'Collection Rate',
+              title: 'COLLECTION RATE',
               value: '94.5%',
               change: '+2.1%',
-              icon: Icons.trending_up,
+              icon: Icons.trending_up_rounded,
               color: AppTheme.success,
             ),
             _MetricCard(
-              title: 'Active Routes',
+              title: 'ACTIVE ROUTES',
               value: '24',
               change: '+2',
-              icon: Icons.route,
+              icon: Icons.route_rounded,
               color: AppTheme.info,
             ),
             _MetricCard(
-              title: 'Complaints',
+              title: 'COMPLAINTS',
               value: '12',
               change: '-8',
-              icon: Icons.report_problem,
+              icon: Icons.report_problem_rounded,
               color: AppTheme.warning,
             ),
           ],
@@ -157,47 +172,72 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: SizedBox(
-          height: 200,
-          child: LineChart(
-            LineChartData(
-              gridData: FlGridData(show: false),
-              titlesData: FlTitlesData(show: false),
-              borderData: FlBorderData(show: false),
-              lineBarsData: [
-                LineChartBarData(
-                  isCurved: true,
-                  barWidth: 3,
-                  color: AppTheme.primaryGreen,
-                  dotData: FlDotData(show: false),
-                  belowBarData: BarAreaData(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Weekly Collection Volume (kg)',
+              style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.grey600, fontSize: 13),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              height: 200,
+              child: LineChart(
+                LineChartData(
+                  gridData: FlGridData(
                     show: true,
-                    color: AppTheme.primaryGreen.withOpacity(0.1),
+                    drawVerticalLine: false,
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: AppTheme.grey100,
+                      strokeWidth: 1,
+                    ),
                   ),
-                  spots: const [
-                    FlSpot(0, 3),
-                    FlSpot(1, 1),
-                    FlSpot(2, 4),
-                    FlSpot(3, 2),
-                    FlSpot(4, 5),
-                    FlSpot(5, 3),
-                    FlSpot(6, 4),
+                  titlesData: FlTitlesData(show: false),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      isCurved: true,
+                      barWidth: 4,
+                      color: AppTheme.primaryGreen,
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(show: false),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.primaryGreen.withOpacity(0.2),
+                            AppTheme.primaryGreen.withOpacity(0.0),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                      spots: const [
+                        FlSpot(0, 3.2),
+                        FlSpot(1, 2.8),
+                        FlSpot(2, 4.5),
+                        FlSpot(3, 3.5),
+                        FlSpot(4, 5.2),
+                        FlSpot(5, 4.8),
+                        FlSpot(6, 6.0),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -360,20 +400,20 @@ class _MetricCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
+        border: Border.all(color: color.withOpacity(0.05), width: 1),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -382,27 +422,22 @@ class _MetricCard extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(icon, color: color, size: 24),
+                  child: Icon(icon, color: color, size: 20),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isPositive 
-                        ? AppTheme.success.withOpacity(0.1)
-                        : AppTheme.error.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: isPositive ? AppTheme.success.withOpacity(0.1) : AppTheme.error.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     change,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
                       color: isPositive ? AppTheme.success : AppTheme.error,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -411,19 +446,22 @@ class _MetricCard extends StatelessWidget {
             const Spacer(),
             Text(
               value,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.grey900,
-                    letterSpacing: -0.5,
-                  ),
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: AppTheme.grey900,
+                letterSpacing: -1,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: AppTheme.grey600,
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.grey500,
+                letterSpacing: 0.5,
+              ),
             ),
           ],
         ),

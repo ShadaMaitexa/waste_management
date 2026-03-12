@@ -311,6 +311,9 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
                   onSelected: (action) => _handleUserAction(action, user),
                   icon: const Icon(Icons.more_vert_rounded, color: AppTheme.grey400),
                   itemBuilder: (_) => [
+                    const PopupMenuItem(value: 'view', child: Text('View Details')),
+                    const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                    const PopupMenuDivider(),
                     const PopupMenuItem(value: 'activate', child: Text('Activate')),
                     const PopupMenuItem(value: 'deactivate', child: Text('Deactivate')),
                     const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: AppTheme.error))),
@@ -466,6 +469,12 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
 
   void _handleUserAction(String action, Map<String, dynamic> user) {
     switch (action) {
+      case 'view':
+        _viewUserDetails(user);
+        break;
+      case 'edit':
+        _editUser(user);
+        break;
       case 'activate':
         setState(() {
           user['status'] = 'Active';

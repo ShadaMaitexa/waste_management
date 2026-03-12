@@ -17,15 +17,19 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     return Scaffold(
       backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Reports Center'),
+        title: const Text(
+          'Strategic Reports',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.tune_rounded),
             onPressed: () {},
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Column(
@@ -54,102 +58,139 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   Widget _buildFilters() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: AppTheme.spacingM),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: _reportTypes.map((type) {
-            final isSelected = _selectedType == type;
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: FilterChip(
-                label: Text(type),
-                selected: isSelected,
-                selectedColor: AppTheme.primaryGreen.withOpacity(0.1),
-                checkmarkColor: AppTheme.primaryGreen,
-                labelStyle: TextStyle(
-                  color: isSelected ? AppTheme.primaryGreen : AppTheme.grey700,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-                onSelected: (selected) {
-                  setState(() => _selectedType = type);
-                },
-              ),
-            );
-          }).toList(),
-        ),
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: _reportTypes.map((type) {
+                final isSelected = _selectedType == type;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: FilterChip(
+                    label: Text(type),
+                    selected: isSelected,
+                    onSelected: (_) => setState(() => _selectedType = type),
+                    backgroundColor: Colors.white,
+                    selectedColor: AppTheme.primaryGreen.withOpacity(0.1),
+                    checkmarkColor: AppTheme.primaryGreen,
+                    side: BorderSide(
+                      color: isSelected ? AppTheme.primaryGreen : AppTheme.grey200,
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    labelStyle: TextStyle(
+                      color: isSelected ? AppTheme.primaryGreen : AppTheme.grey600,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      fontSize: 13,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildReportCard(int index) {
-    // Mock data based on index
-    final title = index % 2 == 0 ? 'Weekly Collection Summary' : 'Monthly Financial Report';
+    final title = index % 2 == 0 ? 'Weekly Collection Summary' : 'Monthly Financial Performance';
     final date = 'Oct ${20 - index}, 2025';
-    final type = index % 2 == 0 ? 'Collection' : 'Financial';
+    final type = index % 2 == 0 ? 'COLLECTION' : 'FINANCIAL';
+    final typeColor = index % 2 == 0 ? AppTheme.primaryGreen : const Color(0xFF6366F1);
     final size = '${(index + 1) * 1.5} MB';
     
     return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: (index % 2 == 0 ? Colors.blue : Colors.orange).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            index % 2 == 0 ? Icons.description : Icons.pie_chart,
-            color: index % 2 == 0 ? Colors.blue : Colors.orange,
-          ),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
           children: [
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppTheme.grey100,
-                    borderRadius: BorderRadius.circular(4),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: typeColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                index % 2 == 0 ? Icons.analytics_rounded : Icons.summarize_rounded,
+                color: typeColor,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                      color: AppTheme.grey900,
+                      letterSpacing: -0.3,
+                    ),
                   ),
-                  child: Text(type, style: const TextStyle(fontSize: 10, color: AppTheme.grey700)),
-                ),
-                const SizedBox(width: 8),
-                Text(date, style: const TextStyle(fontSize: 12)),
-                const SizedBox(width: 8),
-                Text('• $size', style: const TextStyle(fontSize: 12)),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: typeColor.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          type,
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: typeColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        date,
+                        style: TextStyle(color: AppTheme.grey500, fontSize: 12),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '• $size',
+                        style: TextStyle(color: AppTheme.grey500, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert_rounded, color: AppTheme.grey400),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              itemBuilder: (context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem(value: 'download', child: Text('Download')),
+                const PopupMenuItem(value: 'share', child: Text('Share')),
+                const PopupMenuDivider(),
+                const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: AppTheme.error))),
               ],
             ),
           ],
-        ),
-        trailing: PopupMenuButton(
-          itemBuilder: (context) => [
-            const PopupMenuItem(value: 'download', child: Text('Download')),
-            const PopupMenuItem(value: 'share', child: Text('Share')),
-            const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: Colors.red))),
-          ],
-          onSelected: (value) {
-            // TODO: Implement actions
-          },
         ),
       ),
     );

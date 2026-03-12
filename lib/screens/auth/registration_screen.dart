@@ -105,45 +105,59 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingM),
-                child: Card(
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusXL),
-                  ),
-                  color: Colors.white.withOpacity(0.1),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(AppTheme.spacingL),
-                    child: Form(
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: AppTheme.primaryGradient,
+            ),
+          ),
+          Positioned(
+            left: -80,
+            bottom: -50,
+            child: Icon(
+              Icons.eco_rounded,
+              size: 350,
+              color: Colors.white.withOpacity(0.05),
+            ),
+          ),
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 48),
+                    Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _buildHeader(),
-                          const SizedBox(height: AppTheme.spacingL),
                           _buildFormFields(),
-                          const SizedBox(height: AppTheme.spacingL),
+                          const SizedBox(height: 40),
                           _buildRegisterButton(),
-                          const SizedBox(height: AppTheme.spacingM),
+                          const SizedBox(height: 32),
                           _buildLoginLink(),
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
           ),
-        ),
+          // Back Button
+          Positioned(
+            top: 50,
+            left: 20,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -151,25 +165,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget _buildHeader() {
     return Column(
       children: [
-        const Icon(
-          Icons.person_add_rounded,
-          size: 60,
-          color: Colors.white,
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+          ),
+          child: const Icon(
+            Icons.person_add_alt_1_rounded,
+            size: 48,
+            color: Colors.white,
+          ),
         ),
-        const SizedBox(height: AppTheme.spacingM),
-        Text(
-          'Join GreenLoop',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+        const SizedBox(height: 24),
+        const Text(
+          'Create Account',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 32,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -1,
+          ),
         ),
-        const SizedBox(height: AppTheme.spacingS),
+        const SizedBox(height: 8),
         Text(
-          'Create your ${_getUserTypeTitle(_selectedUserType)} account',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.white70,
-              ),
+          'JOIN THE GREEN REVOLUTION',
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.7),
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 2,
+          ),
         ),
       ],
     );
@@ -250,27 +277,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return DropdownButtonFormField<UserType>(
       value: _selectedUserType,
       dropdownColor: AppTheme.primaryGreen,
-      borderRadius: BorderRadius.circular(AppTheme.radiusM),
-      style: const TextStyle(color: Colors.white, fontSize: 16),
+      borderRadius: BorderRadius.circular(24),
+      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
       iconEnabledColor: Colors.white,
       decoration: InputDecoration(
-        labelText: 'Select Role',
-        labelStyle: const TextStyle(color: Colors.white70),
-        prefixIcon: const Icon(Icons.badge, color: Colors.white70),
+        hintText: 'Select Role',
+        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+        prefixIcon: const Icon(Icons.badge_outlined, color: Colors.white, size: 20),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.15),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-          borderSide: const BorderSide(color: Colors.white30),
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-          borderSide: const BorderSide(color: Colors.white30),
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.1), width: 1.5),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-          borderSide: const BorderSide(color: Colors.white),
-        ),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
       ),
       items: UserType.values.map<DropdownMenuItem<UserType>>((UserType type) {
         return DropdownMenuItem<UserType>(
@@ -307,55 +331,62 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       keyboardType: keyboardType,
       obscureText: obscureText,
       maxLines: maxLines,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
       decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
-        prefixIcon: Icon(icon, color: Colors.white70),
+        hintText: label,
+        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 16),
+        prefixIcon: Icon(icon, color: Colors.white, size: 20),
         suffixIcon: suffixIcon,
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.15),
+        contentPadding: const EdgeInsets.all(20),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-          borderSide: const BorderSide(color: Colors.white30),
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-          borderSide: const BorderSide(color: Colors.white30),
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.1), width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-          borderSide: const BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.circular(24),
+          borderSide: const BorderSide(color: Colors.white, width: 2),
         ),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
       ),
       validator: validator,
     );
   }
 
   Widget _buildRegisterButton() {
-    return ElevatedButton(
-      onPressed: _isLoading ? null : _register,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: AppTheme.primaryGreen,
-        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingM),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-        ),
+    return Container(
+      width: double.infinity,
+      height: 64,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
-      child: _isLoading
-          ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _register,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          foregroundColor: AppTheme.primaryGreen,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        ),
+        child: _isLoading
+            ? const CircularProgressIndicator(color: AppTheme.primaryGreen)
+            : const Text(
+                'CREATE ACCOUNT',
+                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.5),
               ),
-            )
-          : const Text(
-              'Sign Up',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
+      ),
     );
   }
 

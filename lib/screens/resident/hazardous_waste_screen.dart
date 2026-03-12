@@ -104,19 +104,16 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: const Text(
-            'Select your item',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18, color: Colors.white),
+            'Biohazard Selection',
+            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white, letterSpacing: -0.5),
           ),
-          centerTitle: false,
+          centerTitle: true,
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 16.0),
+              padding: const EdgeInsets.only(right: 8.0),
               child: IconButton(
-                icon: const Icon(Icons.help_outline_rounded, color: Colors.white),
-                onPressed: () {
-                  // Navigate to FAQs
-                  Navigator.pushNamed(context, '/faq');
-                },
+                icon: const Icon(Icons.help_outline_rounded, color: Colors.white70),
+                onPressed: () => Navigator.pushNamed(context, '/help'),
               ),
             ),
           ],
@@ -124,7 +121,7 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
         body: Column(
           children: [
             _buildTopBanner(),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,22 +140,22 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
   Widget _buildTopBanner() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        height: 100,
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(30),
           gradient: const LinearGradient(
-            colors: [Color(0xFF8E24AA), Color(0xFF5E35B1)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+            colors: [Color(0xFF7B1FA2), Color(0xFF4A148C)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          border: Border.all(color: Colors.white24, width: 1),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF8E24AA).withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: const Color(0xFF4A148C).withOpacity(0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
@@ -167,16 +164,23 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Domestic Hazardous Waste\n(incl Sanitary)',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13, height: 1.4),
+                    'Biomedical Waste',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: -0.5),
+                  ),
+                  Text(
+                    'SAFE DISPOSAL PROTOCOL',
+                    style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
                   ),
                 ],
               ),
             ),
+            const VerticalDivider(color: Colors.white24, width: 32),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -184,22 +188,20 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                   children: [
                     const Text(
                       '₹45',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 24),
                     ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      '+gst\n/kg',
-                      style: TextStyle(color: Colors.white70, fontSize: 10, height: 1.1),
+                    const SizedBox(width: 2),
+                    Text(
+                      '/KG',
+                      style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.w800),
                     ),
                   ],
                 ),
+                Text(
+                  '+GST EXTRA',
+                  style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 8, fontWeight: FontWeight.w700),
+                ),
               ],
-            ),
-            const SizedBox(width: 12),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.yellow.shade700.withOpacity(0.8), shape: BoxShape.circle),
-              child: const Icon(Icons.coronavirus_rounded, color: Colors.black87, size: 28),
             ),
           ],
         ),
@@ -209,11 +211,8 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
   Widget _buildSideMenu() {
     return Container(
-      width: 100,
-      decoration: const BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.only(topRight: Radius.circular(24)),
-      ),
+      width: 90,
+      margin: const EdgeInsets.only(left: 20, right: 12),
       child: ListView.builder(
         itemCount: _tabs.length,
         itemBuilder: (context, index) {
@@ -222,32 +221,32 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
           return GestureDetector(
             onTap: () => setState(() => _selectedTabIndex = index),
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8, top: 4),
-              padding: const EdgeInsets.symmetric(vertical: 16),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: tab['bgInactive'],
-                borderRadius: BorderRadius.circular(16),
-                border: isSelected && index == 0
-                    ? Border.all(color: const Color(0xFFFFD54F), width: 1.5)
-                    : null,
+                color: isSelected ? Colors.white.withOpacity(0.1) : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+                border: isSelected 
+                    ? Border.all(color: tab['color'].withOpacity(0.5), width: 1.5)
+                    : Border.all(color: Colors.white.withOpacity(0.05), width: 1.5),
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     tab['icon'],
-                    color: tab['textInactive'],
-                    size: 28,
+                    color: isSelected ? tab['color'] : Colors.white24,
+                    size: 24,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    tab['title'],
-                    textAlign: TextAlign.center,
+                    tab['title'].split('\n')[0].toUpperCase(),
                     style: TextStyle(
-                      color: tab['textInactive'],
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                      fontSize: 12,
+                      color: isSelected ? Colors.white : Colors.white24,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 10,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ],
@@ -264,9 +263,9 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
     return Expanded(
       child: Container(
-        color: const Color(0xFF1E1E1E),
+        margin: const EdgeInsets.only(right: 20),
         child: ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.zero,
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
@@ -274,24 +273,28 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
             return GestureDetector(
               onTap: () => _toggleItem(item['name']),
-              child: Container(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
                 margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  // Emulate the Akri style yellow-grey gradient pill
+                  borderRadius: BorderRadius.circular(24),
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFFC4AD88),
-                      const Color(0xFF8E836A).withOpacity(0.8),
+                      const Color(0xFF2C2C2E),
+                      const Color(0xFF1C1C1E),
                     ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  border: Border.all(
+                    color: isSelected ? AppTheme.primaryGreen.withOpacity(0.5) : Colors.white.withOpacity(0.05),
+                    width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 8,
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                   ],
@@ -299,39 +302,28 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Icon(item['icon'], color: Colors.white, size: 28),
+                      child: Icon(item['icon'], color: Colors.white, size: 24),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         item['name'],
                         style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
                           fontSize: 15,
                         ),
                       ),
                     ),
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppTheme.primaryGreen : Colors.black,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: isSelected ? AppTheme.primaryGreen : Colors.black,
-                          width: 2,
-                        ),
-                      ),
-                      child: isSelected
-                          ? const Icon(Icons.check, color: Colors.white, size: 20)
-                          : null,
-                    ),
+                    if (isSelected)
+                      const Icon(Icons.check_circle_rounded, color: AppTheme.primaryGreen, size: 24)
+                    else
+                      Icon(Icons.add_circle_outline_rounded, color: Colors.white.withOpacity(0.2), size: 24),
                   ],
                 ),
               ),
@@ -346,42 +338,59 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
     if (_selectedItems.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: const Color(0xFF1C1C1E),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.5),
-            offset: const Offset(0, -4),
-            blurRadius: 10,
+            offset: const Offset(0, -10),
+            blurRadius: 30,
           ),
         ],
       ),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                '${_selectedItems.length} items selected',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_selectedItems.length} ITEMS SELECTED',
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 0.5),
+                ),
+                Text(
+                  'READY FOR COLLECTION',
+                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: 56,
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen]),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryGreen.withOpacity(0.3),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: TextButton(
+              onPressed: () => Navigator.of(context).pop(_selectedItems),
+              child: const Text(
+                'CONFIRM',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1),
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGreen,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-              onPressed: () {
-                // Return to previous screen with selected items
-                Navigator.of(context).pop(_selectedItems);
-              },
-              child: const Text('Continue', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

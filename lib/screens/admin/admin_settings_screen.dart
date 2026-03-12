@@ -18,7 +18,10 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
     return Scaffold(
       backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text(
+          'System Configuration',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -87,47 +90,65 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
 
   Widget _buildProfileSection() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: AppTheme.primaryGreen.withOpacity(0.1),
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            alignment: Alignment.center,
             child: const Text(
               'AD',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'System Admin',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  'Supreme Admin',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: AppTheme.grey900,
+                    letterSpacing: -0.5,
+                  ),
                 ),
                 Text(
-                  'admin@kozhikode.gov.in',
-                  style: TextStyle(color: AppTheme.grey600, fontSize: 13),
+                  'admin.hq@kozhikode.gov',
+                  style: TextStyle(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.edit, color: AppTheme.primaryGreen),
-            onPressed: () {},
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryGreen.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.verified_user_rounded, color: AppTheme.primaryGreen, size: 20),
           ),
         ],
       ),
@@ -139,25 +160,26 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          padding: const EdgeInsets.only(left: 8, bottom: 12),
           child: Text(
-            title,
+            title.toUpperCase(),
             style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.grey700,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey500,
+              letterSpacing: 1.2,
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.radiusM),
+            borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
@@ -169,7 +191,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                 children: [
                   widget,
                   if (index != children.length - 1)
-                    Divider(height: 1, color: AppTheme.grey100, indent: 16, endIndent: 16),
+                    Divider(height: 1, color: AppTheme.grey100, indent: 20, endIndent: 20),
                 ],
               );
             }).toList(),
@@ -203,16 +225,18 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
   Widget _buildLogoutButton() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: OutlinedButton(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: TextButton(
         onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppTheme.error,
-          side: const BorderSide(color: AppTheme.error),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: AppTheme.error.withOpacity(0.05),
         ),
-        child: const Text('Logout from Admin Console'),
+        child: const Text(
+          'Logout Session',
+          style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.w800, fontSize: 16),
+        ),
       ),
     );
   }

@@ -39,19 +39,51 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Contact & Support'),
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
+        title: const Text(
+          'Help Center',
+          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: AppTheme.grey900,
         elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          tabs: const [
-            Tab(text: 'Contact Us'),
-            Tab(text: 'Support Tickets'),
-            Tab(text: 'FAQ'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: AppTheme.grey100,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              labelColor: AppTheme.primaryGreen,
+              unselectedLabelColor: AppTheme.grey500,
+              labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 0.5),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerColor: Colors.transparent,
+              tabs: const [
+                Tab(text: 'CONTACT'),
+                Tab(text: 'TICKETS'),
+                Tab(text: 'FAQ'),
+              ],
+            ),
+          ),
         ),
       ),
       body: TabBarView(
@@ -84,26 +116,44 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
   Widget _buildHeaderSection() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingL),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.circular(AppTheme.radiusL),
+        gradient: const LinearGradient(
+          colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryGreen.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Get in Touch',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          const Icon(Icons.support_agent_rounded, color: Colors.white, size: 48),
+          const SizedBox(height: 24),
+          const Text(
+            'How can we help?',
+            style: TextStyle(
               color: Colors.white,
-              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: AppTheme.spacingS),
+          const SizedBox(height: 8),
           Text(
-            'We\'re here to help you with any questions or concerns about GreenLoop',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white70,
+            'Our team is ready to assist you with any questions or technical issues.',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              height: 1.5,
             ),
           ),
         ],
@@ -112,151 +162,163 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
   }
 
   Widget _buildContactForm() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Send us a Message',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Full Name',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email Address',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            DropdownButtonFormField<String>(
-              value: _selectedCategory,
-              decoration: const InputDecoration(
-                labelText: 'Category',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.category),
-              ),
-              items: const [
-                DropdownMenuItem(value: 'General Inquiry', child: Text('General Inquiry')),
-                DropdownMenuItem(value: 'Technical Support', child: Text('Technical Support')),
-                DropdownMenuItem(value: 'Billing Issue', child: Text('Billing Issue')),
-                DropdownMenuItem(value: 'Feature Request', child: Text('Feature Request')),
-                DropdownMenuItem(value: 'Bug Report', child: Text('Bug Report')),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedCategory = value!;
-                });
-              },
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            TextField(
-              controller: _subjectController,
-              decoration: const InputDecoration(
-                labelText: 'Subject',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.subject),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            TextField(
-              controller: _messageController,
-              decoration: const InputDecoration(
-                labelText: 'Message',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.message),
-              ),
-              maxLines: 5,
-            ),
-            const SizedBox(height: AppTheme.spacingL),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _submitContactForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryGreen,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingM),
-                ),
-                child: const Text(
-                  'Send Message',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Send a Message',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: AppTheme.grey900,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 24),
+          _buildField('Full Name', _nameController, Icons.person_outline_rounded),
+          const SizedBox(height: 16),
+          _buildField('Email Address', _emailController, Icons.email_outlined),
+          const SizedBox(height: 16),
+          _buildDropdownField(),
+          const SizedBox(height: 16),
+          _buildField('Subject', _subjectController, Icons.subject_rounded),
+          const SizedBox(height: 16),
+          _buildField('Message', _messageController, Icons.chat_bubble_outline_rounded, maxLines: 4),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: _submitContactForm,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryGreen,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                elevation: 0,
+              ),
+              child: const Text(
+                'SEND ENQUIRY',
+                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildField(String label, TextEditingController controller, IconData icon, {int maxLines = 1}) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w600),
+        prefixIcon: Icon(icon, color: AppTheme.primaryGreen, size: 20),
+        filled: true,
+        fillColor: AppTheme.grey50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      ),
+    );
+  }
+
+  Widget _buildDropdownField() {
+    return DropdownButtonFormField<String>(
+      value: _selectedCategory,
+      decoration: InputDecoration(
+        labelText: 'Category',
+        labelStyle: const TextStyle(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w600),
+        prefixIcon: const Icon(Icons.category_outlined, color: AppTheme.primaryGreen, size: 20),
+        filled: true,
+        fillColor: AppTheme.grey50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+      ),
+      items: const [
+        DropdownMenuItem(value: 'General Inquiry', child: Text('General Inquiry')),
+        DropdownMenuItem(value: 'Technical Support', child: Text('Technical Support')),
+        DropdownMenuItem(value: 'Billing Issue', child: Text('Billing Issue')),
+        DropdownMenuItem(value: 'Feature Request', child: Text('Feature Request')),
+        DropdownMenuItem(value: 'Bug Report', child: Text('Bug Report')),
+      ],
+      onChanged: (value) => setState(() => _selectedCategory = value!),
     );
   }
 
   Widget _buildContactInfo() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Other Ways to Reach Us',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 8),
+          child: Text(
+            'QUICK CONTACT',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              color: AppTheme.grey500,
+              letterSpacing: 1,
             ),
-            const SizedBox(height: AppTheme.spacingM),
-            _contactInfoItem(Icons.phone, '+91 495 272 3456', 'Call us during business hours'),
-            const SizedBox(height: AppTheme.spacingS),
-            _contactInfoItem(Icons.email, 'support@greenloop.in', 'Email us anytime'),
-            const SizedBox(height: AppTheme.spacingS),
-            _contactInfoItem(Icons.location_on, 'Kozhikode Municipal Corporation, Kerala', 'Visit our office'),
-            const SizedBox(height: AppTheme.spacingS),
-            _contactInfoItem(Icons.schedule, 'Mon - Fri: 9:00 AM - 6:00 PM', 'Business hours'),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 16),
+        _contactInfoItem(Icons.phone_rounded, '+91 495 272 3456', 'Customer Care'),
+        const SizedBox(height: 12),
+        _contactInfoItem(Icons.email_rounded, 'care@greenloop.in', 'Email Support'),
+        const SizedBox(height: 12),
+        _contactInfoItem(Icons.location_on_rounded, 'Municipal Corp. HQ, Kozhikode', 'Office Address'),
+      ],
     );
   }
 
   Widget _contactInfoItem(IconData icon, String info, String description) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: AppTheme.primaryGreen, size: 24),
-        const SizedBox(width: AppTheme.spacingM),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                info,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              Text(
-                description,
-                style: TextStyle(
-                  color: AppTheme.grey600,
-                  fontSize: 12,
-                ),
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryGreen.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: AppTheme.primaryGreen, size: 18),
           ),
-        ),
-      ],
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  description,
+                  style: const TextStyle(color: AppTheme.grey500, fontSize: 10, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  info,
+                  style: const TextStyle(fontWeight: FontWeight.w800, color: AppTheme.grey900, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -264,21 +326,35 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingM),
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: _createNewTicket,
-                  icon: const Icon(Icons.add),
-                  label: const Text('New Ticket'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryGreen,
-                    foregroundColor: Colors.white,
-                  ),
+          padding: const EdgeInsets.all(24),
+          child: Container(
+            width: double.infinity,
+            height: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: const LinearGradient(colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen]),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryGreen.withOpacity(0.3),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
                 ),
+              ],
+            ),
+            child: ElevatedButton.icon(
+              onPressed: _createNewTicket,
+              icon: const Icon(Icons.add_rounded, color: Colors.white),
+              label: const Text(
+                'CREATE NEW TICKET',
+                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
               ),
-            ],
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+            ),
           ),
         ),
         Expanded(
@@ -305,55 +381,67 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
     switch (ticket['status']) {
       case 'Open':
         statusColor = AppTheme.info;
-        statusIcon = Icons.schedule;
+        statusIcon = Icons.schedule_rounded;
         break;
       case 'In Progress':
         statusColor = AppTheme.warning;
-        statusIcon = Icons.autorenew;
+        statusIcon = Icons.autorenew_rounded;
         break;
       case 'Resolved':
         statusColor = AppTheme.success;
-        statusIcon = Icons.check_circle;
+        statusIcon = Icons.check_circle_rounded;
         break;
       default:
         statusColor = AppTheme.grey600;
-        statusIcon = Icons.help;
+        statusIcon = Icons.help_outline_rounded;
     }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: statusColor.withOpacity(0.1),
-          child: Icon(statusIcon, color: statusColor),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: statusColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(statusIcon, color: statusColor, size: 22),
         ),
         title: Text(
           ticket['title'],
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: AppTheme.grey900),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Ticket #${ticket['id']} • ${ticket['date']}'),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingS, vertical: 2),
-              decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusS),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Row(
+            children: [
+              Text(
+                'ID: ${ticket['id']}',
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppTheme.grey500),
               ),
-              child: Text(
-                ticket['status'],
-                style: TextStyle(
-                  color: statusColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
+              const SizedBox(width: 8),
+              Container(width: 3, height: 3, decoration: const BoxDecoration(color: AppTheme.grey300, shape: BoxShape.circle)),
+              const SizedBox(width: 8),
+              Text(
+                ticket['status'].toUpperCase(),
+                style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.w900),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        trailing: const Icon(Icons.chevron_right),
+        trailing: const Icon(Icons.chevron_right_rounded, color: AppTheme.grey400),
         onTap: () => _viewTicketDetails(ticket),
       ),
     );

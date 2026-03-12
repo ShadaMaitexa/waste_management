@@ -11,70 +11,83 @@ class ProfileScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 340.0,
+            expandedHeight: 320.0,
             floating: false,
             pinned: true,
             backgroundColor: AppTheme.primaryGreen,
             elevation: 0,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-            ),
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 40),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      child: const CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        child: Text(
-                          'JD',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryGreen,
+                    ),
+                  ),
+                  Positioned(
+                    right: -20,
+                    top: -20,
+                    child: Icon(Icons.person_rounded, size: 280, color: Colors.white.withOpacity(0.08)),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 60),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
+                        ),
+                        child: const CircleAvatar(
+                          radius: 54,
+                          backgroundColor: Colors.white,
+                          child: Text(
+                            'JD',
+                            style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.w900,
+                              color: AppTheme.primaryGreen,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'John Doe',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                      const SizedBox(height: 20),
+                      const Text(
+                        'John Doe',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                        ),
+                        child: const Text(
+                          'GREEN AMBASSADOR • LEVEL 4',
+                          style: TextStyle(
+                            color: Colors.white, 
+                            fontWeight: FontWeight.w900, 
+                            fontSize: 10,
+                            letterSpacing: 1,
+                          ),
+                        ),
                       ),
-                      child: const Text(
-                        'Green Champion Lvl 3',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -128,26 +141,26 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildStatsRow() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: const EdgeInsets.symmetric(vertical: 28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.5),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 20,
-            offset: const Offset(0, 8),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildStatItem('1,250', 'Points', Icons.stars_rounded, Colors.amber),
+          _buildStatItem('1,250', 'XP POINTS', Icons.auto_awesome_rounded, Colors.amber),
           _verticalDivider(),
-          _buildStatItem('24', 'Cleanups', Icons.delete_outline_rounded, AppTheme.primaryGreen),
+          _buildStatItem('24', 'CLEANUPS', Icons.eco_rounded, AppTheme.primaryGreen),
           _verticalDivider(),
-          _buildStatItem('12kg', 'CO2 Saved', Icons.eco_rounded, Colors.blue),
+          _buildStatItem('12kg', 'CO2 SAVED', Icons.cloud_done_rounded, Colors.blue),
         ],
       ),
     );
@@ -156,31 +169,25 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildStatItem(String value, String label, IconData icon, Color color) {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 28),
-        ),
+        Icon(icon, color: color, size: 28),
         const SizedBox(height: 12),
         Text(
           value,
           style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
             color: AppTheme.grey900,
-            letterSpacing: -0.5,
+            letterSpacing: -1,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
-            color: AppTheme.grey600,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
+          style: TextStyle(
+            color: AppTheme.grey500,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.5,
           ),
         ),
       ],
@@ -199,14 +206,14 @@ class ProfileScreen extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 16, left: 8, top: 8),
+        padding: const EdgeInsets.only(bottom: 12, left: 12, top: 4),
         child: Text(
-          title,
+          title.toUpperCase(),
           style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.grey900,
-            letterSpacing: -0.5,
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.grey500,
+            letterSpacing: 1.2,
           ),
         ),
       ),

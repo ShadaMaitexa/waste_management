@@ -16,105 +16,165 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Pickup History'),
+        title: const Text(
+          'Collection History',
+          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5),
+        ),
+        centerTitle: true,
         elevation: 0,
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: AppTheme.grey900,
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list_rounded, color: AppTheme.primaryGreen),
             onPressed: _showFilterDialog,
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Summary cards
-          Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingM),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildSummaryCard('Total Pickups', '24', AppTheme.primaryGreen),
-                ),
-                const SizedBox(width: AppTheme.spacingM),
-                Expanded(
-                  child: _buildSummaryCard('This Month', '6', AppTheme.success),
-                ),
-                const SizedBox(width: AppTheme.spacingM),
-                Expanded(
-                  child: _buildSummaryCard('Points Earned', '340', AppTheme.warning),
-                ),
-              ],
-            ),
-          ),
-          // Filter chips
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _filters.map((filter) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: AppTheme.spacingS),
-                    child: FilterChip(
-                      label: Text(filter),
-                      selected: _selectedFilter == filter,
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedFilter = filter;
-                        });
-                      },
-                      selectedColor: AppTheme.primaryGreen.withOpacity(0.2),
-                      checkmarkColor: AppTheme.primaryGreen,
+      body: CustomScrollView(
+        slivers: [
+          // Summary Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'YOUR ACTIVITY',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.grey500,
+                      letterSpacing: 1,
                     ),
-                  );
-                }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildSummaryCard('Pickups', '24', AppTheme.primaryGreen, Icons.history_rounded),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildSummaryCard('Points', '340', AppTheme.warning, Icons.stars_rounded),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: AppTheme.spacingM),
-          // Pickup list
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-              itemCount: 8,
-              itemBuilder: (context, index) {
-                return _buildPickupCard(_getMockPickup(index));
-              },
+          // Filter Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: _filters.map((filter) {
+                    final isSelected = _selectedFilter == filter;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: GestureDetector(
+                        onTap: () => setState(() => _selectedFilter = filter),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: isSelected ? AppTheme.primaryGreen : Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isSelected 
+                                  ? AppTheme.primaryGreen.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            filter.toUpperCase(),
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : AppTheme.grey600,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
           ),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
+          // List Section
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => _buildPickupCard(_getMockPickup(index)),
+                childCount: 8,
+              ),
+            ),
+          ),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, Color color) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+  Widget _buildSummaryCard(String title, String value, Color color, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(14),
             ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                color: AppTheme.grey600,
-              ),
-              textAlign: TextAlign.center,
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w900,
+              color: AppTheme.grey900,
             ),
-          ],
-        ),
+          ),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey500,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -122,152 +182,155 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
   Widget _buildPickupCard(dynamic pickup) {
     Color statusColor;
     IconData statusIcon;
-    String statusText;
 
     switch (pickup['status']) {
       case 'completed':
         statusColor = AppTheme.success;
-        statusIcon = Icons.check_circle;
-        statusText = 'Completed';
+        statusIcon = Icons.check_circle_rounded;
         break;
       case 'scheduled':
         statusColor = AppTheme.info;
-        statusIcon = Icons.schedule;
-        statusText = 'Scheduled';
+        statusIcon = Icons.schedule_rounded;
         break;
       case 'cancelled':
         statusColor = AppTheme.error;
-        statusIcon = Icons.cancel;
-        statusText = 'Cancelled';
+        statusIcon = Icons.cancel_rounded;
         break;
       default:
         statusColor = AppTheme.grey600;
-        statusIcon = Icons.help;
-        statusText = 'Unknown';
+        statusIcon = Icons.help_outline_rounded;
     }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(statusIcon, color: statusColor, size: 20),
+                  child: Icon(statusIcon, color: statusColor, size: 22),
                 ),
-                const SizedBox(width: AppTheme.spacingM),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Pickup #${pickup['id']}',
+                        pickup['id'],
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           fontSize: 16,
+                          color: AppTheme.grey900,
                         ),
                       ),
                       Text(
-                        DateFormat('MMM d, yyyy - h:mm a').format(pickup['date']),
-                        style: TextStyle(
-                          color: AppTheme.grey600,
-                          fontSize: 12,
+                        DateFormat('EEE, MMM d • h:mm a').format(pickup['date']),
+                        style: const TextStyle(
+                          color: AppTheme.grey500,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingS,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  ),
-                  child: Text(
-                    statusText,
-                    style: TextStyle(
-                      color: statusColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingM),
-            // Waste types
-            Wrap(
-              spacing: AppTheme.spacingS,
-              children: (pickup['wasteTypes'] as List<String>).map((type) {
-                return Chip(
-                  label: Text(type),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  visualDensity: VisualDensity.compact,
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            // Address
-            Row(
-              children: [
-                Icon(Icons.location_on, size: 16, color: AppTheme.grey600),
-                const SizedBox(width: AppTheme.spacingS),
-                Expanded(
-                  child: Text(
-                    pickup['address'],
-                    style: TextStyle(color: AppTheme.grey700),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingS),
-            // Worker info (if completed)
-            if (pickup['status'] == 'completed' && pickup['worker'] != null)
-              Row(
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.grey50,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
                 children: [
-                  Icon(Icons.person, size: 16, color: AppTheme.grey600),
-                  const SizedBox(width: AppTheme.spacingS),
-                  Text(
-                    'Collected by: ${pickup['worker']}',
-                    style: TextStyle(color: AppTheme.grey700),
+                  const Icon(Icons.location_on_rounded, size: 16, color: AppTheme.primaryGreen),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      pickup['address'],
+                      style: const TextStyle(
+                        color: AppTheme.grey700,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            const SizedBox(height: AppTheme.spacingS),
-            // Actions
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: (pickup['wasteTypes'] as List<String>).map((type) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppTheme.grey200),
+                  ),
+                  child: Text(
+                    type,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.grey600,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                if (pickup['status'] == 'completed') ...[
+                  const Icon(Icons.verified_rounded, size: 14, color: AppTheme.success),
+                  const SizedBox(width: 6),
+                  const Text(
+                    'Collected by team',
+                    style: TextStyle(color: AppTheme.success, fontSize: 11, fontWeight: FontWeight.w800),
+                  ),
+                ],
+                const Spacer(),
                 if (pickup['status'] == 'scheduled') ...[
                   TextButton(
                     onPressed: () => _reschedulePickup(pickup),
-                    child: const Text('Reschedule'),
-                  ),
-                  const SizedBox(width: AppTheme.spacingS),
-                  TextButton(
-                    onPressed: () => _cancelPickup(pickup),
-                    child: const Text('Cancel'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.primaryGreen,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    child: const Text('RESCHEDULE', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 0.5)),
                   ),
                 ] else if (pickup['status'] == 'completed') ...[
                   TextButton(
                     onPressed: () => _viewReceipt(pickup),
-                    child: const Text('View Receipt'),
-                  ),
-                  const SizedBox(width: AppTheme.spacingS),
-                  TextButton(
-                    onPressed: () => _ratePickup(pickup),
-                    child: const Text('Rate Service'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.primaryGreen,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    child: const Text('RECEIPT', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 0.5)),
                   ),
                 ],
               ],
@@ -345,40 +408,13 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reschedule Pickup'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text('Reschedule Pickup', style: TextStyle(fontWeight: FontWeight.w900)),
         content: const Text('Feature coming soon! You will be able to reschedule your pickup in the next update.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _cancelPickup(Map<String, dynamic> pickup) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Cancel Pickup'),
-        content: const Text('Are you sure you want to cancel this pickup?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Pickup cancelled successfully'),
-                  backgroundColor: AppTheme.success,
-                ),
-              );
-            },
-            child: const Text('Yes, Cancel'),
+            child: const Text('OK', style: TextStyle(fontWeight: FontWeight.w900, color: AppTheme.primaryGreen)),
           ),
         ],
       ),
@@ -389,28 +425,13 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Pickup Receipt'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text('Pickup Receipt', style: TextStyle(fontWeight: FontWeight.w900)),
         content: const Text('Receipt feature coming soon! You will be able to view and download receipts in the next update.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _ratePickup(Map<String, dynamic> pickup) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Rate Pickup Service'),
-        content: const Text('Rating feature coming soon! You will be able to rate our pickup service in the next update.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: const Text('OK', style: TextStyle(fontWeight: FontWeight.w900, color: AppTheme.primaryGreen)),
           ),
         ],
       ),

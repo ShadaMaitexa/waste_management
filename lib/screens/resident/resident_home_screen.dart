@@ -54,33 +54,53 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
           const ProfileScreen(),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: _onItemTapped,
-        backgroundColor: Colors.white,
-        indicatorColor: AppTheme.primaryGreen.withOpacity(0.1),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard, color: AppTheme.primaryGreen),
-            label: 'Dashboard',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: NavigationBar(
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: _onItemTapped,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              indicatorColor: AppTheme.primaryGreen.withOpacity(0.1),
+              height: 64,
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              destinations: const [
+                NavigationDestination(
+                icon: Icon(Icons.dashboard_outlined, size: 22),
+                selectedIcon: Icon(Icons.dashboard_rounded, color: AppTheme.primaryGreen, size: 24),
+                label: 'Home',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.add_circle_outline_rounded, size: 22),
+                  selectedIcon: Icon(Icons.add_circle_rounded, color: AppTheme.primaryGreen, size: 24),
+                  label: 'Book',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.auto_awesome_outlined, size: 22),
+                  selectedIcon: Icon(Icons.auto_awesome_rounded, color: AppTheme.primaryGreen, size: 24),
+                  label: 'Rewards',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.person_outline_rounded, size: 22),
+                  selectedIcon: Icon(Icons.person_rounded, color: AppTheme.primaryGreen, size: 24),
+                  label: 'Profile',
+                ),
+              ],
+            ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.schedule_outlined),
-            selectedIcon: Icon(Icons.schedule, color: AppTheme.primaryGreen),
-            label: 'Book Pickup',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.share_outlined),
-            selectedIcon: Icon(Icons.share, color: AppTheme.primaryGreen),
-            label: 'Refer & Earn',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person, color: AppTheme.primaryGreen),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -150,21 +170,17 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildSliverAppBar(BuildContext context, String userName, String? wardNumber) {
     return SliverAppBar(
-      expandedHeight: 180.0,
+      expandedHeight: 200.0,
       floating: false,
       pinned: true,
       backgroundColor: AppTheme.primaryGreen,
       elevation: 0,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-      ),
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
           fit: StackFit.expand,
           children: [
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
                 gradient: LinearGradient(
                   colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
                   begin: Alignment.topLeft,
@@ -173,45 +189,57 @@ class _DashboardTab extends StatelessWidget {
               ),
             ),
             Positioned(
-              right: -30,
+              right: -50,
               top: -20,
               child: Icon(
                 Icons.eco_rounded,
-                size: 180,
-                color: Colors.white.withOpacity(0.08),
+                size: 240,
+                color: Colors.white.withOpacity(0.06),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20, bottom: 20),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Welcome back,',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'STATUS: PREMIUM AMBASSADOR',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 12),
                   Text(
-                    userName,
+                    'Hello, $userName!',
                     style: GoogleFonts.poppins(
                       color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -1,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, color: Colors.white70, size: 14),
+                      Icon(Icons.location_on_rounded, color: Colors.white.withOpacity(0.8), size: 14),
                       const SizedBox(width: 4),
                       Text(
-                        'Ward ${wardNumber ?? "15"}, Kozhikode',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white70,
+                        'Ward ${wardNumber ?? "15"} • Kozhikode Metropolitan',
+                        style: GoogleFonts.inter(
+                          color: Colors.white.withOpacity(0.8),
                           fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -223,16 +251,30 @@ class _DashboardTab extends StatelessWidget {
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-          onPressed: () => Navigator.pushNamed(context, '/notifications'),
+        Container(
+          margin: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 22),
+            onPressed: () => Navigator.pushNamed(context, '/notifications'),
+          ),
         ),
-        IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white),
-          onPressed: () {
-            Provider.of<AuthService>(context, listen: false).logout();
-            Navigator.pushReplacementNamed(context, '/login');
-          },
+        Container(
+          margin: const EdgeInsets.only(right: 16, top: 4, bottom: 4),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.power_settings_new_rounded, color: Colors.white, size: 22),
+            onPressed: () {
+              Provider.of<AuthService>(context, listen: false).logout();
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
         ),
       ],
     );
@@ -573,17 +615,18 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _statCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.12),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 20,
-            offset: const Offset(0, 10),
+            offset: const Offset(0, 5),
           ),
         ],
+        border: Border.all(color: color.withOpacity(0.1), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,26 +637,25 @@ class _DashboardTab extends StatelessWidget {
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 28),
+            child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 20),
           Text(
             value,
-            style: const TextStyle(
+            style: GoogleFonts.poppins(
               fontSize: 28,
               fontWeight: FontWeight.w800,
               color: AppTheme.grey900,
               letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: 4),
           Text(
-            title,
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppTheme.grey600,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.2,
+            title.toUpperCase(),
+            style: TextStyle(
+              fontSize: 10,
+              color: AppTheme.grey500,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
             ),
           ),
         ],
@@ -623,77 +665,76 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildQuickActionsGrid(BuildContext context) {
     final actions = [
-      {'icon': Icons.add_circle_outline, 'label': 'Book', 'index': 1},
-      {'icon': Icons.history, 'label': 'History', 'index': -1}, // TODO: Link to history
-      {'icon': Icons.support_agent, 'label': 'Support', 'index': -1},
+      {'icon': Icons.add_circle_rounded, 'label': 'Book Pickup', 'color': AppTheme.primaryGreen, 'index': 1},
+      {'icon': Icons.history_rounded, 'label': 'My History', 'color': const Color(0xFF3B82F6), 'index': -1},
+      {'icon': Icons.support_agent_rounded, 'label': 'Support', 'color': const Color(0xFF8B5CF6), 'index': -1},
+      {'icon': Icons.auto_awesome_rounded, 'label': 'Rewards', 'color': Colors.orange, 'index': 2},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Quick Actions',
+          'QUICK ACTIONS',
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.grey900,
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.grey500,
+            letterSpacing: 1.5,
           ),
         ),
-        const SizedBox(height: AppTheme.spacingM),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            childAspectRatio: 0.8,
-            crossAxisSpacing: AppTheme.spacingM,
-          ),
-          itemCount: actions.length,
-          itemBuilder: (context, index) {
-            final action = actions[index];
-            return GestureDetector(
-              onTap: () {
-                final navIndex = action['index'] as int;
-                if (navIndex != -1) {
-                  onNavigate(navIndex);
-                }
-              },
-              child: Column(
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.grey300.withOpacity(0.4),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+        const SizedBox(height: 16),
+        Row(
+          children: actions.map((action) {
+            final color = action['color'] as Color;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  final navIndex = action['index'] as int;
+                  if (navIndex != -1) onNavigate(navIndex);
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: color.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      ],
-                    ),
-                    child: Icon(
-                      action['icon'] as IconData,
-                      color: AppTheme.primaryGreen,
-                      size: 26,
-                    ),
+                        child: Icon(action['icon'] as IconData, color: color, size: 22),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        (action['label'] as String).split(' ')[0],
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.grey700,
+                          letterSpacing: 0.2,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    action['label'] as String,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.grey700,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                ),
               ),
             );
-          },
+          }).toList(),
         ),
       ],
     );
@@ -709,41 +750,131 @@ class _DashboardTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Recent Activity',
+              'RECENT ACTIVITY',
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.grey900,
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                color: AppTheme.grey500,
+                letterSpacing: 1.5,
               ),
             ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('View All'),
+            GestureDetector(
+              onTap: () {},
+              child: const Text(
+                'VIEW ALL',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.primaryGreen,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacingS),
-        Card(
-          elevation: 0,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusM)),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
           child: ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: activities.isEmpty ? 3 : activities.length,
-            separatorBuilder: (_, __) => Divider(color: AppTheme.grey100, height: 1),
+            itemCount: activities.isEmpty ? 2 : activities.length,
+            separatorBuilder: (_, __) => Divider(color: AppTheme.grey100, height: 1, indent: 72, endIndent: 20),
             itemBuilder: (context, index) {
+              if (activities.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Icon(Icons.history_rounded, size: 40, color: AppTheme.grey300),
+                        const SizedBox(height: 8),
+                        const Text('No recent activity', style: TextStyle(color: AppTheme.grey400, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
+                );
+              }
               final item = activities[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: AppTheme.primaryGreen.withOpacity(0.1),
-                  child: const Icon(Icons.person_add_rounded, color: AppTheme.primaryGreen, size: 20),
-                ),
-                title: Text(item.name),
-                subtitle: Text('Status: ${item.status}'),
-                trailing: Text(
-                  item.date,
-                  style: const TextStyle(color: AppTheme.grey500, fontSize: 12),
+              final isPaid = item.amount > 0;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryGreen.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(Icons.person_add_rounded, color: AppTheme.primaryGreen, size: 20),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14,
+                              color: AppTheme.grey900,
+                            ),
+                          ),
+                          Text(
+                            item.date,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppTheme.grey500,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (isPaid)
+                          Text(
+                            '+₹${item.amount.toStringAsFixed(0)}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 14,
+                              color: AppTheme.success,
+                            ),
+                          ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: (isPaid ? AppTheme.success : AppTheme.grey400).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            item.status.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              color: isPaid ? AppTheme.success : AppTheme.grey400,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               );
             },
