@@ -42,10 +42,11 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (success && mounted) {
-        // Navigate based on user type
+        // Redirection based on actual role from backend
+        final currentUserType = authService.currentUser?.userType ?? _selectedUserType;
         String route;
         
-        switch (_selectedUserType) {
+        switch (currentUserType) {
           case UserType.resident:
             route = '/resident';
             break;

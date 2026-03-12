@@ -20,6 +20,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   
   bool _isLoading = false;
   bool _obscurePassword = true;
+  UserType _selectedUserType = UserType.resident;
 
   @override
   void dispose() {
@@ -47,7 +48,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         password: _passwordController.text,
         phoneNumber: _phoneController.text.trim(),
         address: _addressController.text.trim(),
-        userType: UserType.resident,
+        userType: _selectedUserType,
       );
 
       if (success && mounted) {
@@ -58,8 +59,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             backgroundColor: AppTheme.success,
           ),
         );
-        // Navigate to resident dashboard
-        Navigator.pushReplacementNamed(context, '/resident');
+        
+        // Navigate based on user type
+        String route;
+        switch (_selectedUserType) {
+          case UserType.resident:
+            route = '/resident';
+            break;
+          case UserType.worker:
+            route = '/worker';
+            break;
+          case UserType.admin:
+            route = '/admin';
+            break;
+          case UserType.recycler:
+            route = '/recycler';
+            break;
+        }
+        
+        Navigator.pushReplacementNamed(context, route);
       } else {
         _showErrorSnackBar('Registration failed. Please try again.');
       }
@@ -147,7 +165,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         const SizedBox(height: AppTheme.spacingS),
         Text(
-          'Create your resident account',
+          'Create your ${_getUserTypeTitle(_selectedUserType)} account',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Colors.white70,
               ),
@@ -156,9 +174,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+  String _getUserTypeTitle(UserType type) {
+    switch (type) {
+      case UserType.resident:
+        return 'Resident';
+      case UserType.worker:
+        return 'Worker';
+      case UserType.admin:
+        return 'Admin';
+      case UserType.recycler:
+        return 'Recycler';
+    }
+  }
+
   Widget _buildFormFields() {
     return Column(
       children: [
+        _buildUserTypeSelector(),
+        const SizedBox(height: AppTheme.spacingM),
         _buildTextField(
           controller: _nameController,
           label: 'Full Name',
@@ -209,6 +242,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           validator: (value) => value == null || value.isEmpty ? 'Please enter your address' : null,
         ),
       ],
+    );
+  }
+
+  Widget _buildUserTypeSelector() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM, vertical: AppTheme.spacingS),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        border: Border.all(color: Colors.white30),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<UserType>(
+          value: _selectedUserType,
+          onChanged: (UserType? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedUserType = newValue;
+              });
+            }
+          },
+          items: UserType.values.map<DropdownMenuItem<UserType>>((UserType type) {
+            return DropdownMenuItem<UserType>(
+              value: type,
+              child: Text(
+                'Register as: ${_getUserTypeTitle(type)}',
+                style: const TextStyle(color: Colors.white),
+              ),
+            );
+          }).toList(),
+          dropdownColor: AppTheme.primaryGreen,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            prefixIcon: Icon(Icons.badge, color: Colors.white70),
+          ),
+          iconEnabledColor: Colors.white70,
+          validator: (value) => value == null ? 'Please select a role' : null,
+        ),
+      ),
     );
   }
 

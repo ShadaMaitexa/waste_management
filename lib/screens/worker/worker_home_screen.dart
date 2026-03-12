@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
+import '../../services/pickup_service.dart';
+import '../../models/pickup.dart';
 import '../../theme/app_theme.dart';
 import 'worker_route_planner_screen.dart';
 import 'worker_attendance_screen.dart';
@@ -102,28 +104,42 @@ class _DashboardTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.grey50,
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(context),
-          SliverPadding(
-            padding: const EdgeInsets.all(AppTheme.spacingM),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _buildWelcomeSection(context),
-                const SizedBox(height: AppTheme.spacingL),
-                _buildStatsGrid(context),
-                const SizedBox(height: AppTheme.spacingL),
-                _buildCurrentTaskCard(context),
-                const SizedBox(height: AppTheme.spacingL),
-                _buildQuickActions(context),
-                const SizedBox(height: AppTheme.spacingL), // Bottom padding
-              ]),
+    return Consumer2<AuthService, PickupService>(
+      builder: (context, authService, pickupService, _) {
+        final workerName = authService.currentUserName ?? 'Worker';
+        final workerId = authService.currentUser?.id ?? '';
+        final todaysPickups = pickupService.getTodaysPickupsForWorker(workerId);
+        final pendingCount = todaysPickups.where((p) => p.status == PickupStatus.scheduled).length;
+        final completedCount = todaysPickups.where((p) => p.status == PickupStatus.completed).length;
+        final currentPickup = todaysPickups.isEmpty ? null : todaysPickups.firstWhere((p) => p.status == PickupStatus.inProgress, orElse: () => todaysPickups.first);
+
+        return Scaffold(
+          backgroundColor: AppTheme.grey50,
+          body: RefreshIndicator(
+            onRefresh: () => pickupService.fetchPickups(),
+            child: CustomScrollView(
+              slivers: [
+                _buildSliverAppBar(context),
+                SliverPadding(
+                  padding: const EdgeInsets.all(AppTheme.spacingM),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      _buildWelcomeSection(context, workerName),
+                      const SizedBox(height: AppTheme.spacingL),
+                      _buildStatsGrid(context, pendingCount, completedCount),
+                      const SizedBox(height: AppTheme.spacingL),
+                      _buildCurrentTaskCard(context, currentPickup),
+                      const SizedBox(height: AppTheme.spacingL),
+                      _buildQuickActions(context),
+                      const SizedBox(height: AppTheme.spacingL), // Bottom padding
+                    ]),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -152,7 +168,7 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildWelcomeSection(BuildContext context) {
+  Widget _buildWelcomeSection(BuildContext context, String name) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -163,7 +179,7 @@ class _DashboardTab extends StatelessWidget {
               ),
         ),
         Text(
-          'Mohammed Rafi',
+          name,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppTheme.grey900,
@@ -173,14 +189,14 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsGrid(BuildContext context) {
+  Widget _buildStatsGrid(BuildContext context, int pending, int completed) {
     return Row(
       children: [
         Expanded(
           child: _buildStatCard(
             context,
             'Pending',
-            '12',
+            pending.toString(),
             Icons.pending_actions,
             AppTheme.warning,
             Colors.orange.shade50,
@@ -191,7 +207,7 @@ class _DashboardTab extends StatelessWidget {
           child: _buildStatCard(
             context,
             'Completed',
-            '28',
+            completed.toString(),
             Icons.task_alt,
             AppTheme.success,
             Colors.green.shade50,
@@ -246,7 +262,19 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildCurrentTaskCard(BuildContext context) {
+  Widget _buildCurrentTaskCard(BuildContext context, Pickup? pickup) {
+    if (pickup == null) {
+      return Container(
+        padding: const EdgeInsets.all(AppTheme.spacingM),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusL),
+          border: Border.all(color: AppTheme.grey200),
+        ),
+        child: const Center(child: Text('No pickups assigned today')),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -296,9 +324,9 @@ class _DashboardTab extends StatelessWidget {
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
-                      'Ward 15',
-                      style: TextStyle(
+                    child: Text(
+                      'Ward ${pickup.wardNumber}',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -309,9 +337,9 @@ class _DashboardTab extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppTheme.spacingL),
-              const Text(
-                'Next Pickup: 123/A, Beach Road',
-                style: TextStyle(
+              Text(
+                'Next Pickup: ${pickup.address}',
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -322,17 +350,17 @@ class _DashboardTab extends StatelessWidget {
                 children: [
                   const Icon(Icons.access_time, color: Colors.white70, size: 16),
                   const SizedBox(width: 4),
-                  const Text(
-                    'Est. 10:30 AM',
-                    style: TextStyle(color: Colors.white70),
+                  Text(
+                    'Est. ${pickup.formattedTime}',
+                    style: const TextStyle(color: Colors.white70),
                   ),
                   const SizedBox(width: 16),
                   const Icon(Icons.delete_outline,
                       color: Colors.white70, size: 16),
                   const SizedBox(width: 4),
-                  const Text(
-                    'Dry Waste',
-                    style: TextStyle(color: Colors.white70),
+                  Text(
+                    pickup.wasteTypes.map((e) => e.toString().split('.').last).join(', '),
+                    style: const TextStyle(color: Colors.white70),
                   ),
                 ],
               ),

@@ -30,6 +30,8 @@ import 'services/auth_service.dart';
 import 'services/pickup_service.dart';
 import 'services/reward_service.dart';
 import 'services/referral_service.dart';
+import 'services/admin_service.dart';
+import 'services/complaint_service.dart';
 
 void main() {
   runApp(const GreenLoopApp());
@@ -43,7 +45,18 @@ class GreenLoopApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (_) => PickupService()),
+        ChangeNotifierProxyProvider<AuthService, PickupService>(
+          create: (context) => PickupService(context.read<AuthService>()),
+          update: (_, auth, pickup) => PickupService(auth),
+        ),
+        ChangeNotifierProxyProvider<AuthService, ComplaintService>(
+          create: (context) => ComplaintService(context.read<AuthService>()),
+          update: (_, auth, complaint) => ComplaintService(auth),
+        ),
+        ChangeNotifierProxyProvider<AuthService, AdminService>(
+          create: (context) => AdminService(context.read<AuthService>()),
+          update: (_, auth, admin) => AdminService(auth),
+        ),
         ChangeNotifierProvider(create: (_) => RewardService()),
         ChangeNotifierProvider(create: (_) => ReferralService()),
       ],

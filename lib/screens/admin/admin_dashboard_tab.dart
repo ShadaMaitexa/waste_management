@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
+import '../../services/admin_service.dart';
 import '../../theme/app_theme.dart';
 
 class AdminDashboardTab extends StatefulWidget {
@@ -14,68 +15,88 @@ class AdminDashboardTab extends StatefulWidget {
 
 class _AdminDashboardTabState extends State<AdminDashboardTab> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AdminService>().fetchDashboardStats();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 140.0,
-            floating: true,
-            pinned: true,
-            backgroundColor: AppTheme.primaryGreen,
-            elevation: 0,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              title: const Text('ULB Admin Portal', style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5)),
-              background: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+    return Consumer<AdminService>(
+      builder: (context, adminService, child) {
+        final stats = adminService.systemStats;
+
+        return Scaffold(
+          body: RefreshIndicator(
+            onRefresh: () => adminService.fetchDashboardStats(),
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: 140.0,
+                  floating: true,
+                  pinned: true,
+                  backgroundColor: AppTheme.primaryGreen,
+                  elevation: 0,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+                  ),
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: const Text('ULB Admin Portal', style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5)),
+                    background: Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+                        gradient: LinearGradient(
+                          colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                    ),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.logout, color: Colors.white),
+                      onPressed: () {
+                        Provider.of<AuthService>(context, listen: false).logout();
+                        Navigator.of(context).pushReplacementNamed('/login');
+                      },
+                    ),
+                  ],
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppTheme.spacingM),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeaderInfo(),
+                        const SizedBox(height: AppTheme.spacingM),
+                        if (adminService.isLoading)
+                          const Center(child: CircularProgressIndicator())
+                        else
+                          _buildKeyMetrics(stats),
+                        const SizedBox(height: AppTheme.spacingM),
+                        _buildWardPerformance(),
+                        const SizedBox(height: AppTheme.spacingM),
+                        _buildRecentAlerts(),
+                        const SizedBox(height: AppTheme.spacingM),
+                        _buildQuickActions(),
+                        const SizedBox(height: 80),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.logout, color: Colors.white),
-                onPressed: () {
-                  Provider.of<AuthService>(context, listen: false).logout();
-                  Navigator.of(context).pushReplacementNamed('/login');
-                },
-              ),
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeaderInfo(),
-                  const SizedBox(height: AppTheme.spacingM),
-                  _buildKeyMetrics(),
-                  const SizedBox(height: AppTheme.spacingM),
-                  _buildWardPerformance(),
-                  const SizedBox(height: AppTheme.spacingM),
-                  _buildRecentAlerts(),
-                  const SizedBox(height: AppTheme.spacingM),
-                  _buildQuickActions(),
-                  const SizedBox(height: 80),
-                ],
-              ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -132,7 +153,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildKeyMetrics() {
+  Widget _buildKeyMetrics(Map<String, dynamic> stats) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -153,28 +174,28 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           children: [
             _buildMetricCard(
               'Total Pickups',
-              '2,456',
+              '${stats['total_pickups'] ?? '2,456'}',
               '+12%',
               Icons.recycling,
               AppTheme.secondaryGreen,
             ),
             _buildMetricCard(
               'Active Routes',
-              '24',
+              '${stats['active_routes'] ?? '24'}',
               '+2',
               Icons.route,
               AppTheme.info,
             ),
             _buildMetricCard(
               'Collection Rate',
-              '94.5%',
+              '${stats['collection_rate'] ?? '94.5%'}',
               '+2.1%',
               Icons.trending_up,
               AppTheme.success,
             ),
             _buildMetricCard(
               'Complaints',
-              '12',
+              '${stats['complaints_count'] ?? '12'}',
               '-8',
               Icons.report_problem,
               AppTheme.warning,

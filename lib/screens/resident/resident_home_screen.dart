@@ -40,53 +40,47 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => PickupService()),
-        ChangeNotifierProvider(create: (_) => ReferralService()),
-      ],
-      child: Scaffold(
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() => _selectedIndex = index);
-          },
-          physics: const NeverScrollableScrollPhysics(), // Prevent horizontal swipe
-          children: [
-            _DashboardTab(onNavigate: _onItemTapped),
-            const BookPickupScreen(),
-            const ReferralScreen(),
-            const ProfileScreen(),
-          ],
-        ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: _onItemTapped,
-          backgroundColor: Colors.white,
-          indicatorColor: AppTheme.primaryGreen.withOpacity(0.1),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.dashboard_outlined),
-              selectedIcon: Icon(Icons.dashboard, color: AppTheme.primaryGreen),
-              label: 'Dashboard',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.schedule_outlined),
-              selectedIcon: Icon(Icons.schedule, color: AppTheme.primaryGreen),
-              label: 'Book Pickup',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.share_outlined),
-              selectedIcon: Icon(Icons.share, color: AppTheme.primaryGreen),
-              label: 'Refer & Earn',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.person_outline),
-              selectedIcon: Icon(Icons.person, color: AppTheme.primaryGreen),
-              label: 'Profile',
-            ),
-          ],
-        ),
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() => _selectedIndex = index);
+        },
+        physics: const NeverScrollableScrollPhysics(), // Prevent horizontal swipe
+        children: [
+          _DashboardTab(onNavigate: _onItemTapped),
+          const BookPickupScreen(),
+          const ReferralScreen(),
+          const ProfileScreen(),
+        ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _onItemTapped,
+        backgroundColor: Colors.white,
+        indicatorColor: AppTheme.primaryGreen.withOpacity(0.1),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard, color: AppTheme.primaryGreen),
+            label: 'Dashboard',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.schedule_outlined),
+            selectedIcon: Icon(Icons.schedule, color: AppTheme.primaryGreen),
+            label: 'Book Pickup',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.share_outlined),
+            selectedIcon: Icon(Icons.share, color: AppTheme.primaryGreen),
+            label: 'Refer & Earn',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person, color: AppTheme.primaryGreen),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }
@@ -99,10 +93,15 @@ class _DashboardTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<PickupService, ReferralService>(
-      builder: (context, pickupService, referralService, _) {
-        // Mock data if service returns empty (for UI testing)
-        final pickups = pickupService.getUpcomingPickupsForUser('user1');
+    return Consumer3<AuthService, PickupService, ReferralService>(
+      builder: (context, authService, pickupService, referralService, _) {
+        final userId = authService.currentUser?.id ?? '';
+        final userName = authService.currentUserName ?? 'Resident';
+        
+        // Fetch pickups if not already done (proactive)
+        // Note: fetchPickups usually called at login or app start, but good to have here too
+        
+        final pickups = pickupService.getUpcomingPickupsForUser(userId);
         final stats = {
           'referralCount': referralService.referralCount,
           'totalEarned': referralService.totalEarned,
@@ -110,32 +109,35 @@ class _DashboardTab extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppTheme.grey50,
-          body: CustomScrollView(
-            slivers: [
-              _buildSliverAppBar(context),
-              SliverPadding(
-                padding: const EdgeInsets.all(AppTheme.spacingM),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    _buildNextPickupCard(context, pickups.isNotEmpty ? pickups.first : null),
-                    const SizedBox(height: AppTheme.spacingL),
-                    _buildStatsOverview(context, stats),
-                    const SizedBox(height: AppTheme.spacingL),
-                    _buildQuickActionsGrid(context),
-                    const SizedBox(height: AppTheme.spacingL),
-                    _buildRecentActivity(context, referralService),
-                    const SizedBox(height: AppTheme.spacingL), // Bottom padding
-                  ]),
+          body: RefreshIndicator(
+            onRefresh: () => pickupService.fetchPickups(),
+            child: CustomScrollView(
+              slivers: [
+                _buildSliverAppBar(context, userName),
+                SliverPadding(
+                  padding: const EdgeInsets.all(AppTheme.spacingM),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      _buildNextPickupCard(context, pickups.isNotEmpty ? pickups.first : null),
+                      const SizedBox(height: AppTheme.spacingL),
+                      _buildStatsOverview(context, stats),
+                      const SizedBox(height: AppTheme.spacingL),
+                      _buildQuickActionsGrid(context),
+                      const SizedBox(height: AppTheme.spacingL),
+                      _buildRecentActivity(context, referralService),
+                      const SizedBox(height: AppTheme.spacingL), // Bottom padding
+                    ]),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
+  Widget _buildSliverAppBar(BuildContext context, String userName) {
     return SliverAppBar(
       expandedHeight: 180.0,
       floating: false,
@@ -182,7 +184,7 @@ class _DashboardTab extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'John Doe', // TODO: Get from auth service
+                    userName,
                     style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontSize: 28,

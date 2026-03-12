@@ -50,7 +50,28 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _navigateToNextScreen() {
     Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
+      if (!mounted) return;
+      
+      final authService = Provider.of<AuthService>(context, listen: false);
+      
+      if (authService.isAuthenticated && authService.currentUser != null) {
+        String route;
+        switch (authService.currentUser!.userType) {
+          case UserType.resident:
+            route = '/resident';
+            break;
+          case UserType.worker:
+            route = '/worker';
+            break;
+          case UserType.admin:
+            route = '/admin';
+            break;
+          case UserType.recycler:
+            route = '/recycler';
+            break;
+        }
+        Navigator.of(context).pushReplacementNamed(route);
+      } else {
         Navigator.of(context).pushReplacementNamed('/login');
       }
     });

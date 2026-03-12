@@ -1,53 +1,82 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
+import '../utils/api_constants.dart';
 export '../models/user.dart';
 
 class AuthService extends ChangeNotifier {
-  UserType? _currentUserType;
-  String? _currentUserName;
-  String? _currentUserEmail;
-  bool _isAuthenticated = false;
+  User? _currentUser;
+  String? _token;
+  bool _isLoading = false;
 
-  UserType? get currentUserType => _currentUserType;
-  String? get currentUserName => _currentUserName;
-  String? get currentUserEmail => _currentUserEmail;
-  bool get isAuthenticated => _isAuthenticated;
+  User? get currentUser => _currentUser;
+  UserType? get currentUserType => _currentUser?.userType;
+  String? get currentUserName => _currentUser?.name;
+  String? get currentUserEmail => _currentUser?.email;
+  bool get isAuthenticated => _token != null;
+  bool get isLoading => _isLoading;
+  String? get token => _token;
 
-  // Hardcoded Admin Credentials
-  static const String adminEmail = 'admin@greenloop.com';
-  static const String adminPassword = 'admin123';
-
-  // Mock login method
-  Future<bool> login(String email, String password, UserType userType) async {
-    // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 1));
-    
-    // Admin check
-    if (userType == UserType.admin) {
-      if (email == adminEmail && password == adminPassword) {
-        _currentUserType = userType;
-        _currentUserName = 'Super Admin';
-        _currentUserEmail = email;
-        _isAuthenticated = true;
-        notifyListeners();
-        return true;
-      }
-      return false;
-    }
-
-    // Mock authentication logic for others
-    if (email.isNotEmpty && password.isNotEmpty) {
-      _currentUserType = userType;
-      _currentUserName = _getMockUserName(userType);
-      _currentUserEmail = email;
-      _isAuthenticated = true;
-      notifyListeners();
-      return true;
-    }
-    return false;
+  AuthService() {
+    _loadToken();
   }
 
-  // Mock Registration method (mainly for residents)
+  Future<void> _loadToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('auth_token');
+    if (_token != null) {
+      await getProfile();
+    }
+    notifyListeners();
+  }
+
+  Future<void> _saveToken(String token) async {
+    _token = token;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('auth_token', token);
+    notifyListeners();
+  }
+
+  Future<void> _clearToken() async {
+    _token = null;
+    _currentUser = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
+    notifyListeners();
+  }
+
+  Future<bool> login(String email, String password, UserType userType) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.login),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      _isLoading = false;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        await _saveToken(data['access'] ?? data['token']);
+        await getProfile();
+        return true;
+      }
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> register({
     required String name,
     required String email,
@@ -56,46 +85,76 @@ class AuthService extends ChangeNotifier {
     required String address,
     required UserType userType,
   }) async {
-    // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 1.5));
-    
-    // In a real app, you would save this to a database
-    _currentUserType = userType;
-    _currentUserName = name;
-    _currentUserEmail = email;
-    _isAuthenticated = true;
+    _isLoading = true;
     notifyListeners();
-    return true;
-  }
 
-  // Mock Forgot Password method
-  Future<bool> forgotPassword(String email) async {
-    // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 1));
-    
-    // Just return true if email is not empty
-    return email.isNotEmpty;
-  }
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.register),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'name': name,
+          'email': email,
+          'password': password,
+          'phoneNumber': phoneNumber,
+          'address': address,
+          'userType': userType.toString().split('.').last,
+        }),
+      );
 
-  void logout() {
-    _currentUserType = null;
-    _currentUserName = null;
-    _currentUserEmail = null;
-    _isAuthenticated = false;
-    notifyListeners();
-  }
-
-  String _getMockUserName(UserType userType) {
-    switch (userType) {
-      case UserType.resident:
-        return 'John Doe';
-      case UserType.worker:
-        return 'HKS Worker';
-      case UserType.admin:
-        return 'ULB Admin';
-      case UserType.recycler:
-        return 'Recycling Partner';
+      _isLoading = false;
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        await _saveToken(data['access'] ?? data['token']);
+        await getProfile();
+        return true;
+      }
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
     }
+  }
+
+  Future<void> getProfile() async {
+    if (_token == null) return;
+
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.profile),
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        _currentUser = User.fromJson(jsonDecode(response.body));
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        await _clearToken();
+      }
+    } catch (e) {
+      debugPrint('Error fetching profile: $e');
+    }
+  }
+
+  Future<bool> forgotPassword(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.forgotPassword),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> logout() async {
+    await _clearToken();
   }
 }
 

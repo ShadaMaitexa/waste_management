@@ -1,76 +1,45 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../models/pickup.dart';
+import '../utils/api_constants.dart';
+import 'auth_service.dart';
 
 class PickupService extends ChangeNotifier {
-  final List<Pickup> _pickups = [];
+  final AuthService _authService;
+  List<Pickup> _pickups = [];
+  bool _isLoading = false;
+
+  PickupService(this._authService);
+
   List<Pickup> get pickups => List.unmodifiable(_pickups);
+  bool get isLoading => _isLoading;
 
-  // Mock data for demonstration
-  void _initializeMockData() {
-    if (_pickups.isNotEmpty) return;
+  Future<void> fetchPickups() async {
+    if (!_authService.isAuthenticated) return;
 
-    final now = DateTime.now();
-    final mockPickups = [
-      Pickup(
-        id: '1',
-        userId: 'user1',
-        userName: 'John Doe',
-        userPhone: '+91 9876543210',
-        address: '123 Green Street, Ward 15',
-        wardNumber: '15',
-        type: PickupType.regular,
-        status: PickupStatus.scheduled,
-        scheduledDate: now.add(const Duration(days: 1)),
-        scheduledTime: const TimeOfDay(hour: 8, minute: 0),
-        notes: 'Please ring the doorbell',
-        createdAt: now.subtract(const Duration(days: 2)),
-        wasteTypes: [WasteType.dry, WasteType.wet],
-        estimatedDuration: 30,
-      ),
-      Pickup(
-        id: '2',
-        userId: 'user1',
-        userName: 'John Doe',
-        userPhone: '+91 9876543210',
-        address: '123 Green Street, Ward 15',
-        wardNumber: '15',
-        type: PickupType.emergency,
-        status: PickupStatus.completed,
-        scheduledDate: now.subtract(const Duration(days: 3)),
-        scheduledTime: const TimeOfDay(hour: 10, minute: 0),
-        assignedWorkerId: 'worker1',
-        assignedWorkerName: 'HKS Worker',
-        completedAt: now.subtract(const Duration(days: 3, hours: 1)),
-        createdAt: now.subtract(const Duration(days: 5)),
-        weight: 5.2,
-        wasteTypes: [WasteType.dry, WasteType.organic],
-        estimatedDuration: 25,
-      ),
-      Pickup(
-        id: '3',
-        userId: 'user2',
-        userName: 'Jane Smith',
-        userPhone: '+91 8765432109',
-        address: '456 Eco Avenue, Ward 15',
-        wardNumber: '15',
-        type: PickupType.regular,
-        status: PickupStatus.inProgress,
-        scheduledDate: now,
-        scheduledTime: const TimeOfDay(hour: 14, minute: 0),
-        assignedWorkerId: 'worker2',
-        assignedWorkerName: 'HKS Worker 2',
-        createdAt: now.subtract(const Duration(days: 1)),
-        wasteTypes: [WasteType.electronic, WasteType.dry],
-        estimatedDuration: 60,
-      ),
-    ];
+    _isLoading = true;
+    notifyListeners();
 
-    _pickups.addAll(mockPickups);
-  }
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.pickups),
+        headers: {
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+      );
 
-  PickupService() {
-    _initializeMockData();
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _pickups = data.map((json) => Pickup.fromJson(json)).toList();
+      }
+    } catch (e) {
+      debugPrint('Error fetching pickups: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   // Get pickups for a specific user
@@ -117,57 +86,65 @@ class PickupService extends ChangeNotifier {
 
   // Create a new pickup
   Future<bool> createPickup(Pickup pickup) async {
-    // Simulate API call
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    _pickups.add(pickup);
-    notifyListeners();
-    return true;
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.pickups),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+        body: jsonEncode(pickup.toJson()),
+      );
+
+      if (response.statusCode == 201) {
+        await fetchPickups();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
   // Update pickup status
   Future<bool> updatePickupStatus(String pickupId, PickupStatus status, {String? workerId, String? workerName}) async {
-    // Simulate API call
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    final index = _pickups.indexWhere((pickup) => pickup.id == pickupId);
-    if (index != -1) {
-      final updatedPickup = _pickups[index].copyWith(
-        status: status,
-        updatedAt: DateTime.now(),
-        assignedWorkerId: workerId,
-        assignedWorkerName: workerName,
-        completedAt: status == PickupStatus.completed ? DateTime.now() : null,
+    try {
+      final response = await http.patch(
+        Uri.parse('${ApiConstants.pickups}$pickupId/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+        body: jsonEncode({
+          'status': status.toString().split('.').last,
+          if (workerId != null) 'assignedWorkerId': workerId,
+          if (workerName != null) 'assignedWorkerName': workerName,
+        }),
       );
-      
-      _pickups[index] = updatedPickup;
-      notifyListeners();
-      return true;
+
+      if (response.statusCode == 200) {
+        await fetchPickups();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
     }
-    return false;
   }
 
   // Assign worker to pickup
   Future<bool> assignWorker(String pickupId, String workerId, String workerName) async {
-    // Simulate API call
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    final index = _pickups.indexWhere((pickup) => pickup.id == pickupId);
-    if (index != -1) {
-      _pickups[index] = _pickups[index].copyWith(
-        assignedWorkerId: workerId,
-        assignedWorkerName: workerName,
-        updatedAt: DateTime.now(),
-      );
-      notifyListeners();
-      return true;
-    }
-    return false;
+    return updatePickupStatus(pickupId, PickupStatus.inProgress, workerId: workerId, workerName: workerName);
   }
 
   // Cancel pickup
   Future<bool> cancelPickup(String pickupId) async {
     return updatePickupStatus(pickupId, PickupStatus.cancelled);
+  }
+
+  // Generate pickup ID
+  String generatePickupId() {
+    return 'pickup_${DateTime.now().millisecondsSinceEpoch}';
   }
 
   // Get pickup statistics
@@ -202,10 +179,5 @@ class PickupService extends ChangeNotifier {
     }
     
     return stats;
-  }
-
-  // Generate pickup ID
-  String generatePickupId() {
-    return 'pickup_${DateTime.now().millisecondsSinceEpoch}';
   }
 }
