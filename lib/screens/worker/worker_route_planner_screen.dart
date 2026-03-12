@@ -99,25 +99,31 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Route Planner'),
+        title: const Text(
+          'Smart Route Optimization',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.auto_awesome_rounded),
             onPressed: _optimizeRoute,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
+          indicatorWeight: 3,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
           tabs: const [
-            Tab(icon: Icon(Icons.map), text: 'Map View'),
-            Tab(icon: Icon(Icons.list), text: 'Route List'),
+            Tab(icon: Icon(Icons.map_rounded), text: 'MAP'),
+            Tab(icon: Icon(Icons.list_alt_rounded), text: 'LIST'),
           ],
         ),
       ),
@@ -186,7 +192,18 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   }
 
   Widget _buildMapControls() {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.95),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingM),
         child: Column(
@@ -204,7 +221,14 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
             ),
             if (_isOptimizingRoute) ...[
               const SizedBox(height: AppTheme.spacingM),
-              const LinearProgressIndicator(),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: const LinearProgressIndicator(
+                  minHeight: 4,
+                  backgroundColor: AppTheme.grey100,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
+                ),
+              ),
             ],
           ],
         ),
@@ -257,48 +281,68 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
     final totalDistance = _calculateTotalDistance();
     final estimatedTime = _calculateEstimatedTime();
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(Icons.route, color: AppTheme.primaryGreen),
-                const SizedBox(width: AppTheme.spacingS),
-                Text(
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryGreen.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.route_rounded, color: AppTheme.primaryGreen, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text(
                   'Route Summary',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: TextStyle(
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: AppTheme.grey900,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingM),
+            const SizedBox(height: 24),
             Row(
               children: [
                 Expanded(
                   child: _summaryItem(
-                    'Completed',
+                    'PROGRESS',
                     '$completedCount/${_routePoints.length}',
-                    Icons.check_circle,
+                    Icons.check_circle_rounded,
                     AppTheme.success,
                   ),
                 ),
                 Expanded(
                   child: _summaryItem(
-                    'Distance',
+                    'DISTANCE',
                     totalDistance,
-                    Icons.straighten,
+                    Icons.straighten_rounded,
                     AppTheme.info,
                   ),
                 ),
                 Expanded(
                   child: _summaryItem(
-                    'ETA',
+                    'EST. TIME',
                     estimatedTime,
-                    Icons.access_time,
+                    Icons.access_time_filled_rounded,
                     AppTheme.warning,
                   ),
                 ),

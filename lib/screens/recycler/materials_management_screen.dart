@@ -37,27 +37,35 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Materials Management'),
+        title: const Text(
+          'Inventory Control',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           tabs: const [
-            Tab(text: 'Incoming'),
-            Tab(text: 'Processing'),
-            Tab(text: 'Certified'),
+            Tab(text: 'INCOMING'),
+            Tab(text: 'PROCESSING'),
+            Tab(text: 'CERTIFIED'),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add_circle_outline_rounded),
             onPressed: _showAddMaterialDialog,
           ),
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.tune_rounded),
             onPressed: _showFilterDialog,
           ),
         ],
@@ -91,42 +99,83 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
   // ---------------- SUMMARY ----------------
 
   Widget _buildSummarySection() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(AppTheme.spacingM),
       child: Row(
         children: [
-          _summaryCard('Total Processed', '2.4 tons', Icons.recycling,
-              AppTheme.secondaryGreen),
+          _summaryCard(
+            'TOTAL',
+            '2.4t',
+            Icons.recycling_rounded,
+            const Color(0xFF6366F1),
+          ),
           const SizedBox(width: AppTheme.spacingS),
           _summaryCard(
-              'This Month', '450 kg', Icons.calendar_today, AppTheme.info),
+            'MONTH',
+            '450k',
+            Icons.event_available_rounded,
+            AppTheme.info,
+          ),
           const SizedBox(width: AppTheme.spacingS),
           _summaryCard(
-              'Revenue', '₹45,000', Icons.currency_rupee, AppTheme.success),
+            'REVENUE',
+            '₹45k',
+            Icons.account_balance_wallet_rounded,
+            AppTheme.success,
+          ),
         ],
       ),
     );
   }
 
-  Widget _summaryCard(
-      String title, String value, IconData icon, Color color) {
+  Widget _summaryCard(String title, String value, IconData icon, Color color) {
     return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingM),
-          child: Column(
-            children: [
-              Icon(icon, color: color),
-              const SizedBox(height: 4),
-              Text(value,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: color)),
-              Text(title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 11, color: AppTheme.grey600)),
-            ],
-          ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+          border: Border.all(color: color.withOpacity(0.05), width: 1),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: color,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.grey500,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -188,10 +237,21 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
             ? AppTheme.warning
             : AppTheme.info;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -201,28 +261,41 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
                   child: Text(
                     material['material'],
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      color: AppTheme.grey900,
+                      letterSpacing: -0.5,
+                    ),
                   ),
                 ),
-                Chip(
-                  label: Text(status.toUpperCase()),
-                  backgroundColor: color.withOpacity(0.1),
-                  labelStyle: TextStyle(color: color),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    status.toUpperCase(),
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            _detail(Icons.scale, 'Quantity: ${material['quantity']}'),
-            _detail(Icons.location_on, 'Ward: ${material['ward']}'),
-            _detail(Icons.person, 'Collector: ${material['collector']}'),
-            _detail(
-              Icons.access_time,
-              'Received: ${DateFormat('MMM d, yyyy').format(material['receivedDate'])}',
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 16,
+              runSpacing: 8,
+              children: [
+                _detail(Icons.scale_rounded, 'Qty: ${material['quantity']}'),
+                _detail(Icons.location_on_rounded, 'Ward ${material['ward']}'),
+                _detail(Icons.calendar_today_rounded, DateFormat('MMM d').format(material['receivedDate'])),
+              ],
             ),
-            if (material['certificate'] != null)
-              _detail(Icons.card_membership,
-                  'Certificate: ${material['certificate']}'),
-            const SizedBox(height: 8),
+            const SizedBox(height: 20),
             _buildActionButtons(material),
           ],
         ),
@@ -248,19 +321,49 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
   Widget _buildActionButtons(Map<String, dynamic> material) {
     switch (material['status']) {
       case 'incoming':
-        return ElevatedButton(
-          onPressed: () => _processMaterial(material),
-          child: const Text('Start Processing'),
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => _processMaterial(material),
+            icon: const Icon(Icons.flash_on_rounded, size: 18),
+            label: const Text('START PROCESSING'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryGreen,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
         );
       case 'processing':
-        return ElevatedButton(
-          onPressed: () => _markProcessed(material),
-          child: const Text('Mark Certified'),
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => _markProcessed(material),
+            icon: const Icon(Icons.verified_rounded, size: 18),
+            label: const Text('MARK CERTIFIED'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.success,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
         );
       case 'certified':
-        return OutlinedButton(
-          onPressed: () => _viewDetails(material),
-          child: const Text('View Details'),
+        return SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () => _viewDetails(material),
+            icon: const Icon(Icons.visibility_rounded, size: 18),
+            label: const Text('VIEW DETAILS'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.grey700,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              side: BorderSide(color: AppTheme.grey300),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
         );
       default:
         return const SizedBox.shrink();

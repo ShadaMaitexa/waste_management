@@ -108,14 +108,39 @@ class AdminService extends ChangeNotifier {
 
   // Get pickup trends (mock data for charts)
   List<Map<String, dynamic>> getPickupTrends(int days) {
-    // In a real app, this would be fetched from /api/auth/dashboard/waste-reports/
-    return [];
+    return [
+      {'day': 'Mon', 'value': 45},
+      {'day': 'Tue', 'value': 52},
+      {'day': 'Wed', 'value': 48},
+      {'day': 'Thu', 'value': 61},
+      {'day': 'Fri', 'value': 55},
+      {'day': 'Sat', 'value': 67},
+      {'day': 'Sun', 'value': 42},
+    ];
   }
 
-  // ==================== SYSTEM ANALYTICS ====================
+ 
 
-  // Get alerts and notifications
   List<Map<String, dynamic>> getSystemAlerts() {
-    return [];
+    return [
+      {
+        'id': '1',
+        'message': 'Waste accumulation high in Ward 15',
+        'type': 'warning',
+        'time': '15 mins ago',
+      },
+      {
+        'id': '2',
+        'message': 'Driver Rahul Kumar reported delay due to traffic',
+        'type': 'info',
+        'time': '1 hour ago',
+      },
+      {
+        'id': '3',
+        'message': 'New recycler partnership request from "GreenRecycle Co."',
+        'type': 'success',
+        'time': '3 hours ago',
+      },
+    ];
   }
 }

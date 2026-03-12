@@ -102,42 +102,53 @@ class _DashboardTab extends StatelessWidget {
         // Note: fetchPickups usually called at login or app start, but good to have here too
         
         final pickups = pickupService.getUpcomingPickupsForUser(userId);
+        final totalWaste = pickupService.getTotalWasteCollectedForUser(userId);
+        final wardNumber = authService.currentUser?.wardNumber;
+        
         final stats = {
           'referralCount': referralService.referralCount,
           'totalEarned': referralService.totalEarned,
+          'totalWaste': totalWaste,
         };
 
         return Scaffold(
-          backgroundColor: AppTheme.grey50,
-          body: RefreshIndicator(
-            onRefresh: () => pickupService.fetchPickups(),
-            child: CustomScrollView(
-              slivers: [
-                _buildSliverAppBar(context, userName),
-                SliverPadding(
-                  padding: const EdgeInsets.all(AppTheme.spacingM),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      _buildNextPickupCard(context, pickups.isNotEmpty ? pickups.first : null),
-                      const SizedBox(height: AppTheme.spacingL),
-                      _buildStatsOverview(context, stats),
-                      const SizedBox(height: AppTheme.spacingL),
-                      _buildQuickActionsGrid(context),
-                      const SizedBox(height: AppTheme.spacingL),
-                      _buildRecentActivity(context, referralService),
-                      const SizedBox(height: AppTheme.spacingL), // Bottom padding
-                    ]),
-                  ),
+      backgroundColor: AppTheme.grey50,
+      body: RefreshIndicator(
+        color: AppTheme.primaryGreen,
+        onRefresh: () async {
+          await pickupService.fetchPickups();
+        },
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            _buildSliverAppBar(context, userName, wardNumber),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+                child: Column(
+                  children: [
+                    const SizedBox(height: AppTheme.spacingM),
+                    _buildNextPickupCard(context, pickups.isNotEmpty ? pickups.first : null),
+                    const SizedBox(height: AppTheme.spacingL),
+                    _buildStatsOverview(context, stats, wardNumber),
+                    const SizedBox(height: AppTheme.spacingL),
+                    _buildQuickActionsGrid(context),
+                    const SizedBox(height: AppTheme.spacingL),
+                    _buildRecentActivity(context, referralService),
+                    const SizedBox(height: AppTheme.spacingXXL), // Extra padding at bottom
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
+  },
+);
   }
 
-  Widget _buildSliverAppBar(BuildContext context, String userName) {
+  Widget _buildSliverAppBar(BuildContext context, String userName, String? wardNumber) {
     return SliverAppBar(
       expandedHeight: 180.0,
       floating: false,
@@ -197,7 +208,7 @@ class _DashboardTab extends StatelessWidget {
                       const Icon(Icons.location_on, color: Colors.white70, size: 14),
                       const SizedBox(width: 4),
                       Text(
-                        'Ward 15, Kozhikode',
+                        'Ward ${wardNumber ?? "15"}, Kozhikode',
                         style: GoogleFonts.poppins(
                           color: Colors.white70,
                           fontSize: 12,
@@ -228,153 +239,179 @@ class _DashboardTab extends StatelessWidget {
   }
 
   Widget _buildNextPickupCard(BuildContext context, dynamic pickup) {
-    // If no pickup, show "Schedule Now" card
     if (pickup == null) {
       return Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.grey300.withOpacity(0.4),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          boxShadow: AppTheme.softShadow,
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryGreen.withOpacity(0.1),
-                shape: BoxShape.circle,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              Positioned(
+                right: -20,
+                top: -20,
+                child: Icon(
+                  Icons.calendar_today_outlined,
+                  size: 100,
+                  color: AppTheme.primaryGreen.withOpacity(0.05),
+                ),
               ),
-              child: const Icon(Icons.schedule_rounded, color: AppTheme.primaryGreen, size: 28),
-            ),
-            const SizedBox(width: AppTheme.spacingM),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'No Pending Pickups',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.grey900,
-                          letterSpacing: -0.5,
-                        ),
-                  ),
-                  const SizedBox(height: 2),
-                  const Text(
-                    'Schedule a waste pickup now.',
-                    style: TextStyle(color: AppTheme.grey600, fontSize: 13, fontWeight: FontWeight.w500),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        gradient: AppTheme.glassGradient,
+                        color: AppTheme.primaryGreen.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.add_task_rounded, color: AppTheme.primaryGreen, size: 28),
+                    ),
+                    const SizedBox(width: AppTheme.spacingM),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Ready to Recycle?',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: AppTheme.grey900,
+                                  letterSpacing: -0.5,
+                                ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Pickups start from ₹10/Kg',
+                            style: TextStyle(color: AppTheme.grey600, fontSize: 13, fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => onNavigate(1), // Go to Book Pickup
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryGreen,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: const Text('Book Now'),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () => onNavigate(1), // Go to Book Pickup
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGreen,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              ),
-              child: const Text('Book'),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2E7D32), Color(0xFF43A047)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppTheme.primaryGradient,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryGreen.withOpacity(0.4),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        boxShadow: AppTheme.primaryShadow,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.access_time, color: Colors.white, size: 14),
-                    SizedBox(width: 4),
-                    Text(
-                      'UPCOMING',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
-                    ),
-                  ],
-                ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            Positioned(
+              right: -40,
+              bottom: -40,
+              child: Icon(
+                Icons.local_shipping_rounded,
+                size: 200,
+                color: Colors.white.withOpacity(0.1),
               ),
-              const Icon(Icons.arrow_forward, color: Colors.white70, size: 16),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingM),
-          const Text(
-            'Next Pickup Scheduled',
-            style: TextStyle(color: Colors.white70, fontSize: 14),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                pickup.formattedTime ?? '10:00 AM', // Fallback
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.access_time_filled, color: Colors.white, size: 14),
+                            SizedBox(width: 6),
+                            Text(
+                              'UPCOMING PICKUP',
+                              style: TextStyle(
+                                  color: Colors.white, 
+                                  fontWeight: FontWeight.bold, 
+                                  fontSize: 10,
+                                  letterSpacing: 0.5),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.more_horiz, color: Colors.white70),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              pickup.scheduledDate != null
+                                  ? DateFormat('EEEE, MMM d').format(pickup.scheduledDate!)
+                                  : 'Tomorrow',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Arriving around ${pickup.formattedTime ?? '10:30 AM'}',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spacingL),
+                  Row(
+                    children: [
+                      _pickupTag(Icons.auto_delete_rounded, 'Dry Waste'),
+                      const SizedBox(width: 12),
+                      _pickupTag(Icons.eco_rounded, 'Eco Friendly'),
+                    ],
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Text(
-                pickup.scheduledDate != null
-                    ? DateFormat('EEE, MMM d').format(pickup.scheduledDate!)
-                    : 'Tomorrow',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingM),
-          Row(
-            children: [
-              _pickupTag(Icons.delete_outline, 'Dry Waste'),
-              const SizedBox(width: 8),
-              _pickupTag(Icons.recycling, 'Plastic'),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -403,18 +440,18 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsOverview(BuildContext context, Map<String, dynamic> stats) {
+  Widget _buildStatsOverview(BuildContext context, Map<String, dynamic> stats, String? wardNumber) {
     return Row(
       children: [
         Expanded(
-          child: _expressCard(context),
+          child: _expressCard(context, wardNumber),
         ),
         const SizedBox(width: AppTheme.spacingM),
         Expanded(
           child: _statCard(
             context,
             'Kg Collected',
-            '24.5', // Mock data
+            stats['totalWaste'].toStringAsFixed(1),
             Icons.scale,
             AppTheme.info,
           ),
@@ -423,7 +460,7 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _expressCard(BuildContext context) {
+  Widget _expressCard(BuildContext context, String? wardNumber) {
     return GestureDetector(
       onTap: () {
         // TODO: Navigate to live map screen showing truck location
@@ -435,19 +472,15 @@ class _DashboardTab extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF1976D2), Color(0xFF42A5F5)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppTheme.infoGradient,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF1976D2).withOpacity(0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+              color: AppTheme.info.withOpacity(0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -458,40 +491,44 @@ class _DashboardTab extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
-                    Icons.local_shipping,
+                    Icons.local_shipping_rounded,
                     color: Colors.white,
                     size: 24,
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     children: [
                       Container(
-                        width: 6,
-                        height: 6,
+                        width: 8,
+                        height: 8,
                         decoration: const BoxDecoration(
-                          color: Colors.greenAccent,
+                          color: Color(0xFF00E676),
                           shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(color: Color(0xFF00E676), blurRadius: 4),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 6),
                       const Text(
                         'LIVE',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
+                          letterSpacing: 1.0,
                         ),
                       ),
                     ],
@@ -499,30 +536,32 @@ class _DashboardTab extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingM),
+            const SizedBox(height: 20),
             const Text(
-              'Express',
+              'Truck Tracking',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
+                letterSpacing: -0.5,
               ),
             ),
             const SizedBox(height: 4),
             Row(
               children: [
-                const Text(
-                  'Track Truck',
+                Text(
+                  'On the way to Ward ${wardNumber ?? "15"}',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Colors.white.withOpacity(0.8),
                     fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white70,
-                  size: 12,
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.arrow_forward_rounded,
+                  color: Colors.white54,
+                  size: 14,
                 ),
               ],
             ),
@@ -534,15 +573,15 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _statCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: color.withOpacity(0.12),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -550,27 +589,31 @@ class _DashboardTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
-              shape: BoxShape.circle,
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 26),
+            child: Icon(icon, color: color, size: 28),
           ),
-          const SizedBox(height: AppTheme.spacingM),
+          const SizedBox(height: 20),
           Text(
             value,
             style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
               color: AppTheme.grey900,
+              letterSpacing: -1,
             ),
           ),
+          const SizedBox(height: 4),
           Text(
             title,
             style: const TextStyle(
+              fontSize: 13,
               color: AppTheme.grey600,
-              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
             ),
           ),
         ],

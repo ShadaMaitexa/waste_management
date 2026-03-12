@@ -54,17 +54,20 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Attendance'),
+        title: const Text(
+          'Attendance Tracking',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
+        centerTitle: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: () {
-              // Show filter options
-            },
+            icon: const Icon(Icons.calendar_month_rounded),
+            onPressed: () {},
           ),
         ],
       ),
@@ -95,69 +98,77 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusL),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: (_isOnDuty ? AppTheme.success : AppTheme.grey400).withOpacity(0.12),
+            blurRadius: 25,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppTheme.spacingL),
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: _isOnDuty 
-                    ? [AppTheme.success, AppTheme.success.withOpacity(0.8)]
-                    : [AppTheme.grey700, AppTheme.grey600],
+                    ? [AppTheme.success, const Color(0xFF00C853)]
+                    : [AppTheme.grey800, AppTheme.grey700],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusL)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
             ),
             child: Column(
               children: [
-                Icon(
-                  _isOnDuty ? Icons.check_circle_outline : Icons.access_time,
-                  size: 48,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: AppTheme.spacingM),
-                Text(
-                  _isOnDuty ? 'YOU ARE ON DUTY' : 'NOT CHECKED IN',
-                  style: const TextStyle(
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _isOnDuty ? Icons.verified_rounded : Icons.timer_outlined,
+                    size: 40,
                     color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
                   ),
                 ),
-                const SizedBox(height: AppTheme.spacingS),
+                const SizedBox(height: 20),
                 Text(
-                  DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now()),
+                  _isOnDuty ? 'ACTIVE ON DUTY' : 'NOT CHECKED IN',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  DateFormat('EEEE, MMMM d').format(DateTime.now()),
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withOpacity(0.7),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingL),
+            padding: const EdgeInsets.all(24),
             child: Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildTimeDisplay('Check In', _checkInTime),
-                    Container(height: 40, width: 1, color: AppTheme.grey300),
-                    _buildTimeDisplay('Check Out', _checkOutTime),
+                    _buildTimeDisplay('CHECK IN', _checkInTime, Icons.login_rounded, AppTheme.success),
+                    Container(height: 40, width: 1, color: AppTheme.grey200),
+                    _buildTimeDisplay('CHECK OUT', _checkOutTime, Icons.logout_rounded, AppTheme.error),
                   ],
                 ),
-                const SizedBox(height: AppTheme.spacingL),
+                const SizedBox(height: 32),
                 _buildActionSlider(),
               ],
             ),
@@ -167,24 +178,32 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
     );
   }
 
-  Widget _buildTimeDisplay(String label, DateTime? time) {
+  Widget _buildTimeDisplay(String label, DateTime? time, IconData icon, Color color) {
     return Column(
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: AppTheme.grey500,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
+        Row(
+          children: [
+            Icon(icon, size: 12, color: AppTheme.grey500),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                color: AppTheme.grey500,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Text(
           time != null ? DateFormat('h:mm a').format(time) : '--:--',
           style: TextStyle(
-            color: AppTheme.grey900,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            color: time != null ? AppTheme.grey900 : AppTheme.grey400,
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
           ),
         ),
       ],
@@ -233,29 +252,38 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
 
   Widget _buildStatItem(String label, String value, Color color) {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
-        border: Border.all(color: color.withOpacity(0.2)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
+          ),
+        ],
+        border: Border.all(color: color.withOpacity(0.08), width: 1),
       ),
       child: Column(
         children: [
           Text(
             value,
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
               color: color,
+              letterSpacing: -0.5,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
-              color: color.withOpacity(0.8),
-              fontWeight: FontWeight.w500,
+              fontSize: 11,
+              color: AppTheme.grey600,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.2,
             ),
           ),
         ],

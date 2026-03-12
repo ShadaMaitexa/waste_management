@@ -34,25 +34,63 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
             child: CustomScrollView(
               slivers: [
                 SliverAppBar(
-                  expandedHeight: 140.0,
-                  floating: true,
+                  expandedHeight: 180.0,
+                  floating: false,
                   pinned: true,
                   backgroundColor: AppTheme.primaryGreen,
                   elevation: 0,
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
                   ),
                   flexibleSpace: FlexibleSpaceBar(
-                    title: const Text('ULB Admin Portal', style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5)),
-                    background: Container(
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-                        gradient: LinearGradient(
-                          colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+                            gradient: LinearGradient(
+                              colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
                         ),
-                      ),
+                        Positioned(
+                          right: -30,
+                          top: -20,
+                          child: Icon(
+                            Icons.admin_panel_settings_rounded,
+                            size: 180,
+                            color: Colors.white.withOpacity(0.08),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20, bottom: 20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'GreenLoop Control Center',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const Text(
+                                'KMC Admin Portal',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   actions: [
@@ -84,7 +122,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                         const SizedBox(height: AppTheme.spacingM),
                         _buildWardPerformance(),
                         const SizedBox(height: AppTheme.spacingM),
-                        _buildRecentAlerts(),
+                        _buildRecentAlerts(adminService),
                         const SizedBox(height: AppTheme.spacingM),
                         _buildQuickActions(),
                         const SizedBox(height: 80),
@@ -207,73 +245,86 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   }
 
   Widget _buildMetricCard(String title, String value, String change, IconData icon, Color color) {
+    bool isPositive = change.startsWith('+');
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(0.12),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    shape: BoxShape.circle,
+            Positioned(
+              right: -10,
+              top: -10,
+              child: Icon(
+                icon,
+                size: 80,
+                color: color.withOpacity(0.05),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: color.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(icon, color: color, size: 20),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: isPositive ? AppTheme.success.withOpacity(0.1) : AppTheme.error.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          change,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: isPositive ? AppTheme.success : AppTheme.error,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: Icon(icon, color: color, size: 24),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: change.startsWith('+') 
-                        ? AppTheme.success.withOpacity(0.1)
-                        : AppTheme.error.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    change,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: change.startsWith('+') ? AppTheme.success : AppTheme.error,
-                      fontWeight: FontWeight.bold,
+                  const Spacer(),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.grey900,
+                      letterSpacing: -1,
                     ),
                   ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.grey900,
-                    letterSpacing: -0.5,
+                  const SizedBox(height: 2),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.grey600,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: AppTheme.grey600,
-                    fontWeight: FontWeight.w600,
-                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -378,7 +429,9 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildRecentAlerts() {
+  Widget _buildRecentAlerts(AdminService adminService) {
+    final alerts = adminService.getSystemAlerts();
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -396,38 +449,78 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Recent Alerts',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'System Alerts',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
+                      ),
+                ),
+                if (alerts.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppTheme.error.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '${alerts.length} NEW',
+                      style: const TextStyle(
+                        color: AppTheme.error,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
+              ],
             ),
             const SizedBox(height: AppTheme.spacingM),
-            _buildAlertItem(
-              'High collection volume in Ward 12',
-              '2 hours ago',
-              Icons.info,
-              AppTheme.info,
-            ),
-            const Divider(),
-            _buildAlertItem(
-              'Worker attendance low in Ward 5',
-              '4 hours ago',
-              Icons.warning,
-              AppTheme.warning,
-            ),
-            const Divider(),
-            _buildAlertItem(
-              'New recycler partnership approved',
-              '1 day ago',
-              Icons.check_circle,
-              AppTheme.success,
-            ),
+            if (alerts.isEmpty)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Text('No active alerts', style: TextStyle(color: AppTheme.grey400)),
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: alerts.length,
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (context, index) {
+                  final alert = alerts[index];
+                  return _buildAlertItem(
+                    alert['message'],
+                    alert['time'],
+                    _getAlertIcon(alert['type']),
+                    _getAlertColor(alert['type']),
+                  );
+                },
+              ),
           ],
         ),
       ),
     );
+  }
+
+  IconData _getAlertIcon(String type) {
+    switch (type) {
+      case 'warning': return Icons.warning_amber_rounded;
+      case 'success': return Icons.check_circle_outline_rounded;
+      default: return Icons.info_outline_rounded;
+    }
+  }
+
+  Color _getAlertColor(String type) {
+    switch (type) {
+      case 'warning': return AppTheme.warning;
+      case 'success': return AppTheme.success;
+      default: return AppTheme.info;
+    }
   }
 
   Widget _buildAlertItem(String message, String time, IconData icon, Color color) {
@@ -477,27 +570,41 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           'Quick Actions',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
               ),
         ),
         const SizedBox(height: AppTheme.spacingM),
-        Row(
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: AppTheme.spacingM,
+          crossAxisSpacing: AppTheme.spacingM,
+          childAspectRatio: 1.6,
           children: [
-            Expanded(
-              child: _buildQuickActionCard(
-                'Generate Report',
-                Icons.assessment,
-                AppTheme.info,
-                () => widget.onNavigate(2), // Navigate to Reports
-              ),
+            _buildQuickActionCard(
+              'Generate Reports',
+              Icons.analytics_rounded,
+              AppTheme.info,
+              () => widget.onNavigate(2),
             ),
-            const SizedBox(width: AppTheme.spacingM),
-            Expanded(
-              child: _buildQuickActionCard(
-                'Manage Routes',
-                Icons.route,
-                AppTheme.primaryGreen,
-                () {},
-              ),
+            _buildQuickActionCard(
+              'Route Planning',
+              Icons.map_rounded,
+              AppTheme.primaryGreen,
+              () {},
+            ),
+            _buildQuickActionCard(
+              'User Control',
+              Icons.people_alt_rounded,
+              AppTheme.warning,
+              () => widget.onNavigate(1),
+            ),
+            _buildQuickActionCard(
+              'System Settings',
+              Icons.settings_rounded,
+              AppTheme.secondaryGreen,
+              () {},
             ),
           ],
         ),
@@ -505,41 +612,42 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildQuickActionCard(String title, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickActionCard(String label, IconData icon, Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(24),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
-          border: Border.all(color: color.withOpacity(0.2), width: 1.5),
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.12),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
-              child: Icon(icon, color: color, size: 30),
+              child: Icon(icon, color: color, size: 28),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
-              title,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.grey900,
-                  ),
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.grey800,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

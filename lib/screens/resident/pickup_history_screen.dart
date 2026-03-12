@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../models/pickup.dart';
 import '../../theme/app_theme.dart';
 
 class PickupHistoryScreen extends StatefulWidget {

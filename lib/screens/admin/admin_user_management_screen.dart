@@ -33,27 +33,36 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('User Management'),
+        title: const Text(
+          'Command Center: Users',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_add_alt_1_rounded),
+            onPressed: _showAddUserDialog,
+          ),
+          const SizedBox(width: 8),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
+          indicatorWeight: 4,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           tabs: const [
-            Tab(text: 'Residents'),
-            Tab(text: 'Workers'),
-            Tab(text: 'Recyclers'),
-            Tab(text: 'Admins'),
+            Tab(text: 'RESIDENTS'),
+            Tab(text: 'WORKERS'),
+            Tab(text: 'RECYCLERS'),
+            Tab(text: 'ADMINS'),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _showAddUserDialog,
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -76,38 +85,58 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
   }
 
   Widget _buildSearchAndFilter() {
-    return Padding(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
       child: Row(
         children: [
           Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search users...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.toLowerCase();
-                });
-              },
+              child: TextField(
+                onChanged: (value) => setState(() => _searchQuery = value.toLowerCase()),
+                decoration: InputDecoration(
+                  hintText: 'Search by name or email...',
+                  hintStyle: TextStyle(color: AppTheme.grey400, fontSize: 14),
+                  prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primaryGreen),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
             ),
           ),
-          const SizedBox(width: AppTheme.spacingS),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
-            onSelected: (value) {
-              setState(() {
-                _selectedFilter = value;
-              });
-            },
-            itemBuilder: (_) => _filters
-                .map((filter) => PopupMenuItem(
-                      value: filter,
-                      child: Text(filter),
-                    ))
-                .toList(),
+          const SizedBox(width: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: PopupMenuButton<String>(
+              icon: const Icon(Icons.tune_rounded, color: AppTheme.primaryGreen),
+              onSelected: (value) => setState(() => _selectedFilter = value),
+              itemBuilder: (_) => _filters
+                  .map((filter) => PopupMenuItem(
+                        value: filter,
+                        child: Text(filter, style: const TextStyle(fontWeight: FontWeight.w500)),
+                      ))
+                  .toList(),
+            ),
           ),
         ],
       ),
@@ -115,17 +144,15 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
   }
 
   Widget _buildStatistics() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
         children: [
-          _statCard('Total Users', '1,247', Icons.people, AppTheme.primaryGreen),
-          const SizedBox(width: AppTheme.spacingS),
-          _statCard('Active', '1,156', Icons.check_circle, AppTheme.success),
-          const SizedBox(width: AppTheme.spacingS),
-          _statCard('Pending', '23', Icons.schedule, AppTheme.warning),
-          const SizedBox(width: AppTheme.spacingS),
-          _statCard('Inactive', '68', Icons.cancel, AppTheme.error),
+          _statCard('TOTAL', '1.2k', Icons.people_alt_rounded, AppTheme.primaryGreen),
+          const SizedBox(width: 10),
+          _statCard('ACTIVE', '1.1k', Icons.check_circle_rounded, AppTheme.success),
+          const SizedBox(width: 10),
+          _statCard('PENDING', '23', Icons.pending_rounded, AppTheme.warning),
         ],
       ),
     );
@@ -133,32 +160,43 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
 
   Widget _statCard(String title, String value, IconData icon, Color color) {
     return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingM),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 20),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          border: Border.all(color: color.withOpacity(0.1), width: 1),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: color,
+                letterSpacing: -0.5,
               ),
-              const SizedBox(height: 2),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: AppTheme.grey600,
-                ),
-                textAlign: TextAlign.center,
+            ),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.grey500,
+                letterSpacing: 0.5,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -192,23 +230,43 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
   }
 
   Widget _buildUserCard(Map<String, dynamic> user) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: _getUserTypeColor(user['type']),
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: _getUserTypeColor(user['type']).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
                   child: Text(
                     user['name'].split(' ').map((e) => e[0]).join(),
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: _getUserTypeColor(user['type']),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
-                const SizedBox(width: AppTheme.spacingM),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,89 +274,46 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
                       Text(
                         user['name'],
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w800,
                           fontSize: 16,
+                          color: AppTheme.grey900,
                         ),
                       ),
-                      Text(user['email']),
                       Text(
-                        user['ward'] != null ? 'Ward ${user['ward']}' : 'Ward N/A',
-                        style: TextStyle(
-                          color: AppTheme.grey600,
-                          fontSize: 12,
-                        ),
+                        user['email'],
+                        style: TextStyle(color: AppTheme.grey500, fontSize: 13),
                       ),
+                      if (user['ward'] != null)
+                        Text(
+                          'Ward ${user['ward']}',
+                          style: const TextStyle(
+                            color: AppTheme.primaryGreen,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                          ),
+                        ),
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingS,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(user['status']).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  ),
-                  child: Text(
-                    user['status'],
-                    style: TextStyle(
-                      color: _getStatusColor(user['status']),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                _statusChip(user['status']),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingM),
+            const SizedBox(height: 16),
+            const Divider(height: 1),
+            const SizedBox(height: 16),
             Row(
               children: [
-                Icon(Icons.phone, size: 16, color: AppTheme.grey600),
-                const SizedBox(width: AppTheme.spacingS),
-                Text(user['phone']),
-                const SizedBox(width: AppTheme.spacingL),
-                Icon(Icons.calendar_today, size: 16, color: AppTheme.grey600),
-                const SizedBox(width: AppTheme.spacingS),
-                Text(user['joinedDate']),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => _viewUserDetails(user),
-                    child: const Text('View Details'),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingS),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => _editUser(user),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryGreen,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text('Edit'),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingS),
+                _iconDetail(Icons.local_phone_rounded, user['phone']),
+                const SizedBox(width: 16),
+                _iconDetail(Icons.history_rounded, user['joinedDate']),
+                const Spacer(),
                 PopupMenuButton<String>(
                   onSelected: (action) => _handleUserAction(action, user),
+                  icon: const Icon(Icons.more_vert_rounded, color: AppTheme.grey400),
                   itemBuilder: (_) => [
-                    const PopupMenuItem(
-                      value: 'activate',
-                      child: Text('Activate'),
-                    ),
-                    const PopupMenuItem(
-                      value: 'deactivate',
-                      child: Text('Deactivate'),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Text('Delete'),
-                    ),
+                    const PopupMenuItem(value: 'activate', child: Text('Activate')),
+                    const PopupMenuItem(value: 'deactivate', child: Text('Deactivate')),
+                    const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: AppTheme.error))),
                   ],
                 ),
               ],
@@ -306,6 +321,38 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _statusChip(String status) {
+    final color = _getStatusColor(status);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        status.toUpperCase(),
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+
+  Widget _iconDetail(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: AppTheme.grey400),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: TextStyle(color: AppTheme.grey600, fontSize: 13, fontWeight: FontWeight.w500),
+        ),
+      ],
     );
   }
 

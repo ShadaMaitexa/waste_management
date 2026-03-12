@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../theme/app_theme.dart';
 
 class RecyclerCertificatesScreen extends StatefulWidget {
@@ -33,27 +32,35 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.grey50,
       appBar: AppBar(
-        title: const Text('Certificates'),
+        title: const Text(
+          'Certificate Vault',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           tabs: const [
-            Tab(text: 'Processing'),
-            Tab(text: 'Materials'),
-            Tab(text: 'Compliance'),
+            Tab(text: 'PROCESSING'),
+            Tab(text: 'MATERIALS'),
+            Tab(text: 'COMPLIANCE'),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add_moderator_rounded),
             onPressed: _showGenerateCertificateDialog,
           ),
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.tune_rounded),
             onPressed: _showFilterDialog,
           ),
         ],
@@ -85,17 +92,15 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
   }
 
   Widget _buildSummarySection() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(AppTheme.spacingM),
       child: Row(
         children: [
-          _summaryCard('Total Certificates', '24', Icons.card_membership, AppTheme.primaryGreen),
+          _summaryCard('TOTAL', '24', Icons.card_membership_rounded, AppTheme.primaryGreen),
           const SizedBox(width: AppTheme.spacingS),
-          _summaryCard('This Month', '6', Icons.calendar_today, AppTheme.info),
+          _summaryCard('ACTIVE', '18', Icons.verified_user_rounded, AppTheme.success),
           const SizedBox(width: AppTheme.spacingS),
-          _summaryCard('Active', '18', Icons.check_circle, AppTheme.success),
-          const SizedBox(width: AppTheme.spacingS),
-          _summaryCard('Revenue', '₹1,25,000', Icons.currency_rupee, AppTheme.warning),
+          _summaryCard('EARNINGS', '₹1.2L', Icons.monetization_on_rounded, AppTheme.warning),
         ],
       ),
     );
@@ -103,32 +108,52 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
 
   Widget _summaryCard(String title, String value, IconData icon, Color color) {
     return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingM),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 20),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+          border: Border.all(color: color.withOpacity(0.05), width: 1),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
-              const SizedBox(height: 2),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: AppTheme.grey600,
-                ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: color,
+                letterSpacing: -0.5,
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.grey500,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -186,31 +211,42 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
             ? AppTheme.error
             : AppTheme.warning;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: InkWell(
         onTap: () => _viewCertificateDetails(cert),
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        borderRadius: BorderRadius.circular(28),
         child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingM),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
                       _getCertificateIcon(cert['type']),
                       color: color,
-                      size: 24,
+                      size: 28,
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingM),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,70 +254,71 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
                         Text(
                           cert['title'],
                           style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
                             fontSize: 16,
+                            color: AppTheme.grey900,
+                            letterSpacing: -0.5,
                           ),
                         ),
                         Text(
                           cert['certificateId'],
                           style: TextStyle(
-                            color: AppTheme.grey600,
+                            color: AppTheme.grey500,
                             fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingS,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                    ),
-                    child: Text(
-                      status,
-                      style: TextStyle(
-                        color: color,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
                 ],
               ),
-              const SizedBox(height: AppTheme.spacingM),
-              _detailRow(Icons.factory, 'Material: ${cert['material']}'),
-              const SizedBox(height: AppTheme.spacingXS),
-              _detailRow(Icons.scale, 'Quantity: ${cert['quantity']}'),
-              const SizedBox(height: AppTheme.spacingXS),
-              _detailRow(Icons.date_range, 'Issued: ${cert['issueDate']}'),
-              const SizedBox(height: AppTheme.spacingXS),
-              _detailRow(Icons.event, 'Valid Until: ${cert['expiryDate']}'),
-              if (cert['authority'] != null) ...[
-                const SizedBox(height: AppTheme.spacingXS),
-                _detailRow(Icons.gavel, 'Authority: ${cert['authority']}'),
-              ],
-              const SizedBox(height: AppTheme.spacingM),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.grey50,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    _detailRow(Icons.eco_rounded, 'Material: ${cert['material']}'),
+                    const SizedBox(height: 10),
+                    _detailRow(Icons.scale_rounded, 'Quantity: ${cert['quantity']}'),
+                    const SizedBox(height: 10),
+                    _detailRow(Icons.event_available_rounded, 'Valid Until: ${cert['expiryDate']}'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton(
+                    child: OutlinedButton.icon(
                       onPressed: () => _downloadCertificate(cert),
-                      child: const Text('Download'),
+                      icon: const Icon(Icons.download_rounded, size: 18),
+                      label: const Text('DOWNLOAD'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        foregroundColor: AppTheme.grey700,
+                        side: BorderSide(color: AppTheme.grey300),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingS),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: ElevatedButton(
+                    child: ElevatedButton.icon(
                       onPressed: () => _shareCertificate(cert),
+                      icon: const Icon(Icons.share_rounded, size: 18),
+                      label: const Text('SHARE'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryGreen,
                         foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
                       ),
-                      child: const Text('Share'),
                     ),
                   ),
                 ],

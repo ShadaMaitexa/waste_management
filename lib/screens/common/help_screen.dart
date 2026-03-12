@@ -9,7 +9,6 @@ class HelpScreen extends StatefulWidget {
 }
 
 class _HelpScreenState extends State<HelpScreen> {
-  String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -44,9 +43,7 @@ class _HelpScreenState extends State<HelpScreen> {
                 fillColor: AppTheme.grey100,
               ),
               onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.toLowerCase();
-                });
+                // TODO: Implement search filtering
               },
             ),
           ),

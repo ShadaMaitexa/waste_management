@@ -180,4 +180,11 @@ class PickupService extends ChangeNotifier {
     
     return stats;
   }
+
+  // Get total waste collected in kg for a specific user
+  double getTotalWasteCollectedForUser(String userId) {
+    return _pickups
+        .where((p) => p.userId == userId && p.status == PickupStatus.completed)
+        .fold(0.0, (sum, p) => sum + (p.weight ?? 5.0)); // Default to 5kg if weight is null
+  }
 }

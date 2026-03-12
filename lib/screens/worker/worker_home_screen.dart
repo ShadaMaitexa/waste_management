@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../services/pickup_service.dart';
 import '../../models/pickup.dart';
@@ -116,22 +117,23 @@ class _DashboardTab extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppTheme.grey50,
           body: RefreshIndicator(
-            onRefresh: () => pickupService.fetchPickups(),
+            color: AppTheme.primaryGreen,
+            onRefresh: () async {
+              await pickupService.fetchPickups();
+            },
             child: CustomScrollView(
               slivers: [
-                _buildSliverAppBar(context),
+                _buildSliverAppBar(context, workerName),
                 SliverPadding(
-                  padding: const EdgeInsets.all(AppTheme.spacingM),
+                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM, vertical: AppTheme.spacingL),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      _buildWelcomeSection(context, workerName),
-                      const SizedBox(height: AppTheme.spacingL),
                       _buildStatsGrid(context, pendingCount, completedCount),
                       const SizedBox(height: AppTheme.spacingL),
                       _buildCurrentTaskCard(context, currentPickup),
                       const SizedBox(height: AppTheme.spacingL),
                       _buildQuickActions(context),
-                      const SizedBox(height: AppTheme.spacingL), // Bottom padding
+                      const SizedBox(height: AppTheme.spacingXXL),
                     ]),
                   ),
                 ),
@@ -143,22 +145,82 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
+  Widget _buildSliverAppBar(BuildContext context, String name) {
     return SliverAppBar(
-      expandedHeight: 80.0,
-      floating: true,
+      expandedHeight: 180.0,
+      floating: false,
       pinned: true,
       elevation: 0,
       backgroundColor: AppTheme.primaryGreen,
-      title: const Text('GreenLoop Worker'),
-      centerTitle: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+              ),
+            ),
+            Positioned(
+              right: -30,
+              top: -20,
+              child: Icon(
+                Icons.engineering_rounded,
+                size: 180,
+                color: Colors.white.withOpacity(0.08),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, bottom: 20, right: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Stay Safe & Green,',
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                  ),
+                  Text(
+                    name,
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.verified_user_rounded, color: Colors.white70, size: 14),
+                      const SizedBox(width: 4),
+                      const Text(
+                        'Certified Worker #GLW204',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.notifications_outlined),
+          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
           onPressed: () {},
         ),
         IconButton(
-          icon: const Icon(Icons.logout),
+          icon: const Icon(Icons.logout, color: Colors.white),
           onPressed: () {
             Provider.of<AuthService>(context, listen: false).logout();
             Navigator.of(context).pushReplacementNamed('/login');
@@ -168,67 +230,41 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildWelcomeSection(BuildContext context, String name) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Good Morning,',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppTheme.grey600,
-              ),
-        ),
-        Text(
-          name,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppTheme.grey900,
-              ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildStatsGrid(BuildContext context, int pending, int completed) {
     return Row(
       children: [
         Expanded(
-          child: _buildStatCard(
-            context,
+          child: _buildStatItem(
             'Pending',
             pending.toString(),
-            Icons.pending_actions,
+            Icons.pending_actions_rounded,
             AppTheme.warning,
-            Colors.orange.shade50,
           ),
         ),
         const SizedBox(width: AppTheme.spacingM),
         Expanded(
-          child: _buildStatCard(
-            context,
+          child: _buildStatItem(
             'Completed',
             completed.toString(),
-            Icons.task_alt,
+            Icons.task_alt_rounded,
             AppTheme.success,
-            Colors.green.shade50,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(BuildContext context, String title, String value,
-      IconData icon, Color color, Color bgColor) {
+  Widget _buildStatItem(String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(0.12),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -236,26 +272,30 @@ class _DashboardTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(8),
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 26),
           ),
-          const SizedBox(height: AppTheme.spacingM),
+          const SizedBox(height: 16),
           Text(
             value,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.grey900,
-                ),
+            style: const TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey900,
+              letterSpacing: -1,
+            ),
           ),
           Text(
             title,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.grey600,
-                ),
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.grey600,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
@@ -295,76 +335,123 @@ class _DashboardTab extends StatelessWidget {
         ),
         const SizedBox(height: AppTheme.spacingS),
         Container(
-          padding: const EdgeInsets.all(AppTheme.spacingM),
+          width: double.infinity,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(AppTheme.radiusL),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primaryGreen.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            gradient: AppTheme.primaryGradient,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: AppTheme.primaryShadow,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'Ward ${pickup.wardNumber}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: -40,
+                  bottom: -40,
+                  child: Icon(
+                    Icons.local_shipping_rounded,
+                    size: 200,
+                    color: Colors.white.withOpacity(0.1),
                   ),
-                  const Icon(Icons.arrow_forward_ios,
-                      color: Colors.white, size: 16),
-                ],
-              ),
-              const SizedBox(height: AppTheme.spacingL),
-              Text(
-                'Next Pickup: ${pickup.address}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
-              const SizedBox(height: AppTheme.spacingS),
-              Row(
-                children: [
-                  const Icon(Icons.access_time, color: Colors.white70, size: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Est. ${pickup.formattedTime}',
-                    style: const TextStyle(color: Colors.white70),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.location_on, color: Colors.white, size: 14),
+                                SizedBox(width: 6),
+                                Text(
+                                  'CURRENT PICKUP',
+                                  style: TextStyle(
+                                      color: Colors.white, 
+                                      fontWeight: FontWeight.bold, 
+                                      fontSize: 10,
+                                      letterSpacing: 0.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              'Ward ${pickup.wardNumber}',
+                              style: const TextStyle(
+                                color: AppTheme.primaryGreen,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        pickup.address,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.5,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.access_time_filled, color: Colors.white70, size: 16),
+                          const SizedBox(width: 6),
+                          Text(
+                            'ETA: ${pickup.formattedTime}',
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                          ),
+                          const Spacer(),
+                          Text(
+                            '${pickup.wasteTypes.length} Items',
+                            style: const TextStyle(color: Colors.white70, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppTheme.primaryGreen,
+                          elevation: 0,
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.check_circle_rounded),
+                            SizedBox(width: 10),
+                            Text('Mark as Handed Over', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  const Icon(Icons.delete_outline,
-                      color: Colors.white70, size: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    pickup.wasteTypes.map((e) => e.toString().split('.').last).join(', '),
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -372,12 +459,6 @@ class _DashboardTab extends StatelessWidget {
   }
 
   Widget _buildQuickActions(BuildContext context) {
-    final actions = [
-      {'icon': Icons.add_a_photo, 'label': 'Report', 'route': ''},
-      {'icon': Icons.history, 'label': 'History', 'route': ''},
-      {'icon': Icons.support_agent, 'label': 'Support', 'route': ''},
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -385,48 +466,63 @@ class _DashboardTab extends StatelessWidget {
           'Quick Actions',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
               ),
         ),
         const SizedBox(height: AppTheme.spacingM),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: actions.map((action) {
-            return Column(
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      action['icon'] as IconData,
-                      color: AppTheme.primaryGreen,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingS),
-                Text(
-                  action['label'] as String,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ],
-            );
-          }).toList(),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: AppTheme.spacingM,
+          crossAxisSpacing: AppTheme.spacingM,
+          childAspectRatio: 0.9,
+          children: [
+            _actionCard('Report', Icons.add_a_photo_rounded, AppTheme.info),
+            _actionCard('History', Icons.history_rounded, AppTheme.primaryGreen),
+            _actionCard('Support', Icons.support_agent_rounded, AppTheme.warning),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _actionCard(String label, IconData icon, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.06),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+        border: Border.all(color: color.withOpacity(0.05), width: 1),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.grey800,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

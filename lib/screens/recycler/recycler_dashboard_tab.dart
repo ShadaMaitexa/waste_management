@@ -12,20 +12,63 @@ class RecyclerDashboardTab extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 120.0,
-            floating: true,
+            expandedHeight: 180.0,
+            floating: false,
             pinned: true,
             backgroundColor: AppTheme.primaryGreen,
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+            ),
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text('Recycler Portal'),
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                    begin: Alignment.topLeft,
-                    end: Alignment.centerRight,
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+                      gradient: LinearGradient(
+                        colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    right: -30,
+                    top: -20,
+                    child: Icon(
+                      Icons.recycling_rounded,
+                      size: 180,
+                      color: Colors.white.withOpacity(0.08),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, bottom: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Sustainability Hub,',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const Text(
+                          'Recycler Portal',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             actions: [
@@ -70,15 +113,15 @@ class RecyclerDashboardTab extends StatelessWidget {
   Widget _buildHeaderInfo(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.all(AppTheme.spacingL),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        borderRadius: BorderRadius.circular(24),
          boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppTheme.grey300.withOpacity(0.5),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -88,23 +131,33 @@ class RecyclerDashboardTab extends StatelessWidget {
           Text(
             'EcoRecycle Solutions',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                   color: AppTheme.grey900,
+                  letterSpacing: -0.5,
                 ),
           ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Icon(Icons.verified, color: AppTheme.primaryGreen, size: 16),
-              const SizedBox(width: 8),
-              Text(
-                'Certified Partner • EPR Compliant',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.primaryGreen,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            ],
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppTheme.success.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.verified_rounded, color: AppTheme.success, size: 14),
+                const SizedBox(width: 6),
+                const Text(
+                  'Certified Partner • EPR Compliant',
+                  style: TextStyle(
+                    color: AppTheme.success,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -116,9 +169,10 @@ class RecyclerDashboardTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Monthly Summary (Oct 2025)',
+          'Monthly Performance',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
               ),
         ),
         const SizedBox(height: AppTheme.spacingM),
@@ -129,18 +183,18 @@ class RecyclerDashboardTab extends StatelessWidget {
                 context,
                 'Processed',
                 '24 Tons',
-                Icons.recycling,
-                AppTheme.primaryGreen,
+                Icons.analytics_rounded,
+                AppTheme.info,
               ),
             ),
             const SizedBox(width: AppTheme.spacingM),
             Expanded(
               child: _summaryCard(
                 context,
-                'Pending',
-                '5.2 Tons',
-                Icons.hourglass_empty,
-                AppTheme.warning,
+                'Collected',
+                '18.5k',
+                Icons.savings_rounded,
+                AppTheme.success,
               ),
             ),
           ],
@@ -151,15 +205,15 @@ class RecyclerDashboardTab extends StatelessWidget {
 
   Widget _summaryCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.all(AppTheme.spacingL),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            color: color.withOpacity(0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -167,25 +221,27 @@ class RecyclerDashboardTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: color.withOpacity(0.12),
+              shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 28),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             value,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.grey900,
+                  letterSpacing: -0.5,
                 ),
           ),
           Text(
             title,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: AppTheme.grey600,
+                  fontWeight: FontWeight.w500,
                 ),
           ),
         ],
@@ -204,6 +260,7 @@ class RecyclerDashboardTab extends StatelessWidget {
               'Recent Transactions',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
                   ),
             ),
             TextButton(
@@ -213,7 +270,18 @@ class RecyclerDashboardTab extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppTheme.spacingS),
-        Card(
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.grey300.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
           child: Column(
             children: [
               _transactionTile(
@@ -223,7 +291,7 @@ class RecyclerDashboardTab extends StatelessWidget {
                 'Today, 10:30 AM',
                 isIncoming: true,
               ),
-              const Divider(height: 1),
+              const Divider(height: 1, indent: 64),
               _transactionTile(
                 context,
                 'Processed - Paper',
@@ -231,7 +299,7 @@ class RecyclerDashboardTab extends StatelessWidget {
                 'Yesterday',
                 isIncoming: false,
               ),
-              const Divider(height: 1),
+              const Divider(height: 1, indent: 64),
                _transactionTile(
                 context,
                 'Material IN - E-Waste',
@@ -239,6 +307,7 @@ class RecyclerDashboardTab extends StatelessWidget {
                 'Oct 24',
                 isIncoming: true,
               ),
+              const SizedBox(height: 8),
             ],
           ),
         ),
@@ -274,44 +343,46 @@ class RecyclerDashboardTab extends StatelessWidget {
           'Quick Actions',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
               ),
         ),
         const SizedBox(height: AppTheme.spacingM),
         Row(
           children: [
-            Expanded(
-              child: _actionButton(
-                context,
-                'Add Material',
-                Icons.add_circle_outline,
-                () => onNavigate(1), // Go to Materials tab
-              ),
-            ),
+            Expanded(child: _actionCard(context, 'Add Material', Icons.add_rounded, AppTheme.info, () => onNavigate(1))),
             const SizedBox(width: AppTheme.spacingM),
-            Expanded(
-              child: _actionButton(
-                context,
-                'Get Certificate',
-                Icons.card_membership,
-                () => onNavigate(2), // Go to Certificates tab
-              ),
-            ),
+            Expanded(child: _actionCard(context, 'Get Certificate', Icons.verified_rounded, AppTheme.primaryGreen, () => onNavigate(2))),
           ],
         ),
       ],
     );
   }
 
-  Widget _actionButton(BuildContext context, String label, IconData icon, VoidCallback onTap) {
-    return ElevatedButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 20),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: AppTheme.primaryGreen,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        elevation: 2,
+  Widget _actionCard(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.1), width: 1),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

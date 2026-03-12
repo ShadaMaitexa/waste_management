@@ -22,6 +22,12 @@ class ReferralService extends ChangeNotifier {
     // In a real app, this would use the share_plus package
     await Future.delayed(const Duration(milliseconds: 500));
   }
+
+  Future<void> fetchReferrals() async {
+    // Mock API call
+    await Future.delayed(const Duration(seconds: 1));
+    notifyListeners();
+  }
 }
 
 class ReferralHistory {

@@ -37,7 +37,34 @@ class AppTheme {
   
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primaryGreen, secondaryGreen],
+    colors: [primaryGreen, Color(0xFF1B5E20)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient accentGradient = LinearGradient(
+    colors: [secondaryGreen, accentGreen],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient alertGradient = LinearGradient(
+    colors: [error, Color(0xFFC62828)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient infoGradient = LinearGradient(
+    colors: [info, Color(0xFF1565C0)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
+  static const LinearGradient glassGradient = LinearGradient(
+    colors: [
+      Color(0x33FFFFFF),
+      Color(0x11FFFFFF),
+    ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -47,6 +74,31 @@ class AppTheme {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
+
+  // Shadows
+  static List<BoxShadow> get softShadow => [
+    BoxShadow(
+      color: black.withOpacity(0.05),
+      blurRadius: 15,
+      offset: const Offset(0, 5),
+    ),
+  ];
+
+  static List<BoxShadow> get primaryShadow => [
+    BoxShadow(
+      color: primaryGreen.withOpacity(0.25),
+      blurRadius: 20,
+      offset: const Offset(0, 10),
+    ),
+  ];
+
+  static List<BoxShadow> get glassShadow => [
+    BoxShadow(
+      color: black.withOpacity(0.1),
+      blurRadius: 10,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
   // Text Styles
   static TextTheme get textTheme => TextTheme(
