@@ -111,19 +111,24 @@ class AuthService extends ChangeNotifier {
     required String password,
     required String phoneNumber,
     required String address,
+    String? ward,
     required UserType userType,
   }) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Django REST API expects snake_case: username, phone_number, role
+      // Django REST API requires: username, email, password, phone, ward
+      // Use provided ward, or default "15" if null/empty
+      final finalWard = (ward != null && ward.isNotEmpty) ? ward : '15';
+      
       final body = jsonEncode({
         'username': name,
         'email': email,
         'password': password,
-        'phone_number': phoneNumber,
+        'phone': phoneNumber, // API expects 'phone' not 'phone_number'
         'address': address,
+        'ward': finalWard, // Required field
         'role': userType.toString().split('.').last,
       });
 
@@ -162,11 +167,34 @@ class AuthService extends ChangeNotifier {
 
         return true;
       }
+
+      // Handle validation errors (e.g. username taken)
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        try {
+          final errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          final errorMessages = <String>[];
+          errorData.forEach((key, value) {
+            String msg = value is List ? value.join(', ') : value.toString();
+            errorMessages.add('$key: $msg');
+          });
+          if (errorMessages.isNotEmpty) {
+            throw Exception(errorMessages.join('\n'));
+          }
+        } catch (e) {
+          if (e is Exception && e.toString().contains('Exception:')) rethrow;
+          // Fall back if it's not JSON
+        }
+      }
+
       notifyListeners();
       return false;
     } catch (e) {
       _isLoading = false;
       notifyListeners();
+      // Re-throw if we manually threw to show the specific error message in the UI
+      if (e is Exception && e.toString().contains('Exception:')) {
+        throw Exception(e.toString().replaceAll('Exception: ', ''));
+      }
       return false;
     }
   }

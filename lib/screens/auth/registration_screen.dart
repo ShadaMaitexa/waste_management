@@ -17,6 +17,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
+  final _wardController = TextEditingController(); // Added ward controller
   
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -30,6 +31,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _passwordController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
+    _wardController.dispose(); // Dispose ward controller
     super.dispose();
   }
 
@@ -49,6 +51,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         password: _passwordController.text,
         phoneNumber: _phoneController.text.trim(),
         address: _addressController.text.trim(),
+        ward: _selectedUserType == UserType.resident ? _wardController.text.trim() : null, // Pass ward if resident
         userType: _selectedUserType,
       );
 
@@ -269,6 +272,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           maxLines: 2,
           validator: (value) => value == null || value.isEmpty ? 'Please enter your address' : null,
         ),
+        if (_selectedUserType == UserType.resident) ...[
+          const SizedBox(height: AppTheme.spacingM),
+          _buildTextField(
+            controller: _wardController,
+            label: 'Ward Number',
+            icon: Icons.map,
+            keyboardType: TextInputType.number,
+            validator: (value) => value == null || value.isEmpty ? 'Please enter your ward number' : null,
+          ),
+        ],
       ],
     );
   }
