@@ -103,10 +103,6 @@ class AdminService extends ChangeNotifier {
       return false;
     }
   }
-
-  // ==================== PICKUP MANAGEMENT ====================
-
-  // Get pickup trends (mock data for charts)
   List<Map<String, dynamic>> getPickupTrends(int days) {
     return [
       {'day': 'Mon', 'value': 45},
@@ -118,9 +114,6 @@ class AdminService extends ChangeNotifier {
       {'day': 'Sun', 'value': 42},
     ];
   }
-
- 
-
   List<Map<String, dynamic>> getSystemAlerts() {
     return [
       {

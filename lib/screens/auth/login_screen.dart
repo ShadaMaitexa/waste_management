@@ -42,16 +42,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (success && mounted) {
         // Redirection based on actual role from backend
         final currentUserType = authService.currentUser?.userType;
-        if (currentUserType == null) {
-          _showErrorSnackBar('Unable to determine user role');
-          return;
-        }
-        String route;
         
+        // Default to resident if profile fetch succeeded but userType is unknown
+        String route;
         switch (currentUserType) {
-          case UserType.resident:
-            route = '/resident';
-            break;
           case UserType.worker:
             route = '/worker';
             break;
@@ -61,11 +55,15 @@ class _LoginScreenState extends State<LoginScreen> {
           case UserType.recycler:
             route = '/recycler';
             break;
+          case UserType.resident:
+          default:
+            route = '/resident';
+            break;
         }
 
         Navigator.pushReplacementNamed(context, route);
-      } else {
-        _showErrorSnackBar('Invalid email or password');
+      } else if (mounted) {
+        _showErrorSnackBar('Login failed. Please check your credentials.');
       }
     } catch (e) {
       _showErrorSnackBar('Login failed: $e');

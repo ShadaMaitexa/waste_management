@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 class User {
   final String id;
@@ -34,23 +33,36 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    // Support snake_case (Django REST), camelCase, and 'role' field naming
+    // API may return: role, user_type, or userType
+    final userTypeStr = json['role'] ?? json['user_type'] ?? json['userType'] ?? 'resident';
+    final phoneNumber = json['phone_number'] ?? json['phoneNumber'] ?? '';
+    final address = json['address'] ?? '';
+    final createdAtRaw = json['created_at'] ?? json['createdAt'];
+    final isActive = json['is_active'] ?? json['isActive'] ?? true;
+    final wardNumber = json['ward_number'] ?? json['wardNumber'];
+    final employeeId = json['employee_id'] ?? json['employeeId'];
+    final department = json['department'];
+    final companyName = json['company_name'] ?? json['companyName'];
+    final licenseNumber = json['license_number'] ?? json['licenseNumber'];
+
     return User(
-      id: json['id'] ?? '',
+      id: (json['id'] ?? '').toString(),
       email: json['email'] ?? '',
-      name: json['name'] ?? '',
+      name: json['name'] ?? json['username'] ?? '',
       userType: UserType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['userType'],
+        (e) => e.toString().split('.').last.toLowerCase() == userTypeStr.toString().toLowerCase(),
         orElse: () => UserType.resident,
       ),
-      phoneNumber: json['phoneNumber'] ?? '',
-      address: json['address'] ?? '',
-      createdAt: DateTime.parse(json['createdAt']),
-      isActive: json['isActive'] ?? true,
-      wardNumber: json['wardNumber'],
-      employeeId: json['employeeId'],
-      department: json['department'],
-      companyName: json['companyName'],
-      licenseNumber: json['licenseNumber'],
+      phoneNumber: phoneNumber,
+      address: address,
+      createdAt: createdAtRaw != null ? DateTime.tryParse(createdAtRaw.toString()) ?? DateTime.now() : DateTime.now(),
+      isActive: isActive is bool ? isActive : (isActive.toString() == 'true'),
+      wardNumber: wardNumber?.toString(),
+      employeeId: employeeId?.toString(),
+      department: department?.toString(),
+      companyName: companyName?.toString(),
+      licenseNumber: licenseNumber?.toString(),
     );
   }
 

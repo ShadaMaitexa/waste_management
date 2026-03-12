@@ -61,16 +61,44 @@ class AuthService extends ChangeNotifier {
         }),
       );
 
+      debugPrint('[AuthService] Login status: ${response.statusCode}');
+      debugPrint('[AuthService] Login body: ${response.body}');
+
       _isLoading = false;
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        await _saveToken(data['access'] ?? data['token']);
-        await getProfile();
+
+        // Token may be nested: { tokens: { access: '...' } } or at root level
+        String? token;
+        if (data['tokens'] != null) {
+          token = data['tokens']['access'];
+        }
+        token ??= data['access'] ?? data['token'];
+
+        if (token == null) {
+          debugPrint('[AuthService] No token found in response');
+          notifyListeners();
+          return false;
+        }
+        await _saveToken(token);
+
+        // Try to build user from login response directly (avoids extra profile call)
+        try {
+          _currentUser = User.fromJson(data);
+          debugPrint('[AuthService] User from login: ${_currentUser?.name}, role: ${_currentUser?.userType}');
+          notifyListeners();
+        } catch (e) {
+          debugPrint('[AuthService] Could not parse user from login response: $e');
+          // Fall back to separate profile fetch
+          await getProfile();
+        }
+
         return true;
       }
       notifyListeners();
       return false;
     } catch (e) {
+      debugPrint('[AuthService] Login error: $e');
       _isLoading = false;
       notifyListeners();
       return false;
@@ -89,24 +117,49 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Django REST API expects snake_case: username, phone_number, role
+      final body = jsonEncode({
+        'username': name,
+        'email': email,
+        'password': password,
+        'phone_number': phoneNumber,
+        'address': address,
+        'role': userType.toString().split('.').last,
+      });
+
+      debugPrint('[AuthService] Register body: $body');
+
       final response = await http.post(
         Uri.parse(ApiConstants.register),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'name': name,
-          'email': email,
-          'password': password,
-          'phoneNumber': phoneNumber,
-          'address': address,
-          'userType': userType.toString().split('.').last,
-        }),
+        body: body,
       );
+
+      debugPrint('[AuthService] Register status: ${response.statusCode}');
+      debugPrint('[AuthService] Register response: ${response.body}');
 
       _isLoading = false;
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        await _saveToken(data['access'] ?? data['token']);
-        await getProfile();
+
+        // Token may be nested: { tokens: { access: '...' } } or at root level
+        String? token;
+        if (data['tokens'] != null) {
+          token = data['tokens']['access'];
+        }
+        token ??= data['access'] ?? data['token'];
+
+        if (token != null) await _saveToken(token);
+
+        // Parse user from response
+        try {
+          _currentUser = User.fromJson(data);
+          notifyListeners();
+        } catch (e) {
+          debugPrint('[AuthService] Could not parse user from register response: $e');
+          if (token != null) await getProfile();
+        }
+
         return true;
       }
       notifyListeners();
@@ -129,14 +182,18 @@ class AuthService extends ChangeNotifier {
         },
       );
 
+      debugPrint('[AuthService] Profile status: ${response.statusCode}');
+      debugPrint('[AuthService] Profile body: ${response.body}');
+
       if (response.statusCode == 200) {
         _currentUser = User.fromJson(jsonDecode(response.body));
+        debugPrint('[AuthService] Parsed user: ${_currentUser?.name}, type: ${_currentUser?.userType}');
         notifyListeners();
       } else if (response.statusCode == 401) {
         await _clearToken();
       }
     } catch (e) {
-      debugPrint('Error fetching profile: $e');
+      debugPrint('[AuthService] Error fetching profile: $e');
     }
   }
 
