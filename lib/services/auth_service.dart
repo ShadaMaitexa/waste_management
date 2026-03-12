@@ -47,7 +47,7 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String email, String password, UserType userType) async {
+  Future<bool> login(String email, String password) async {
     _isLoading = true;
     notifyListeners();
 

@@ -21,19 +21,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   UserType _selectedUserType = UserType.resident;
-  bool _roleInitialized = false;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_roleInitialized) {
-      final args = ModalRoute.of(context)?.settings.arguments;
-      if (args is UserType) {
-        _selectedUserType = args;
-      }
-      _roleInitialized = true;
-    }
-  }
 
   @override
   void dispose() {
@@ -259,41 +247,48 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Widget _buildUserTypeSelector() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM, vertical: AppTheme.spacingS),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
-        border: Border.all(color: Colors.white30),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<UserType>(
-          value: _selectedUserType,
-          onChanged: (UserType? newValue) {
-            if (newValue != null) {
-              setState(() {
-                _selectedUserType = newValue;
-              });
-            }
-          },
-          items: UserType.values.map<DropdownMenuItem<UserType>>((UserType type) {
-            return DropdownMenuItem<UserType>(
-              value: type,
-              child: Text(
-                'Register as: ${_getUserTypeTitle(type)}',
-                style: const TextStyle(color: Colors.white),
-              ),
-            );
-          }).toList(),
-          dropdownColor: AppTheme.primaryGreen,
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            prefixIcon: Icon(Icons.badge, color: Colors.white70),
-          ),
-          iconEnabledColor: Colors.white70,
-          validator: (value) => value == null ? 'Please select a role' : null,
+    return DropdownButtonFormField<UserType>(
+      value: _selectedUserType,
+      dropdownColor: AppTheme.primaryGreen,
+      borderRadius: BorderRadius.circular(AppTheme.radiusM),
+      style: const TextStyle(color: Colors.white, fontSize: 16),
+      iconEnabledColor: Colors.white,
+      decoration: InputDecoration(
+        labelText: 'Select Role',
+        labelStyle: const TextStyle(color: Colors.white70),
+        prefixIcon: const Icon(Icons.badge, color: Colors.white70),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusM),
+          borderSide: const BorderSide(color: Colors.white30),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusM),
+          borderSide: const BorderSide(color: Colors.white30),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusM),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.1),
       ),
+      items: UserType.values.map<DropdownMenuItem<UserType>>((UserType type) {
+        return DropdownMenuItem<UserType>(
+          value: type,
+          child: Text(
+            _getUserTypeTitle(type),
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+      }).toList(),
+      onChanged: (UserType? newValue) {
+        if (newValue != null) {
+          setState(() {
+            _selectedUserType = newValue;
+          });
+        }
+      },
+      validator: (value) => value == null ? 'Please select a role' : null,
     );
   }
 
@@ -365,8 +360,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Widget _buildLoginLink() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         const Text(
           'Already have an account? ',
@@ -374,6 +370,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         TextButton(
           onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingS),
+          ),
           child: const Text(
             'Sign In',
             style: TextStyle(

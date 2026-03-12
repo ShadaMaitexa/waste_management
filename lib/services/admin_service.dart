@@ -13,8 +13,7 @@ class AdminService extends ChangeNotifier {
   List<Pickup> _pickups = [];
   Map<String, dynamic> _systemStats = {};
   bool _isLoading = false;
-  
-  // Getters
+
   List<User> get allUsers => List.unmodifiable(_users);
   List<Pickup> get allPickups => List.unmodifiable(_pickups);
   Map<String, dynamic> get systemStats => Map.unmodifiable(_systemStats);

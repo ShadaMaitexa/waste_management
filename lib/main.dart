@@ -6,7 +6,6 @@ import 'screens/auth/login_screen.dart';
 import 'screens/auth/onboarding_screen.dart';
 import 'screens/auth/registration_screen.dart';
 import 'screens/auth/forgot_password_screen.dart';
-import 'screens/auth/role_selection_screen.dart';
 import 'screens/resident/resident_home_screen.dart';
 import 'screens/resident/book_pickup_screen.dart';
 import 'screens/resident/my_pickups_screen.dart';
@@ -74,7 +73,6 @@ class GreenLoopApp extends StatelessWidget {
           '/login': (_) => const LoginScreen(),
           '/register': (_) => const RegistrationScreen(),
           '/forgot-password': (_) => const ForgotPasswordScreen(),
-          '/role-selection': (_) => const RoleSelectionScreen(),
           
           // Resident Routes
           '/resident': (_) => const ResidentHomeScreen(),

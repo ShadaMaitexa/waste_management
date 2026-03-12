@@ -16,7 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  UserType _selectedUserType = UserType.resident;
 
   @override
   void dispose() {
@@ -38,12 +37,15 @@ class _LoginScreenState extends State<LoginScreen> {
       final success = await authService.login(
         _emailController.text.trim(),
         _passwordController.text,
-        _selectedUserType,
       );
 
       if (success && mounted) {
         // Redirection based on actual role from backend
-        final currentUserType = authService.currentUser?.userType ?? _selectedUserType;
+        final currentUserType = authService.currentUser?.userType;
+        if (currentUserType == null) {
+          _showErrorSnackBar('Unable to determine user role');
+          return;
+        }
         String route;
         
         switch (currentUserType) {
@@ -90,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToSignUp() {
-    Navigator.pushNamed(context, '/role-selection');
+    Navigator.pushNamed(context, '/register');
   }
 
   @override
@@ -125,7 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: AppTheme.spacingXL),
                           _buildWelcomeText(),
                           const SizedBox(height: AppTheme.spacingL),
-                          _buildUserTypeSelector(),
                           const SizedBox(height: AppTheme.spacingM),
                           _buildLoginForm(),
                           const SizedBox(height: AppTheme.spacingL),
@@ -192,70 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildUserTypeSelector() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
-        border: Border.all(color: Colors.white30),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Login as:',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingS),
-          ...UserType.values.map((type) {
-            return RadioListTile<UserType>(
-              value: type,
-              groupValue: _selectedUserType,
-              onChanged: (value) {
-                setState(() {
-                  _selectedUserType = value!;
-                });
-              },
-              title: Text(
-                _getUserTypeTitle(type),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              activeColor: Colors.white,
-              fillColor: MaterialStateProperty.all(Colors.white),
-              visualDensity: VisualDensity.compact,
-              contentPadding: EdgeInsets.zero,
-            );
-          }).toList(),
-          if (_selectedUserType == UserType.admin)
-            Padding(
-              padding: const EdgeInsets.only(top: AppTheme.spacingS),
-              child: Container(
-                padding: const EdgeInsets.all(AppTheme.spacingS),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                ),
-                child: const Text(
-                  'Demo: admin@greenloop.com / admin123',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildLoginForm() {
     return Column(
@@ -391,8 +328,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildSignUpPrompt() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         const Text(
           'Don\'t have an account? ',
@@ -400,6 +338,9 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         TextButton(
           onPressed: _navigateToSignUp,
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingS),
+          ),
           child: const Text(
             'Sign Up',
             style: TextStyle(
@@ -412,16 +353,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  String _getUserTypeTitle(UserType type) {
-    switch (type) {
-      case UserType.resident:
-        return 'Resident';
-      case UserType.worker:
-        return 'Collection Worker';
-      case UserType.admin:
-        return 'Super Admin';
-      case UserType.recycler:
-        return 'Recycling Partner';
-    }
-  }
 }
