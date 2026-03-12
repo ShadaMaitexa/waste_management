@@ -21,6 +21,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   UserType _selectedUserType = UserType.resident;
+  bool _roleInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_roleInitialized) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is UserType) {
+        _selectedUserType = args;
+      }
+      _roleInitialized = true;
+    }
+  }
 
   @override
   void dispose() {

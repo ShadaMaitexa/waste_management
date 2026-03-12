@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToSignUp() {
-    Navigator.pushNamed(context, '/register');
+    Navigator.pushNamed(context, '/role-selection');
   }
 
   @override
