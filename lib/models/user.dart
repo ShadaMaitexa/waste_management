@@ -58,7 +58,7 @@ class User {
       address: address,
       createdAt: createdAtRaw != null ? DateTime.tryParse(createdAtRaw.toString()) ?? DateTime.now() : DateTime.now(),
       isActive: isActive is bool ? isActive : (isActive.toString() == 'true'),
-      wardNumber: wardNumber?.toString(),
+      wardNumber: wardNumber?.toString() ?? json['ward']?.toString(),
       employeeId: employeeId?.toString(),
       department: department?.toString(),
       companyName: companyName?.toString(),

@@ -46,10 +46,23 @@ class Pickup {
   });
 
   factory Pickup.fromJson(Map<String, dynamic> json) {
+    
+    // Status parsing
+    final rawStatus = json['status']?.toString().toLowerCase() ?? 'pending';
+    PickupStatus parsedStatus;
+    if (rawStatus == 'pending') {
+      parsedStatus = PickupStatus.scheduled;
+    } else {
+      parsedStatus = PickupStatus.values.firstWhere(
+        (e) => e.toString().split('.').last == rawStatus,
+        orElse: () => PickupStatus.scheduled,
+      );
+    }
+
     return Pickup(
-      id: json['id'] ?? '',
-      userId: json['userId'] ?? '',
-      userName: json['userName'] ?? '',
+      id: json['id']?.toString() ?? '',
+      userId: json['resident']?.toString() ?? json['userId'] ?? '',
+      userName: json['resident_name'] ?? json['userName'] ?? '',
       userPhone: json['userPhone'] ?? '',
       address: json['address'] ?? '',
       wardNumber: json['wardNumber'] ?? '',
@@ -57,58 +70,40 @@ class Pickup {
         (e) => e.toString().split('.').last == json['type'],
         orElse: () => PickupType.regular,
       ),
-      status: PickupStatus.values.firstWhere(
-        (e) => e.toString().split('.').last == json['status'],
-        orElse: () => PickupStatus.scheduled,
-      ),
-      scheduledDate: DateTime.parse(json['scheduledDate']),
-      scheduledTime: TimeOfDay.fromDateTime(DateTime.parse(json['scheduledTime'])),
+      status: parsedStatus,
+      scheduledDate: json['date'] != null 
+          ? DateTime.tryParse(json['date']) ?? DateTime.now()
+          : (json['scheduledDate'] != null ? DateTime.parse(json['scheduledDate']) : DateTime.now()),
+      scheduledTime: json['scheduledTime'] != null 
+          ? TimeOfDay.fromDateTime(DateTime.parse(json['scheduledTime'])) 
+          : TimeOfDay.now(),
       notes: json['notes'],
       assignedWorkerId: json['assignedWorkerId'],
       assignedWorkerName: json['assignedWorkerName'],
       completedAt: json['completedAt'] != null ? DateTime.parse(json['completedAt']) : null,
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: json['created_at'] != null 
+          ? DateTime.parse(json['created_at']) 
+          : (json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now()),
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       weight: json['weight']?.toDouble(),
-      wasteTypes: (json['wasteTypes'] as List).map((e) => 
-        WasteType.values.firstWhere(
-          (w) => w.toString().split('.').last == e,
-          orElse: () => WasteType.mixed,
-        )
-      ).toList(),
-      estimatedDuration: json['estimatedDuration']?.toDouble(),
-      specialInstructions: json['specialInstructions'],
+      wasteTypes: [],
+      specialInstructions: json['item_display'] ?? json['item'] ?? json['specialInstructions'],
     );
   }
 
   Map<String, dynamic> toJson() {
+    // Determine the status string backend expects
+    String targetStatus = status.toString().split('.').last;
+    if (targetStatus == 'scheduled') {
+      targetStatus = 'pending';
+    }
+
+    // Backend expects item, address, date, status for creating
     return {
-      'id': id,
-      'userId': userId,
-      'userName': userName,
-      'userPhone': userPhone,
+      'item': 'ampoules', // or a default value, or grab from wasteTypes if it existed
       'address': address,
-      'wardNumber': wardNumber,
-      'type': type.toString().split('.').last,
-      'status': status.toString().split('.').last,
-      'scheduledDate': scheduledDate.toIso8601String(),
-      'scheduledTime': DateTime(
-        scheduledDate.year,
-        scheduledDate.month,
-        scheduledDate.day,
-        scheduledTime.hour,
-        scheduledTime.minute,
-      ).toIso8601String(),
-      'notes': notes,
-      'assignedWorkerId': assignedWorkerId,
-      'assignedWorkerName': assignedWorkerName,
-      'completedAt': completedAt?.toIso8601String(),
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      'weight': weight,
-      'wasteTypes': wasteTypes.map((e) => e.toString().split('.').last).toList(),
-      'estimatedDuration': estimatedDuration,
-      'specialInstructions': specialInstructions,
+      'date': "${scheduledDate.year}-${scheduledDate.month.toString().padLeft(2, '0')}-${scheduledDate.day.toString().padLeft(2, '0')}",
+      'status': targetStatus,
     };
   }
 

@@ -120,7 +120,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                         else
                           _buildKeyMetrics(stats),
                         const SizedBox(height: AppTheme.spacingM),
-                        _buildWardPerformance(),
+                        _buildWardPerformance(stats),
                         const SizedBox(height: AppTheme.spacingM),
                         _buildRecentAlerts(adminService),
                         const SizedBox(height: AppTheme.spacingM),
@@ -332,7 +332,10 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildWardPerformance() {
+  Widget _buildWardPerformance(Map<String, dynamic> stats) {
+    // If stats['ward'] is available, it might have ward_wise_stats etc.
+    final hasWardStats = stats['ward'] != null && stats['ward']['ward_wise_stats'] != null;
+    
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -358,17 +361,43 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                   ),
             ),
             const SizedBox(height: AppTheme.spacingM),
-            _buildWardItem('Ward 15', '98%', 'Excellent', AppTheme.success),
-            const Divider(),
-            _buildWardItem('Ward 12', '94%', 'Good', AppTheme.success),
-            const Divider(),
-            _buildWardItem('Ward 8', '89%', 'Average', AppTheme.warning),
-            const Divider(),
-            _buildWardItem('Ward 5', '85%', 'Needs Improvement', AppTheme.error),
+            if (hasWardStats) ..._buildDynamicWards(stats['ward']['ward_wise_stats'] as List)
+            else ...[
+              _buildWardItem('Ward 15', '98%', 'Excellent', AppTheme.success),
+              const Divider(),
+              _buildWardItem('Ward 12', '94%', 'Good', AppTheme.success),
+              const Divider(),
+              _buildWardItem('Ward 8', '89%', 'Average', AppTheme.warning),
+              const Divider(),
+              _buildWardItem('Ward 5', '85%', 'Needs Improvement', AppTheme.error),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _buildDynamicWards(List dynamicWards) {
+    final widgets = <Widget>[];
+    for (int i = 0; i < dynamicWards.length; i++) {
+        final wardObj = dynamicWards[i];
+        final String wardName = wardObj['ward'] ?? 'Ward ${i+1}';
+        final int pickups = wardObj['total_pickups'] ?? 0;
+        final int complaints = wardObj['total_complaints'] ?? 0;
+        
+        // Compute pseudo performance
+        double perf = pickups == 0 ? 0 : 100.0 - (complaints / (pickups + complaints)) * 100.0;
+        if (perf.isNaN) perf = 90.0;
+        String status = 'Excellent';
+        Color color = AppTheme.success;
+        if (perf < 90 && perf >= 80) { status = 'Good'; }
+        else if (perf < 80 && perf >= 60) { status = 'Average'; color = AppTheme.warning; }
+        else if (perf < 60) { status = 'Needs Improvement'; color = AppTheme.error; }
+        
+        widgets.add(_buildWardItem(wardName, '${perf.toStringAsFixed(0)}%', status, color));
+        if (i < dynamicWards.length - 1) widgets.add(const Divider());
+    }
+    return widgets;
   }
 
   Widget _buildWardItem(String ward, String percentage, String status, Color color) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../services/admin_service.dart';
 
 class AdminUserManagementScreen extends StatefulWidget {
   const AdminUserManagementScreen({super.key});
@@ -21,7 +23,9 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    _users.addAll(_getMockUsers());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AdminService>(context, listen: false).fetchUsers();
+    });
   }
 
   @override
@@ -32,55 +36,79 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.grey50,
-      appBar: AppBar(
-        title: const Text(
-          'Command Center: Users',
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
-        ),
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_add_alt_1_rounded),
-            onPressed: _showAddUserDialog,
-          ),
-          const SizedBox(width: 8),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          indicatorWeight: 4,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          tabs: const [
-            Tab(text: 'RESIDENTS'),
-            Tab(text: 'WORKERS'),
-            Tab(text: 'RECYCLERS'),
-            Tab(text: 'ADMINS'),
-          ],
-        ),
-      ),
-      body: Column(
-        children: [
-          _buildSearchAndFilter(),
-          _buildStatistics(),
-          Expanded(
-            child: TabBarView(
+    return Consumer<AdminService>(
+      builder: (context, adminService, child) {
+        final rawUsers = adminService.allUsers;
+        _users.clear();
+        for (final u in rawUsers) {
+          _users.add({
+            'id': u.id,
+            'name': u.name,
+            'email': u.email,
+            'phone': u.phoneNumber,
+            'type': u.userType.toString().split('.').last, // resident, worker, admin
+            'status': u.isActive ? 'Active' : 'Inactive',
+            'ward': u.wardNumber,
+            'joinedDate': "${u.createdAt.month}/${u.createdAt.year}",
+          });
+        }
+
+        return Scaffold(
+          backgroundColor: AppTheme.grey50,
+          appBar: AppBar(
+            title: const Text(
+              'Command Center: Users',
+              style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+            ),
+            backgroundColor: AppTheme.primaryGreen,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.person_add_alt_1_rounded),
+                onPressed: _showAddWorkerDialog,
+              ),
+              const SizedBox(width: 8),
+            ],
+            bottom: TabBar(
               controller: _tabController,
-              children: [
-                _buildUserList('resident'),
-                _buildUserList('worker'),
-                _buildUserList('recycler'),
-                _buildUserList('admin'),
+              indicatorColor: Colors.white,
+              indicatorWeight: 4,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              tabs: const [
+                Tab(text: 'RESIDENTS'),
+                Tab(text: 'WORKERS'),
+                Tab(text: 'RECYCLERS'),
+                Tab(text: 'ADMINS'),
               ],
             ),
           ),
-        ],
-      ),
+          body: adminService.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                  onRefresh: () => adminService.fetchUsers(),
+                  child: Column(
+                    children: [
+                      _buildSearchAndFilter(),
+                      _buildStatistics(),
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            _buildUserList('resident'),
+                            _buildUserList('worker'),
+                            _buildUserList('recycler'),
+                            _buildUserList('admin'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        );
+      },
     );
   }
 
@@ -387,16 +415,83 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
     }
   }
 
-  void _showAddUserDialog() {
+  void _showAddWorkerDialog() {
+    final formKey = GlobalKey<FormState>();
+    String username = '';
+    String email = '';
+    String password = '';
+    String phone = '';
+    String ward = '15';
+
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Add New User'),
-        content: const Text('User registration feature coming soon!'),
+      builder: (ctx) => AlertDialog(
+        title: const Text('Add HKS Worker'),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Username'),
+                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  onSaved: (v) => username = v!,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  onSaved: (v) => email = v!,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  onSaved: (v) => password = v!,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Phone'),
+                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  onSaved: (v) => phone = v!,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Ward'),
+                  initialValue: '15',
+                  onSaved: (v) => ward = v ?? '15',
+                ),
+              ],
+            ),
+          ),
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                formKey.currentState!.save();
+                Navigator.pop(ctx);
+                final success = await context.read<AdminService>().createHksWorker({
+                  'username': username,
+                  'email': email,
+                  'password': password,
+                  'phone': phone,
+                  'ward': ward,
+                });
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(success ? 'Worker created successfully' : 'Failed to create worker'),
+                      backgroundColor: success ? AppTheme.success : AppTheme.error,
+                    ),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryGreen),
+            child: const Text('Create', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -500,23 +595,26 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
   void _confirmDeleteUser(Map<String, dynamic> user) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         title: const Text('Delete User'),
         content: Text('Are you sure you want to delete ${user['name']}?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _users.remove(user);
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${user['name']} deleted')),
-              );
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final success = await context.read<AdminService>().deleteUser(user['id']);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(success ? '${user['name']} deleted' : 'Failed to delete user'),
+                    backgroundColor: success ? AppTheme.success : AppTheme.error,
+                  ),
+                );
+              }
             },
             child: const Text('Delete', style: TextStyle(color: AppTheme.error)),
           ),
@@ -525,53 +623,4 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen>
     );
   }
 
-  List<Map<String, dynamic>> _getMockUsers() {
-    return [
-      {
-        'name': 'John Doe',
-        'email': 'john.doe@email.com',
-        'phone': '+91 9876543210',
-        'type': 'resident',
-        'status': 'Active',
-        'ward': 15,
-        'joinedDate': 'Jan 2024',
-      },
-      {
-        'name': 'Jane Smith',
-        'email': 'jane.smith@email.com',
-        'phone': '+91 9876543211',
-        'type': 'resident',
-        'status': 'Active',
-        'ward': 12,
-        'joinedDate': 'Feb 2024',
-      },
-      {
-        'name': 'Mike Worker',
-        'email': 'mike.worker@kozhikode.gov',
-        'phone': '+91 9876543212',
-        'type': 'worker',
-        'status': 'Active',
-        'ward': null,
-        'joinedDate': 'Mar 2024',
-      },
-      {
-        'name': 'Sarah Recycler',
-        'email': 'sarah@ecorecycle.com',
-        'phone': '+91 9876543213',
-        'type': 'recycler',
-        'status': 'Active',
-        'ward': null,
-        'joinedDate': 'Apr 2024',
-      },
-      {
-        'name': 'Admin User',
-        'email': 'admin@kozhikode.gov',
-        'phone': '+91 9876543214',
-        'type': 'admin',
-        'status': 'Active',
-        'ward': null,
-        'joinedDate': 'Jan 2024',
-      },
-    ];
-  }
 }
