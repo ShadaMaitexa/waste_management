@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/user.dart';
 import '../models/pickup.dart';
+import '../models/complaint.dart';
 import '../utils/api_constants.dart';
 import 'auth_service.dart';
 
@@ -11,11 +12,13 @@ class AdminService extends ChangeNotifier {
   final AuthService _authService;
   List<User> _users = [];
   List<Pickup> _pickups = [];
+  List<Complaint> _complaints = [];
   Map<String, dynamic> _systemStats = {};
   bool _isLoading = false;
 
   List<User> get allUsers => List.unmodifiable(_users);
   List<Pickup> get allPickups => List.unmodifiable(_pickups);
+  List<Complaint> get allComplaints => List.unmodifiable(_complaints);
   Map<String, dynamic> get systemStats => Map.unmodifiable(_systemStats);
   bool get isLoading => _isLoading;
 
@@ -123,6 +126,119 @@ class AdminService extends ChangeNotifier {
       return false;
     }
   }
+  // ==================== COMPLAINTS MANAGEMENT ====================
+
+  Future<void> fetchComplaints() async {
+    if (!_authService.isAuthenticated) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.complaints),
+        headers: {'Authorization': 'Bearer ${_authService.token}'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _complaints = data.map((json) => Complaint.fromJson(json)).toList();
+      }
+    } catch (e) {
+      debugPrint('Error fetching complaints: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> updateComplaintStatus(String id, String status, {String? responseText}) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('${ApiConstants.complaints}$id/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+        body: jsonEncode({
+          'status': status,
+          if (responseText != null) 'response': responseText,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        await fetchComplaints();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ==================== BOOKINGS & ASSIGNMENTS ====================
+
+  Future<void> fetchAllBookings() async {
+    if (!_authService.isAuthenticated) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.pickups),
+        headers: {'Authorization': 'Bearer ${_authService.token}'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _pickups = data.map((json) => Pickup.fromJson(json)).toList();
+      }
+    } catch (e) {
+      debugPrint('Error fetching bookings: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> assignWorkerToBooking(String pickupId, String workerId) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('${ApiConstants.pickups}$pickupId/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+        body: jsonEncode({'assigned_worker': workerId, 'status': 'assigned'}),
+      );
+
+      if (response.statusCode == 200) {
+        await fetchAllBookings();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ==================== REVENUE & ANALYTICS ====================
+
+  Future<Map<String, dynamic>> fetchRevenueStats() async {
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.feesStats),
+        headers: {'Authorization': 'Bearer ${_authService.token}'},
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      debugPrint('Error fetching revenue stats: $e');
+    }
+    return {};
+  }
+
   List<Map<String, dynamic>> getPickupTrends(int days) {
     return [
       {'day': 'Mon', 'value': 45},
@@ -134,6 +250,7 @@ class AdminService extends ChangeNotifier {
       {'day': 'Sun', 'value': 42},
     ];
   }
+
   List<Map<String, dynamic>> getSystemAlerts() {
     return [
       {

@@ -3,17 +3,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/pickup.dart';
+import '../models/pickup_slot.dart'; // Added import for PickupSlot
 import '../utils/api_constants.dart';
 import 'auth_service.dart';
 
 class PickupService extends ChangeNotifier {
   final AuthService _authService;
   List<Pickup> _pickups = [];
+  List<PickupSlot> _availableSlots = []; // Added available slots list
   bool _isLoading = false;
 
   PickupService(this._authService);
 
   List<Pickup> get pickups => List.unmodifiable(_pickups);
+  List<PickupSlot> get availableSlots => List.unmodifiable(_availableSlots); // Added available slots getter
   bool get isLoading => _isLoading;
 
   Future<void> fetchPickups() async {
@@ -186,5 +189,58 @@ class PickupService extends ChangeNotifier {
     return _pickups
         .where((p) => p.userId == userId && p.status == PickupStatus.completed)
         .fold(0.0, (sum, p) => sum + (p.weight ?? 5.0)); // Default to 5kg if weight is null
+  }
+  // ==================== PICKUP SLOTS ====================
+
+  Future<void> fetchAvailableSlots() async {
+    // Mocking for now as backend might not have this yet
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      // simulate network delay
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      // Some mock data
+      final now = DateTime.now();
+      _availableSlots = [
+        PickupSlot(
+          id: 'slot1',
+          date: now,
+          startTime: const TimeOfDay(hour: 8, minute: 0),
+          endTime: const TimeOfDay(hour: 10, minute: 0),
+        ),
+        PickupSlot(
+          id: 'slot2',
+          date: now,
+          startTime: const TimeOfDay(hour: 10, minute: 30),
+          endTime: const TimeOfDay(hour: 12, minute: 30),
+        ),
+        PickupSlot(
+          id: 'slot3',
+          date: now.add(const Duration(days: 1)),
+          startTime: const TimeOfDay(hour: 9, minute: 0),
+          endTime: const TimeOfDay(hour: 11, minute: 0),
+        ),
+      ];
+    } catch (e) {
+      debugPrint('Error fetching slots: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> createPickupSlot(PickupSlot slot) async {
+    // Mocking
+    _availableSlots.add(slot);
+    notifyListeners();
+    return true;
+  }
+
+  Future<bool> deletePickupSlot(String slotId) async {
+    _availableSlots.removeWhere((s) => s.id == slotId);
+    notifyListeners();
+    return true;
   }
 }

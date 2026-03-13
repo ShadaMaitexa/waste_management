@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import 'manage_pickup_slots_screen.dart';
 
 class AdminSettingsScreen extends StatefulWidget {
   const AdminSettingsScreen({super.key});
@@ -62,12 +63,21 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           ]),
           const SizedBox(height: AppTheme.spacingM),
           _buildSection('Data Management', [
-            _buildActionTile(
-               'Manage Wards & Zones',
-               'Add or edit geographical boundaries',
-               Icons.map,
-               () {},
-             ),
+             _buildActionTile(
+                'Manage Pickup Slots',
+                'Define when residents can book pickups',
+                Icons.calendar_month,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen()),
+                ),
+              ),
+              _buildActionTile(
+                'Manage Wards & Zones',
+                'Add or edit geographical boundaries',
+                Icons.map,
+                () {},
+              ),
              _buildActionTile(
                'Data Backup',
                'Last backup: Today, 04:00 AM',

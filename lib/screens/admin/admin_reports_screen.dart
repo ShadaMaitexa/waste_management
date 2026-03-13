@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/admin_service.dart';
 import '../../theme/app_theme.dart';
 
 class AdminReportsScreen extends StatefulWidget {
@@ -11,6 +13,25 @@ class AdminReportsScreen extends StatefulWidget {
 class _AdminReportsScreenState extends State<AdminReportsScreen> {
   String _selectedType = 'All';
   final List<String> _reportTypes = ['All', 'Collection', 'Financial', 'Performance', 'Audit'];
+  Map<String, dynamic> _revenueStats = {};
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchStats();
+  }
+
+  Future<void> _fetchStats() async {
+    setState(() => _isLoading = true);
+    final stats = await context.read<AdminService>().fetchRevenueStats();
+    if (mounted) {
+      setState(() {
+        _revenueStats = stats;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,26 +53,112 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
           const SizedBox(width: 8),
         ],
       ),
-      body: Column(
-        children: [
-          _buildFilters(),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(AppTheme.spacingM),
-              itemCount: 10, // Mock count
-              itemBuilder: (context, index) {
-                return _buildReportCard(index);
-              },
+      body: _isLoading 
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                if (_revenueStats.isNotEmpty) _buildRevenueOverview(),
+                _buildFilters(),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: _fetchStats,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(AppTheme.spacingM),
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        return _buildReportCard(index);
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showGenerateReportDialog,
         backgroundColor: AppTheme.primaryGreen,
         icon: const Icon(Icons.add),
         label: const Text('Generate Report'),
       ),
+    );
+  }
+
+  Widget _buildRevenueOverview() {
+    final total = _revenueStats['total_revenue'] ?? _revenueStats['total_fees'] ?? '0.00';
+    final growth = _revenueStats['revenue_growth'] ?? '+15%';
+
+    return Container(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6366F1).withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Total Revenue (KMC)',
+                style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  growth,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '₹$total',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -1,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _revenueSubStat('Fees Collected', '₹${_revenueStats['fees_collected'] ?? '0'}'),
+              _revenueSubStat('Pending Dues', '₹${_revenueStats['pending_dues'] ?? '0'}'),
+              _revenueSubStat('Recycler Sales', '₹${_revenueStats['recycler_sales'] ?? '0'}'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _revenueSubStat(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.white60, fontSize: 11)),
+        const SizedBox(height: 4),
+        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+      ],
     );
   }
 
@@ -232,7 +339,6 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
             onPressed: () {
                Navigator.pop(context);
                
-               // Show loading/success
                ScaffoldMessenger.of(context).showSnackBar(
                  const SnackBar(content: Text('Report generation started...')),
                );

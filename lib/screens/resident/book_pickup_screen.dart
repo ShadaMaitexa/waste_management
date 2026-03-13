@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../models/pickup.dart';
+import '../../models/pickup_slot.dart';
 import '../../services/pickup_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -18,11 +19,14 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   final _notesController = TextEditingController();
   final _specialInstructionsController = TextEditingController();
 
-  PickupType _selectedType = PickupType.regular;
   final List<WasteType> _selectedWasteTypes = [];
-  DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
-  TimeOfDay _selectedTime = const TimeOfDay(hour: 8, minute: 0);
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // No need to fetch slots if we are just booking for the standard time
+  }
 
   @override
   void dispose() {
@@ -30,53 +34,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     _notesController.dispose();
     _specialInstructionsController.dispose();
     super.dispose();
-  }
-
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 30)),
-      builder: (context, child) {
-        return Theme(
-          data: AppTheme.lightTheme.copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppTheme.primaryGreen,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null && picked != _selectedDate) {
-      setState(() => _selectedDate = picked);
-    }
-  }
-
-  Future<void> _selectTime() async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime,
-      builder: (context, child) {
-        return Theme(
-          data: AppTheme.lightTheme.copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppTheme.primaryGreen,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null && picked != _selectedTime) {
-      setState(() => _selectedTime = picked);
-    }
   }
 
   void _toggleWasteType(WasteType type) {
@@ -113,14 +70,14 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         userPhone: '+91 9876543210',
         address: _addressController.text.trim(),
         wardNumber: '15',
-        type: _selectedType,
+        type: PickupType.regular,
         status: PickupStatus.scheduled,
-        scheduledDate: _selectedDate,
-        scheduledTime: _selectedTime,
+        scheduledDate: DateTime.now(), // Admin will manage actual time
+        scheduledTime: const TimeOfDay(hour: 8, minute: 0), // Default placeholder
         notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
         createdAt: DateTime.now(),
         wasteTypes: _selectedWasteTypes,
-        estimatedDuration: _getEstimatedDuration(),
+        estimatedDuration: 30.0,
         specialInstructions: _specialInstructionsController.text.trim().isNotEmpty
             ? _specialInstructionsController.text.trim()
             : null,
@@ -153,12 +110,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     }
   }
 
-  double _getEstimatedDuration() {
-    int baseDuration = 30;
-    if (_selectedType == PickupType.emergency) baseDuration -= 10;
-    baseDuration += _selectedWasteTypes.length * 5;
-    return baseDuration.toDouble();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,24 +139,14 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildStepHeader('01', 'MODE OF COLLECTION'),
-                    const SizedBox(height: 20),
-                    _buildPickupTypeGrid(),
-                    const SizedBox(height: 40),
-
-                    _buildStepHeader('02', 'CLASSIFICATION'),
+                    _buildStepHeader('01', 'WASTE CLASSIFICATION'),
                     const SizedBox(height: 20),
                     _buildWasteTypeGrid(),
                     const SizedBox(height: 40),
 
-                    if (_selectedType != PickupType.instant) ...[
-                      _buildStepHeader('03', 'SCHEDULING'),
-                      const SizedBox(height: 20),
-                      _buildDateTimeSelector(),
-                      const SizedBox(height: 40),
-                    ],
-
-                    _buildStepHeader(_selectedType == PickupType.instant ? '03' : '04', 'LOCATION & LOGISTICS'),
+                    _buildStepHeader('02', 'COLLECTION DETAILS'),
+                    const SizedBox(height: 20),
+                    _buildCollectionInfo(),
                     const SizedBox(height: 20),
                     _buildAddressSection(),
                     const SizedBox(height: 48),
@@ -273,79 +214,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     );
   }
 
-  Widget _buildPickupTypeGrid() {
-    return SizedBox(
-      height: 160,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
-        physics: const BouncingScrollPhysics(),
-        children: PickupType.values.map((type) {
-          final isSelected = _selectedType == type;
-          return GestureDetector(
-            onTap: () => setState(() => _selectedType = type),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              width: 150,
-              margin: const EdgeInsets.only(right: 20),
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primaryGreen : Colors.white,
-                borderRadius: BorderRadius.circular(36),
-                boxShadow: [
-                  BoxShadow(
-                    color: (isSelected ? AppTheme.primaryGreen : Colors.black).withOpacity(isSelected ? 0.3 : 0.04),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.white.withOpacity(0.2) : AppTheme.grey50,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _getPickupIcon(type),
-                      color: isSelected ? Colors.white : AppTheme.primaryGreen,
-                      size: 28,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _getPickupTypeTitle(type).split('\n')[0].toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w900,
-                      color: isSelected ? Colors.white : AppTheme.grey900,
-                      letterSpacing: 0.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _getPickupTypeTitle(type).contains('\n') 
-                        ? _getPickupTypeTitle(type).split('\n')[1] 
-                        : 'Ready',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected ? Colors.white.withOpacity(0.7) : AppTheme.grey500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
 
   Widget _buildWasteTypeGrid() {
     return GridView.builder(
@@ -415,59 +283,31 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     );
   }
 
-  Widget _buildDateTimeSelector() {
+  Widget _buildCollectionInfo() {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        color: AppTheme.primaryGreen.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.primaryGreen.withOpacity(0.1)),
       ),
-      child: Row(
+      child: const Row(
         children: [
+          Icon(Icons.info_outline_rounded, color: AppTheme.primaryGreen),
+          SizedBox(width: 16),
           Expanded(
-            child: InkWell(
-              onTap: _selectDate,
-              borderRadius: BorderRadius.circular(16),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Column(
-                  children: [
-                    const Icon(Icons.event_note_rounded, color: AppTheme.primaryGreen),
-                    const SizedBox(height: 8),
-                    Text(
-                      DateFormat('EEE, MMM d').format(_selectedDate),
-                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
-                    ),
-                  ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Standard Daily Collection',
+                  style: TextStyle(fontWeight: FontWeight.w800, color: AppTheme.primaryGreen),
                 ),
-              ),
-            ),
-          ),
-          Container(width: 1, height: 40, color: AppTheme.grey100),
-          Expanded(
-            child: InkWell(
-              onTap: _selectTime,
-              borderRadius: BorderRadius.circular(16),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Column(
-                  children: [
-                    const Icon(Icons.schedule_rounded, color: AppTheme.primaryGreen),
-                    const SizedBox(height: 8),
-                    Text(
-                      _selectedTime.format(context),
-                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
-                    ),
-                  ],
+                Text(
+                  'Pickup time: Tomorrow (8:00 AM - 10:00 AM)',
+                  style: TextStyle(fontSize: 12, color: AppTheme.grey600),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -585,30 +425,23 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    (_selectedType == PickupType.instant ? 'INITIATE COLLECTION' : 'CONFIRM BOOKING').toUpperCase(),
-                    style: const TextStyle(
+                   Text(
+                    'SCHEDULE PICKUP',
+                    style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
                       fontSize: 15,
                       letterSpacing: 1,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                  SizedBox(width: 12),
+                  Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
                 ],
               ),
       ),
     );
   }
 
-  IconData _getPickupIcon(PickupType type) {
-    switch (type) {
-      case PickupType.regular: return Icons.calendar_month_outlined;
-      case PickupType.emergency: return Icons.bolt_outlined;
-      case PickupType.instant: return Icons.local_shipping_outlined;
-    }
-  }
 
   IconData _getWasteIcon(WasteType type) {
      switch (type) {
@@ -622,13 +455,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     }
   }
 
-  String _getPickupTypeTitle(PickupType type) {
-    switch (type) {
-      case PickupType.regular: return 'Pre-book\n(Scheduled)';
-      case PickupType.emergency: return 'Express\n(Priority)';
-      case PickupType.instant: return 'Instant\n(Release Now)';
-    }
-  }
 
   String _getWasteTypeTitle(WasteType type) {
      final str = type.toString().split('.').last;

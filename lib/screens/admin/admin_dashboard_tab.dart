@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
 import '../../services/admin_service.dart';
 import '../../theme/app_theme.dart';
+import 'admin_complaints_screen.dart';
+import 'admin_bookings_screen.dart';
+import 'admin_user_management_screen.dart';
+import 'manage_pickup_slots_screen.dart';
 
 class AdminDashboardTab extends StatefulWidget {
   final Function(int) onNavigate;
@@ -603,6 +607,16 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               ),
         ),
         const SizedBox(height: AppTheme.spacingM),
+        _buildManagementHub(),
+        const SizedBox(height: AppTheme.spacingL),
+        Text(
+          'Quick Insights',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
+              ),
+        ),
+        const SizedBox(height: AppTheme.spacingM),
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
@@ -612,32 +626,120 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           childAspectRatio: 1.6,
           children: [
             _buildQuickActionCard(
-              'Generate Reports',
-              Icons.analytics_rounded,
+              'Reports',
+              Icons.description_rounded,
               AppTheme.info,
               () => widget.onNavigate(2),
             ),
             _buildQuickActionCard(
-              'Route Planning',
-              Icons.map_rounded,
+              'Analytics',
+              Icons.analytics_rounded,
               AppTheme.primaryGreen,
-              () {},
-            ),
-            _buildQuickActionCard(
-              'User Control',
-              Icons.people_alt_rounded,
-              AppTheme.warning,
               () => widget.onNavigate(1),
-            ),
-            _buildQuickActionCard(
-              'System Settings',
-              Icons.settings_rounded,
-              AppTheme.secondaryGreen,
-              () {},
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildManagementHub() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Management Hub',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
+              ),
+        ),
+        const SizedBox(height: AppTheme.spacingM),
+        Container(
+          padding: const EdgeInsets.all(AppTheme.spacingM),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.grey300.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              _buildHubItem(
+                'Citizen Complaints',
+                'Manage and resolve disputes',
+                Icons.report_problem_rounded,
+                AppTheme.warning,
+                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen())),
+              ),
+              const Divider(height: 32),
+              _buildHubItem(
+                'Pickup Bookings',
+                'Assign and track collections',
+                Icons.local_shipping_rounded,
+                AppTheme.info,
+                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen())),
+              ),
+              const Divider(height: 32),
+              _buildHubItem(
+                'User Management',
+                'Manage workers and residents',
+                Icons.people_alt_rounded,
+                AppTheme.success,
+                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen())),
+              ),
+              const Divider(height: 32),
+              _buildHubItem(
+                'Pickup Slots',
+                'Define collection schedules',
+                Icons.calendar_month_rounded,
+                AppTheme.primaryGreen,
+                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen())),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHubItem(String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.grey900),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(color: AppTheme.grey500, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.chevron_right_rounded, color: AppTheme.grey300),
+        ],
+      ),
     );
   }
 
