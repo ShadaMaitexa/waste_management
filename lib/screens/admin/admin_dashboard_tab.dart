@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../services/auth_service.dart';
 import '../../services/admin_service.dart';
 import '../../theme/app_theme.dart';
@@ -80,70 +82,101 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
 
   Widget _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: 140,
+      expandedHeight: 160,
       collapsedHeight: 80,
       pinned: true,
       elevation: 0,
+      scrolledUnderElevation: 0,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border(bottom: BorderSide(color: AppTheme.grey100, width: 1)),
+            border: Border(bottom: BorderSide(color: AppTheme.grey100, width: 1.5)),
           ),
         ),
-        titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         title: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'COMMAND CENTER',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.5,
-                color: AppTheme.primaryEmerald,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Text(
+                'SYSTEM OPERATIONAL',
+                style: TextStyle(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                  color: AppTheme.primaryEmerald,
+                ),
               ),
             ),
+            const SizedBox(height: 4),
             const Text(
-              'Government Panel',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.grey900),
+              'Command Center',
+              style: TextStyle(
+                fontSize: 20, 
+                fontWeight: FontWeight.w900, 
+                color: AppTheme.grey900,
+                letterSpacing: -0.8,
+              ),
             ),
           ],
         ),
       ),
       actions: [
         Container(
+          height: 40,
+          width: 40,
           margin: const EdgeInsets.only(right: 12),
-          decoration: BoxDecoration(color: AppTheme.grey50, shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            color: AppTheme.grey50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.grey200),
+          ),
           child: IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, color: AppTheme.grey700, size: 20),
+            icon: const Icon(Icons.notifications_active_rounded, color: AppTheme.primaryEmerald, size: 18),
             onPressed: () {},
+            padding: EdgeInsets.zero,
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.logout_rounded, color: AppTheme.error, size: 20),
-          onPressed: () {
-            Provider.of<AuthService>(context, listen: false).logout();
-            Navigator.of(context).pushReplacementNamed('/login');
-          },
+        Container(
+          height: 40,
+          width: 40,
+          margin: const EdgeInsets.only(right: 20),
+          decoration: BoxDecoration(
+            color: AppTheme.error.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.error.withValues(alpha: 0.1)),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.power_settings_new_rounded, color: AppTheme.error, size: 18),
+            onPressed: () {
+              Provider.of<AuthService>(context, listen: false).logout();
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
+            padding: EdgeInsets.zero,
+          ),
         ),
-        const SizedBox(width: 8),
       ],
     );
   }
 
   Widget _buildWelcomeSection() {
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        gradient: AppTheme.emeraldGradient,
+        gradient: AppTheme.slateGradient,
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+            color: AppTheme.grey900.withValues(alpha: 0.2),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -152,9 +185,9 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
       child: Stack(
         children: [
           Positioned(
-            right: -30,
-            top: -30,
-            child: Icon(Icons.shield_rounded, size: 160, color: Colors.white.withValues(alpha: 0.1)),
+            right: -20,
+            bottom: -20,
+            child: Icon(Icons.show_chart_rounded, size: 140, color: Colors.white.withValues(alpha: 0.05)),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,31 +195,44 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
-                    child: const Text('SUPER ADMIN', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(color: AppTheme.primaryEmerald, borderRadius: BorderRadius.circular(8)),
+                    child: const Text('SYSTEM SECURE', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
                   ),
-                  const SizedBox(width: 8),
+                  const Spacer(),
                   Text(
-                    'System Secure',
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 10, fontWeight: FontWeight.w600),
+                    DateFormat('EEEE, MMM d').format(DateTime.now()).toUpperCase(),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               const Text(
-                'Operational Intelligence',
-                style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, letterSpacing: -1),
+                'Intelligence Overview',
+                style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -1),
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  _buildQuickStat('Uptime', '99.9%'),
-                  const SizedBox(width: 24),
-                  _buildQuickStat('Latency', '24ms'),
-                  const SizedBox(width: 24),
-                  _buildQuickStat('Node Status', 'Healthy'),
-                ],
+              Text(
+                'Monitoring 1,248 active service nodes across the district.',
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 32),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildQuickStat('CORE UPTIME', '99.98%'),
+                    Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.1)),
+                    _buildQuickStat('AVG LATENCY', '18ms'),
+                    Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.1)),
+                    _buildQuickStat('DATA NODES', 'Healthy'),
+                  ],
+                ),
               ),
             ],
           ),
@@ -199,8 +245,9 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10, fontWeight: FontWeight.bold)),
-        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
+        Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+        const SizedBox(height: 4),
+        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
       ],
     );
   }
@@ -212,29 +259,42 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppTheme.grey900)),
-            Text(subtitle, style: const TextStyle(fontSize: 13, color: AppTheme.grey500)),
+            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.5)),
+            Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey400, fontWeight: FontWeight.w500)),
           ],
         ),
         TextButton(
           onPressed: () {},
-          child: const Text('View Full Analytics', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryEmerald)),
+          style: TextButton.styleFrom(
+            foregroundColor: AppTheme.primaryEmerald,
+            textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 0.5),
+          ),
+          child: const Row(
+            children: [
+              Text('ANALYTICS'),
+              SizedBox(width: 4),
+              Icon(Icons.arrow_forward_ios_rounded, size: 10),
+            ],
+          ),
         ),
       ],
     );
   }
 
   Widget _buildLoadingMetrics() {
-    return GridView.count(
-      shrinkWrap: true,
-      crossAxisCount: 4,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      childAspectRatio: 1.5,
-      children: List.generate(4, (index) => Container(
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      )),
+    return Shimmer.fromColors(
+      baseColor: AppTheme.grey100,
+      highlightColor: AppTheme.grey50,
+      child: GridView.count(
+        shrinkWrap: true,
+        crossAxisCount: 2,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 2.2,
+        children: List.generate(4, (index) => Container(
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+        )),
+      ),
     );
   }
 
@@ -243,14 +303,14 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      childAspectRatio: 2.2,
+      crossAxisSpacing: 20,
+      mainAxisSpacing: 20,
+      childAspectRatio: 2.0,
       children: [
-        _buildMetricCard('Total Revenue', '₹${stats['total_revenue'] ?? '4.8L'}', '+18%', Icons.payments_rounded, AppTheme.success),
-        _buildMetricCard('Total Pickups', '${stats['total_pickups'] ?? '2,456'}', '+12%', Icons.recycling_rounded, AppTheme.primaryEmerald),
-        _buildMetricCard('Active Routes', '${stats['active_routes'] ?? '24'}', '+2', Icons.route_rounded, AppTheme.info),
-        _buildMetricCard('Open Issues', '${stats['complaints_count'] ?? '12'}', '-5%', Icons.report_problem_rounded, AppTheme.error),
+        _buildMetricCard('Total Revenue', '₹${stats['total_revenue'] ?? '5.2L'}', '+14%', Icons.account_balance_wallet_rounded, AppTheme.success),
+        _buildMetricCard('Active Pickups', '${stats['total_pickups'] ?? '1,842'}', '+8%', Icons.token_rounded, AppTheme.primaryEmerald),
+        _buildMetricCard('Deployed Force', '${stats['active_routes'] ?? '32'}', '+3', Icons.engineering_rounded, AppTheme.info),
+        _buildMetricCard('Pending Alerts', '${stats['complaints_count'] ?? '08'}', '-12%', Icons.emergency_share_rounded, AppTheme.error),
       ],
     );
   }
@@ -260,15 +320,9 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         border: Border.all(color: AppTheme.grey100, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: AppTheme.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,22 +332,22 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(14)),
-                child: Icon(icon, color: color, size: 18),
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+                child: Icon(icon, color: color, size: 20),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: growth.contains('+') ? AppTheme.success.withValues(alpha: 0.1) : AppTheme.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(growth, style: TextStyle(color: growth.contains('+') ? AppTheme.success : AppTheme.error, fontSize: 10, fontWeight: FontWeight.w900)),
+                child: Text(growth, style: TextStyle(color: growth.contains('+') ? AppTheme.success : AppTheme.error, fontSize: 9, fontWeight: FontWeight.w900)),
               ),
             ],
           ),
           const Spacer(),
-          Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.5)),
-          Text(label.toUpperCase(), style: const TextStyle(fontSize: 9, color: AppTheme.grey400, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+          Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -1)),
+          Text(label.toUpperCase(), style: const TextStyle(fontSize: 9, color: AppTheme.grey400, fontWeight: FontWeight.w900, letterSpacing: 0.8)),
         ],
       ),
     );
@@ -304,42 +358,46 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      childAspectRatio: 1.6,
+      crossAxisSpacing: 20,
+      mainAxisSpacing: 20,
+      childAspectRatio: 1.4,
       children: [
-        _buildHubCard('Complaints', 'Resolve citizen issues', Icons.report_problem_rounded, AppTheme.error, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen()))),
-        _buildHubCard('Bookings', 'Dispatch collections', Icons.local_shipping_rounded, AppTheme.accentIndigo, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen()))),
-        _buildHubCard('Workers', 'Field force management', Icons.people_alt_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen()))),
-        _buildHubCard('Schedules', 'Optimization engine', Icons.calendar_month_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen()))),
+        _buildHubCard('Incident Center', 'Manage grievances', Icons.report_problem_rounded, AppTheme.error, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen()))),
+        _buildHubCard('Service Queue', 'Dispatch operations', Icons.auto_graph_rounded, AppTheme.accentIndigo, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen()))),
+        _buildHubCard('Field Force', 'User & Worker registry', Icons.supervised_user_circle_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen()))),
+        _buildHubCard('Scheduling', 'Slot & route engine', Icons.timer_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen()))),
       ],
     );
   }
 
   Widget _buildHubCard(String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppTheme.grey100, width: 1.5),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.08), shape: BoxShape.circle),
-              child: Icon(icon, color: color, size: 24),
-            ),
-            const Spacer(),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppTheme.grey900)),
-            const SizedBox(height: 2),
-            Text(subtitle, style: const TextStyle(fontSize: 10, color: AppTheme.grey400, fontWeight: FontWeight.w500, height: 1.1)),
-          ],
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(28),
+        child: Ink(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: AppTheme.grey100, width: 1.5),
+            boxShadow: AppTheme.cardShadow,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(16)),
+                child: Icon(icon, color: color, size: 26),
+              ),
+              const Spacer(),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.5)),
+              const SizedBox(height: 2),
+              Text(subtitle, style: const TextStyle(fontSize: 11, color: AppTheme.grey400, fontWeight: FontWeight.w500, height: 1.2)),
+            ],
+          ),
         ),
       ),
     );

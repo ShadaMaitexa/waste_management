@@ -38,11 +38,39 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.grey50,
-      appBar: AppBar(
-        title: const Text('Strategic Intelligence'),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: Container(
+          padding: const EdgeInsets.only(top: 10),
+          decoration: const BoxDecoration(
+            gradient: AppTheme.slateGradient,
+          ),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: const Text(
+              'Strategic Intelligence',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 22,
+                color: Colors.white,
+                letterSpacing: -0.8,
+              ),
+            ),
+            foregroundColor: Colors.white,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share_rounded, color: Colors.white70),
+                onPressed: () {},
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
       ),
       body: _isLoading 
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: AppTheme.primaryEmerald))
           : Column(
               children: [
                 if (_revenueStats.isNotEmpty) _buildRevenueOverview(),
@@ -50,8 +78,10 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: _fetchStats,
+                    color: AppTheme.primaryEmerald,
                     child: ListView.builder(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.only(bottom: 100),
+                      physics: const BouncingScrollPhysics(),
                       itemCount: 8,
                       itemBuilder: (context, index) {
                         return _buildReportCard(index);
@@ -61,11 +91,25 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                 ),
               ],
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showGenerateReportDialog,
-        backgroundColor: AppTheme.primaryEmerald,
-        icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text('Generate Intelligence', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: _showGenerateReportDialog,
+          backgroundColor: AppTheme.primaryEmerald,
+          elevation: 0,
+          highlightElevation: 0,
+          icon: const Icon(Icons.insights_rounded, color: Colors.white),
+          label: const Text('GENERATE REPORT', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1)),
+        ),
       ),
     );
   }
@@ -141,30 +185,45 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   }
 
   Widget _buildFilters() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Row(
-        children: _reportTypes.map((type) {
+    return Container(
+      height: 60,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: _reportTypes.length,
+        itemBuilder: (context, index) {
+          final type = _reportTypes[index];
           final isSelected = _selectedType == type;
           return Padding(
-            padding: const EdgeInsets.only(right: 10),
+            padding: const EdgeInsets.only(right: 12),
             child: ChoiceChip(
-              label: Text(type),
+              label: Text(type.toUpperCase()),
               selected: isSelected,
               onSelected: (_) => setState(() => _selectedType = type),
               backgroundColor: Colors.white,
-              selectedColor: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+              selectedColor: AppTheme.primaryEmerald,
               labelStyle: TextStyle(
-                color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey500,
-                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                fontSize: 13,
+                color: isSelected ? Colors.white : AppTheme.grey500,
+                fontWeight: FontWeight.w900,
+                fontSize: 11,
+                letterSpacing: 0.5,
               ),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(
+                  color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200,
+                  width: 1.5,
+                ),
+              ),
               showCheckmark: false,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              elevation: isSelected ? 4 : 0,
+              shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
             ),
           );
-        }).toList(),
+        },
       ),
     );
   }
@@ -176,52 +235,76 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     final isFinancial = index % 2 != 0;
     
     return Container(
-      margin: const EdgeInsets.only(bottom: 16, left: 20, right: 20),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.grey100),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppTheme.grey100, width: 1),
         boxShadow: AppTheme.cardShadow,
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: (isFinancial ? AppTheme.accentIndigo : AppTheme.primaryEmerald).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(
-              isFinancial ? Icons.payments_rounded : Icons.analytics_rounded,
-              color: isFinancial ? AppTheme.accentIndigo : AppTheme.primaryEmerald,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(28),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Row(
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppTheme.grey900)),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(date, style: const TextStyle(color: AppTheme.grey400, fontSize: 12, fontWeight: FontWeight.w600)),
-                    const SizedBox(width: 8),
-                    Container(width: 4, height: 4, decoration: const BoxDecoration(color: AppTheme.grey300, shape: BoxShape.circle)),
-                    const SizedBox(width: 8),
-                    Text('PDF • 2.4 MB', style: TextStyle(color: AppTheme.grey400, fontSize: 12)),
-                  ],
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: (isFinancial ? AppTheme.accentIndigo : AppTheme.primaryEmerald).withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    isFinancial ? Icons.analytics_rounded : Icons.summarize_rounded,
+                    color: isFinancial ? AppTheme.accentIndigo : AppTheme.primaryEmerald,
+                    size: 26,
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title, 
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.3),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_today_rounded, size: 12, color: AppTheme.grey400),
+                          const SizedBox(width: 6),
+                          Text(
+                            date, 
+                            style: const TextStyle(color: AppTheme.grey400, fontSize: 12, fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(width: 12),
+                          Container(width: 4, height: 4, decoration: const BoxDecoration(color: AppTheme.grey200, shape: BoxShape.circle)),
+                          const SizedBox(width: 12),
+                          Text(
+                            '2.4 MB', 
+                            style: TextStyle(color: AppTheme.grey300, fontSize: 11, fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.grey50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.download_for_offline_rounded, color: AppTheme.grey400, size: 22),
                 ),
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.download_for_offline_rounded, color: AppTheme.grey300),
-            onPressed: () {},
-          ),
-        ],
+        ),
       ),
     );
   }

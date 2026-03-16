@@ -382,27 +382,50 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
   void _showFilterDialog() {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         String tempFilter = _selectedFilter;
         return StatefulBuilder(
-          builder: (context, setDialogState) => AlertDialog(
-            title: const Text('Filter Pickups'),
+          builder: (dialogContext, setDialogState) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: const Text('Filter Pickups', style: TextStyle(fontWeight: FontWeight.w900)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: _filters.map((filter) {
-                return ListTile(
-                  title: Text(filter),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                  leading: Radio<String>(
-                    value: filter,
-                    groupValue: tempFilter,
-                    activeColor: AppTheme.primaryEmerald,
-                    onChanged: (value) {
-                      setDialogState(() => tempFilter = value!);
-                      setState(() => _selectedFilter = value!);
-                      Navigator.pop(context);
-                    },
+                final isSelected = tempFilter == filter;
+                return InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    setDialogState(() => tempFilter = filter);
+                    setState(() => _selectedFilter = filter);
+                    Navigator.pop(dialogContext);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    margin: const EdgeInsets.only(bottom: 4),
+                    decoration: BoxDecoration(
+                      color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.08) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.3) : Colors.transparent,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
+                          color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey300,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          filter,
+                          style: TextStyle(
+                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                            color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }).toList(),
@@ -412,7 +435,6 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
       },
     );
   }
-
 
   void _reschedulePickup(Map<String, dynamic> pickup) {
     showDialog(

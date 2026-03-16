@@ -18,81 +18,105 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.grey50,
-      appBar: AppBar(
-        title: const Text(
-          'System Configuration',
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: Container(
+          padding: const EdgeInsets.only(top: 10),
+          decoration: const BoxDecoration(
+            gradient: AppTheme.slateGradient,
+          ),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: const Text(
+              'System Configuration',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 22,
+                color: Colors.white,
+                letterSpacing: -0.8,
+              ),
+            ),
+            foregroundColor: Colors.white,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.help_outline_rounded, color: Colors.white70),
+                onPressed: () {},
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
         ),
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
-        elevation: 0,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(24),
+        physics: const BouncingScrollPhysics(),
         children: [
           _buildProfileSection(),
-          const SizedBox(height: AppTheme.spacingL),
-          _buildSection('System Configuration', [
+          const SizedBox(height: 32),
+          _buildSection('Operational Core', [
             _buildSwitchTile(
-              'Auto-Dispatch Routes',
-              'Automatically assign routes to closest available workers',
+              'Autonomous Dispatch',
+              'Al-driven route optimization and assignment',
               _autoDispatchEnabled,
               (v) => setState(() => _autoDispatchEnabled = v),
             ),
             _buildSwitchTile(
               'Maintenance Mode',
-             'Suspend all non-essential system operations', // Reverted to original subtitle string
+              'Suspend non-essential system services',
               _maintenanceMode,
               (v) => setState(() => _maintenanceMode = v),
             ),
           ]),
-          const SizedBox(height: AppTheme.spacingM),
-          _buildSection('Notifications', [
+          const SizedBox(height: 24),
+          _buildSection('Security & Alerting', [
             _buildSwitchTile(
-              'System Alerts',
-              'Receive push notifications for critical alerts',
+              'Critical System Alerts',
+              'Real-time push notifications for anomalies',
               _notificationsEnabled,
               (v) => setState(() => _notificationsEnabled = v),
             ),
-             _buildActionTile(
-               'Notification Channels',
-               'Configure email and SMS preferences',
-               Icons.arrow_forward_ios,
-               () {},
-             ),
+            _buildActionTile(
+              'Communication Hub',
+              'Manage email, SMS, and broadcast gateways',
+              Icons.sensors_rounded,
+              () {},
+            ),
           ]),
-          const SizedBox(height: AppTheme.spacingM),
-          _buildSection('Data Management', [
-             _buildActionTile(
-                'Manage Pickup Slots',
-                'Define when residents can book pickups',
-                Icons.calendar_month,
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen()),
-                ),
+          const SizedBox(height: 24),
+          _buildSection('Resource Management', [
+            _buildActionTile(
+              'Availability Matrices',
+              'Configure citizen pickup booking slots',
+              Icons.event_available_rounded,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen()),
               ),
-              _buildActionTile(
-                'Manage Wards & Zones',
-                'Add or edit geographical boundaries',
-                Icons.map,
-                () {},
-              ),
-             _buildActionTile(
-               'Data Backup',
-               'Last backup: Today, 04:00 AM',
-               Icons.cloud_upload,
-               () {},
-             ),
-             _buildActionTile(
-               'Audit Logs',
-               'View system access logs',
-               Icons.history,
-               () {},
-             ),
+            ),
+            _buildActionTile(
+              'Geospatial Zoning',
+              'Modify ward boundaries and coverage areas',
+              Icons.map_rounded,
+              () {},
+            ),
+            _buildActionTile(
+              'Cloud Data Integrity',
+              'Last automated backup: 04:00 AM UTC',
+              Icons.cloud_done_rounded,
+              () {},
+            ),
+            _buildActionTile(
+              'Audit Intelligence',
+              'Review high-level administrative logs',
+              Icons.security_rounded,
+              () {},
+            ),
           ]),
-          const SizedBox(height: AppTheme.spacingL),
+          const SizedBox(height: 48),
           _buildLogoutButton(),
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -100,65 +124,56 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
 
   Widget _buildProfileSection() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
       ),
       child: Row(
         children: [
           Container(
-            width: 70,
-            height: 70,
+            width: 72,
+            height: 72,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(20),
+              gradient: AppTheme.emeraldGradient,
+              borderRadius: BorderRadius.circular(24),
             ),
             alignment: Alignment.center,
             child: const Text(
-              'AD',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white),
+              'HQ',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: Colors.white),
             ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 24),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Supreme Admin',
+                  'Command Admin',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: AppTheme.grey900,
-                    letterSpacing: -0.5,
+                    letterSpacing: -0.8,
                   ),
                 ),
                 Text(
-                  'admin.hq@kozhikode.gov',
+                  'hq.operations@kozhikode.gov.in',
                   style: TextStyle(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              color: AppTheme.success.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.verified_user_rounded, color: AppTheme.primaryGreen, size: 20),
+            child: const Icon(Icons.verified_rounded, color: AppTheme.success, size: 20),
           ),
         ],
       ),
@@ -213,40 +228,59 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
 
   Widget _buildSwitchTile(String title, String subtitle, bool value, ValueChanged<bool> onChanged) {
     return SwitchListTile(
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey600)),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.2)),
+      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey400, fontWeight: FontWeight.w500)),
       value: value,
       onChanged: onChanged,
-      activeTrackColor: AppTheme.primaryGreen.withValues(alpha: 0.5),
-      activeThumbColor: AppTheme.primaryGreen,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      activeTrackColor: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+      thumbColor: WidgetStateProperty.all(AppTheme.primaryEmerald),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppTheme.primaryEmerald.withValues(alpha: 0.15);
+        }
+        return AppTheme.grey200;
+      }),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     );
   }
 
   Widget _buildActionTile(String title, String subtitle, IconData icon, VoidCallback onTap) {
     return ListTile(
       onTap: onTap,
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey600)),
-      trailing: Icon(icon, size: 18, color: AppTheme.grey400),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppTheme.grey50,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, size: 20, color: AppTheme.grey500),
+      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.2)),
+      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey400, fontWeight: FontWeight.w500)),
+      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.grey300),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     );
   }
 
   Widget _buildLogoutButton() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: TextButton(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: ElevatedButton(
         onPressed: () {},
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.error.withValues(alpha: 0.05),
+          foregroundColor: AppTheme.error,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: AppTheme.error.withValues(alpha: 0.1)),
+          ),
         ),
         child: const Text(
-          'Logout Session',
-          style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.w800, fontSize: 16),
+          'TERMINATE SESSION',
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14, letterSpacing: 1),
         ),
       ),
     );

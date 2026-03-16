@@ -28,21 +28,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       _isLoading = true;
     });
 
-    try {
-      final authService = Provider.of<AuthService>(context, listen: false);
-      final success = await authService.forgotPassword(_emailController.text.trim());
+    // Capture context-dependent objects before the async gap
+    final navigator = Navigator.of(context);
+    final scaffoldMsg = ScaffoldMessenger.of(context);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final email = _emailController.text.trim();
 
-      if (success && context.mounted) {
+    try {
+      final success = await authService.forgotPassword(email);
+
+      if (success && mounted) {
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
+          builder: (ctx) => AlertDialog(
             title: const Text('Reset Link Sent'),
-            content: Text('A password reset link has been sent to ${_emailController.text.trim()}. Please check your email.'),
+            content: Text('A password reset link has been sent to $email. Please check your email.'),
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // Close dialog
-                  Navigator.pop(context); // Return to Login
+                  Navigator.pop(ctx); // Close dialog
+                  navigator.pop(); // Return to Login
                 },
                 child: const Text('Back to Login'),
               ),
@@ -51,13 +56,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         );
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMsg.showSnackBar(
         SnackBar(
           content: Text('Error: $e'),
+          backgroundColor: AppTheme.error,
         ),
       );
-      }
     } finally {
       if (mounted) {
         setState(() {
