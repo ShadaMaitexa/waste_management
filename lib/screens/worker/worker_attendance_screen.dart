@@ -58,24 +58,29 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
       backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
         title: Text(
-          'LOGISTICS REGISTRY',
+          'Logistics Registry',
           style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.w800, 
-            fontSize: 12,
-            letterSpacing: 2,
-            color: AppTheme.grey400,
+            fontWeight: FontWeight.w900, 
+            fontSize: 18,
+            color: Colors.white,
+            letterSpacing: -0.5,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
         elevation: 0,
+        backgroundColor: AppTheme.bgDark,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.slateGradient,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.tune_rounded, size: 20),
+            icon: const Icon(Icons.tune_rounded, size: 20, color: Colors.white),
             onPressed: () {},
           ),
           const SizedBox(width: 8),
@@ -95,19 +100,23 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        backgroundColor: AppTheme.bgDark,
-        elevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        icon: const Icon(Icons.add_task_rounded, color: Colors.white, size: 20),
-        label: Text(
-          'LEAVE REQUEST',
-          style: GoogleFonts.plusJakartaSans(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-            fontSize: 12,
-            letterSpacing: 1,
+      floatingActionButton: Container(
+        height: 64,
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: FloatingActionButton.extended(
+          onPressed: () {},
+          backgroundColor: AppTheme.bgDark,
+          elevation: 12,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          icon: const Icon(Icons.add_task_rounded, color: AppTheme.primaryEmerald, size: 22),
+          label: Text(
+            'LEAVE REQUEST',
+            style: GoogleFonts.plusJakartaSans(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              fontSize: 12,
+              letterSpacing: 1.5,
+            ),
           ),
         ),
       ),
@@ -118,32 +127,39 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(40),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+            padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 24),
             decoration: BoxDecoration(
-              color: AppTheme.bgDark,
+              gradient: AppTheme.slateGradient,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(39)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.bgDark.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(28),
                   decoration: BoxDecoration(
-                    color: (_isOnDuty ? AppTheme.primaryEmerald : AppTheme.grey800).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(color: (_isOnDuty ? AppTheme.primaryEmerald : AppTheme.grey800).withValues(alpha: 0.1)),
+                    color: Colors.white.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 2),
                   ),
                   child: Icon(
                     _isOnDuty ? Icons.radar_rounded : Icons.offline_bolt_rounded,
-                    size: 48,
-                    color: _isOnDuty ? AppTheme.primaryEmerald : AppTheme.grey400,
+                    size: 56,
+                    color: _isOnDuty ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.4),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -151,19 +167,26 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                   _isOnDuty ? 'ACTIVE ON FIELD' : 'TERMINAL STANDBY',
                   style: GoogleFonts.plusJakartaSans(
                     color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  DateFormat('EEEE, MMMM d').format(DateTime.now()).toUpperCase(),
-                  style: GoogleFonts.inter(
-                    color: Colors.white.withValues(alpha: 0.4),
-                    fontWeight: FontWeight.w800,
-                    fontSize: 11,
-                    letterSpacing: 1.5,
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    DateFormat('EEEE, MMMM d').format(DateTime.now()).toUpperCase(),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 11,
+                      letterSpacing: 1.5,
+                    ),
                   ),
                 ),
               ],
@@ -176,7 +199,21 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                 Row(
                   children: [
                     _timeNode('DEPLOYMENT', _checkInTime, Icons.play_circle_filled_rounded, AppTheme.primaryEmerald),
-                    Expanded(child: Container(height: 1, color: AppTheme.grey100, margin: const EdgeInsets.symmetric(horizontal: 16))),
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        margin: const EdgeInsets.symmetric(horizontal: 24),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                              const Color(0xFFF43F5E).withValues(alpha: 0.2),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(1),
+                        ),
+                      ),
+                    ),
                     _timeNode('RETRACTION', _checkOutTime, Icons.stop_circle_rounded, const Color(0xFFF43F5E)),
                   ],
                 ),
@@ -189,15 +226,26 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _isOnDuty ? AppTheme.bgDark : AppTheme.primaryEmerald,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      elevation: 12,
+                      shadowColor: (_isOnDuty ? AppTheme.bgDark : AppTheme.primaryEmerald).withValues(alpha: 0.4),
+                      padding: EdgeInsets.zero,
                     ),
-                    child: Text(
-                      _isOnDuty ? 'TERMINATE SESSION' : 'INITIALIZE SHIFT',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.5,
-                        fontSize: 13,
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: _isOnDuty ? AppTheme.slateGradient : AppTheme.emeraldGradient,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          _isOnDuty ? 'TERMINATE SESSION' : 'INITIALIZE SHIFT',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                            fontSize: 14,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -216,27 +264,34 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
       children: [
         Row(
           children: [
-            Icon(icon, size: 14, color: color),
-            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 12, color: color),
+            ),
+            const SizedBox(width: 10),
             Text(
               label,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 color: AppTheme.grey400,
                 fontSize: 10,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.5,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Text(
           time != null ? DateFormat('h:mm a').format(time) : '--:--',
           style: GoogleFonts.plusJakartaSans(
             color: time != null ? AppTheme.grey900 : AppTheme.grey300,
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            letterSpacing: -0.5,
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -1,
           ),
         ),
       ],
@@ -253,11 +308,11 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
           padding: const EdgeInsets.only(left: 4),
           child: Text(
             'QUARTERLY METRICS',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey400,
-              letterSpacing: 1.2,
+              letterSpacing: 2,
             ),
           ),
         ),
@@ -277,33 +332,40 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
 
   Widget _metricTile(String label, String value, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
-          Text(
-            value,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              color: AppTheme.grey900,
-              letterSpacing: -1.5,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              value,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                color: color,
+                letterSpacing: -1,
+              ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             label.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              fontSize: 8,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 9,
               color: AppTheme.grey400,
               fontWeight: FontWeight.w900,
-              letterSpacing: 1,
+              letterSpacing: 1.5,
             ),
           ),
         ],
@@ -319,11 +381,11 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
           padding: const EdgeInsets.only(left: 4),
           child: Text(
             'LOGBOOK ARCHIVE',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey400,
-              letterSpacing: 1.2,
+              letterSpacing: 2,
             ),
           ),
         ),
@@ -339,28 +401,30 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
             final isPresent = record['status'] == 'Present';
             
             return Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(28),
               decoration: BoxDecoration(
-                color: AppTheme.bgCanvas,
-                borderRadius: BorderRadius.circular(32),
-                boxShadow: AppTheme.cardShadow,
-                border: Border.all(color: AppTheme.grey100),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(40),
+                boxShadow: AppTheme.smoothShadow,
+                border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: isPresent ? AppTheme.primaryEmerald.withValues(alpha: 0.1) : const Color(0xFFF43F5E).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(14),
+                      color: isPresent 
+                        ? AppTheme.primaryEmerald.withValues(alpha: 0.1) 
+                        : const Color(0xFFF43F5E).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
                       isPresent ? Icons.verified_user_rounded : Icons.report_gmailerrorred_rounded,
                       color: isPresent ? AppTheme.primaryEmerald : const Color(0xFFF43F5E),
-                      size: 22,
+                      size: 24,
                     ),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: 24),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,21 +432,21 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                         Text(
                           DateFormat('MMM d, yyyy').format(record['date']).toUpperCase(),
                           style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 15,
                             color: AppTheme.grey900,
                             letterSpacing: 0.5,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 6),
                         Text(
                           isPresent 
                               ? '${record['checkIn']} — ${record['checkOut']}'
                               : 'OPERATIONAL LAPSE',
                           style: GoogleFonts.inter(
-                            color: AppTheme.grey400,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
+                            color: isPresent ? AppTheme.grey400 : const Color(0xFFF43F5E).withValues(alpha: 0.6),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -390,10 +454,10 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                   ),
                   if (isPresent)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
                         color: AppTheme.bgSurface,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppTheme.grey100),
                       ),
                       child: Text(
@@ -401,7 +465,8 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                         style: GoogleFonts.plusJakartaSans(
                           color: AppTheme.grey900,
                           fontWeight: FontWeight.w900,
-                          fontSize: 10,
+                          fontSize: 11,
+                          letterSpacing: 1,
                         ),
                       ),
                     ),

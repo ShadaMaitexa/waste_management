@@ -27,19 +27,24 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
       backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
         title: Text(
-          'IDENTITY & ACCESS',
+          'Identity & Access',
           style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.w800, 
-            fontSize: 12,
-            letterSpacing: 2,
-            color: AppTheme.grey400,
+            fontWeight: FontWeight.w900, 
+            fontSize: 18,
+            color: Colors.white,
+            letterSpacing: -0.5,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
         elevation: 0,
+        backgroundColor: AppTheme.bgDark,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.slateGradient,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -91,11 +96,11 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         padding: const EdgeInsets.only(left: 4),
         child: Text(
           title,
-          style: GoogleFonts.inter(
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
             color: AppTheme.grey400,
-            letterSpacing: 1.5,
+            letterSpacing: 2,
           ),
         ),
       ),
@@ -113,26 +118,37 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.bgDark,
-          foregroundColor: const Color(0xFFF43F5E),
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(24),
           ),
-          elevation: 0,
+          elevation: 12,
+          shadowColor: AppTheme.bgDark.withValues(alpha: 0.4),
+          padding: EdgeInsets.zero,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.power_settings_new_rounded, size: 18),
-            const SizedBox(width: 12),
-            Text(
-              'TERMINATE SESSION',
-              style: GoogleFonts.plusJakartaSans(
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.5,
-                fontSize: 12,
-              ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: AppTheme.slateGradient,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Container(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.power_settings_new_rounded, size: 20, color: Color(0xFFF43F5E)),
+                const SizedBox(width: 12),
+                Text(
+                  'TERMINATE SESSION',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -145,36 +161,37 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
           alignment: Alignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1.5),
+                gradient: AppTheme.emeraldGradient,
+                boxShadow: AppTheme.intenseShadow,
               ),
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.bgCanvas,
+                  color: Colors.white,
                 ),
                 child: const CircleAvatar(
-                  radius: 56,
+                  radius: 64,
                   backgroundColor: AppTheme.grey100,
-                  child: Icon(Icons.person_rounded, size: 64, color: AppTheme.grey300),
+                  child: Icon(Icons.person_rounded, size: 72, color: AppTheme.grey300),
                 ),
               ),
             ),
             Positioned(
-              bottom: 8,
-              right: 8,
+              bottom: 4,
+              right: 4,
               child: Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.bgDark,
+                  gradient: AppTheme.slateGradient,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppTheme.bgSurface, width: 3),
-                  boxShadow: AppTheme.cardShadow,
+                  border: Border.all(color: Colors.white, width: 3),
+                  boxShadow: AppTheme.smoothShadow,
                 ),
-                child: const Icon(Icons.camera_enhance_rounded, color: Colors.white, size: 14),
+                child: const Icon(Icons.camera_enhance_rounded, color: Colors.white, size: 16),
               ),
             ),
           ],
@@ -183,41 +200,49 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         Text(
           _workerName,
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
+            fontSize: 36,
+            fontWeight: FontWeight.w900,
             color: AppTheme.grey900,
-            letterSpacing: -1,
+            letterSpacing: -2,
+            height: 1,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 10),
         Text(
           'Logistics Specialist • $_ward',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             color: AppTheme.grey400,
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
+            letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           decoration: BoxDecoration(
             color: AppTheme.bgDark,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: AppTheme.smoothShadow,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.bgDark.withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              )
+            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
-              const SizedBox(width: 10),
+              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 16),
+              const SizedBox(width: 12),
               Text(
                 'UNIT ID: ${_employeeId.toUpperCase()}',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   color: Colors.white,
                   fontWeight: FontWeight.w900,
-                  fontSize: 10,
-                  letterSpacing: 1.5,
+                  fontSize: 11,
+                  letterSpacing: 2,
                 ),
               ),
             ],
@@ -241,40 +266,41 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
 
   Widget _perfCard(String value, String label, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 28),
+      padding: const EdgeInsets.symmetric(vertical: 32),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 18),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
               letterSpacing: -1,
             ),
           ),
+          const SizedBox(height: 2),
           Text(
             label.toUpperCase(),
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               color: AppTheme.grey400,
               fontSize: 9,
               fontWeight: FontWeight.w900,
-              letterSpacing: 0.5,
+              letterSpacing: 1,
             ),
           ),
         ],
@@ -284,26 +310,26 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
 
   Widget _buildCredentialCard() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
           _credentialRow(Icons.phone_iphone_rounded, 'CONTACT', _phoneNumber),
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(vertical: 20),
             child: Divider(height: 1, color: AppTheme.grey100),
           ),
           _credentialRow(Icons.alternate_email_rounded, 'SECURE EMAIL', _email),
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(vertical: 20),
             child: Divider(height: 1, color: AppTheme.grey100),
           ),
-          _credentialRow(Icons.fmd_good_rounded, 'ASSIGNED HUB', 'Kozhikode Operational Center'),
+          _credentialRow(Icons.fmd_good_rounded, 'ASSIGNED HUB', 'Kozhikode Ops Center'),
         ],
       ),
     );
@@ -313,35 +339,36 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: AppTheme.bgSurface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppTheme.grey100),
           ),
-          child: Icon(icon, size: 18, color: AppTheme.grey400),
+          child: Icon(icon, size: 20, color: AppTheme.grey400),
         ),
-        const SizedBox(width: 20),
+        const SizedBox(width: 24),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   color: AppTheme.grey400,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 6),
               Text(
                 value,
                 style: GoogleFonts.plusJakartaSans(
                   color: AppTheme.grey900,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.2,
                 ),
               ),
             ],
@@ -354,15 +381,15 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
   Widget _buildSettingsModule() {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
-          _settingTile(Icons.shield_moon_rounded, 'Cryptographic Security'),
-          _settingTile(Icons.notifications_active_rounded, 'Deployment Alerts'),
+          _settingTile(Icons.shield_moon_rounded, 'Security & Encryption'),
+          _settingTile(Icons.notifications_active_rounded, 'Operational Alerts'),
           _settingTile(Icons.translate_rounded, 'Interface Language'),
           _settingTile(Icons.support_agent_rounded, 'Command Support', isLast: true),
         ],
@@ -376,24 +403,25 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         border: Border(bottom: BorderSide(color: AppTheme.grey100, width: 1)),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
         leading: Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppTheme.bgSurface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: Icon(icon, color: AppTheme.grey600, size: 18),
+          child: Icon(icon, color: AppTheme.grey600, size: 20),
         ),
         title: Text(
           title,
           style: GoogleFonts.plusJakartaSans(
             color: AppTheme.grey900,
-            fontWeight: FontWeight.w700,
-            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            fontSize: 15,
+            letterSpacing: -0.2,
           ),
         ),
-        trailing: const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey300),
+        trailing: const Icon(Icons.chevron_right_rounded, size: 22, color: AppTheme.grey300),
         onTap: () {},
       ),
     );
