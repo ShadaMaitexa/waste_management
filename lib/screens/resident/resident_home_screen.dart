@@ -11,7 +11,6 @@ import 'book_pickup_screen.dart';
 import 'referral_screen.dart';
 import 'profile_screen.dart';
 
-
 class ResidentHomeScreen extends StatefulWidget {
   const ResidentHomeScreen({super.key});
 
@@ -34,19 +33,20 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+      curve: Curves.easeOutCubic,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.bgSurface,
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
           setState(() => _selectedIndex = index);
         },
-        physics: const NeverScrollableScrollPhysics(), // Prevent horizontal swipe
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           _DashboardTab(onNavigate: _onItemTapped),
           const BookPickupScreen(),
@@ -56,45 +56,46 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.bgCanvas,
+          border: Border(top: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5))),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
+              color: AppTheme.grey900.withValues(alpha: 0.04),
+              blurRadius: 24,
+              offset: const Offset(0, -8),
             ),
           ],
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: NavigationBar(
               selectedIndex: _selectedIndex,
               onDestinationSelected: _onItemTapped,
               backgroundColor: Colors.transparent,
               elevation: 0,
-              indicatorColor: AppTheme.primaryGreen.withOpacity(0.1),
-              height: 64,
+              indicatorColor: AppTheme.primaryEmerald.withValues(alpha: 0.12),
+              height: 60,
               labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
               destinations: const [
                 NavigationDestination(
-                icon: Icon(Icons.dashboard_outlined, size: 22),
-                selectedIcon: Icon(Icons.dashboard_rounded, color: AppTheme.primaryGreen, size: 24),
-                label: 'Home',
+                  icon: Icon(Icons.dashboard_outlined, size: 22, color: AppTheme.grey500),
+                  selectedIcon: Icon(Icons.dashboard_rounded, color: AppTheme.primaryEmerald, size: 24),
+                  label: 'Home',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.add_circle_outline_rounded, size: 22),
-                  selectedIcon: Icon(Icons.add_circle_rounded, color: AppTheme.primaryGreen, size: 24),
+                  icon: Icon(Icons.add_circle_outline_rounded, size: 22, color: AppTheme.grey500),
+                  selectedIcon: Icon(Icons.add_circle_rounded, color: AppTheme.primaryEmerald, size: 24),
                   label: 'Book',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.auto_awesome_outlined, size: 22),
-                  selectedIcon: Icon(Icons.auto_awesome_rounded, color: AppTheme.primaryGreen, size: 24),
+                  icon: Icon(Icons.auto_awesome_outlined, size: 22, color: AppTheme.grey500),
+                  selectedIcon: Icon(Icons.auto_awesome_rounded, color: AppTheme.primaryEmerald, size: 24),
                   label: 'Rewards',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.person_outline_rounded, size: 22),
-                  selectedIcon: Icon(Icons.person_rounded, color: AppTheme.primaryGreen, size: 24),
+                  icon: Icon(Icons.person_outline_rounded, size: 22, color: AppTheme.grey500),
+                  selectedIcon: Icon(Icons.person_rounded, color: AppTheme.primaryEmerald, size: 24),
                   label: 'Profile',
                 ),
               ],
@@ -118,9 +119,6 @@ class _DashboardTab extends StatelessWidget {
         final userId = authService.currentUser?.id ?? '';
         final userName = authService.currentUserName ?? 'Resident';
         
-        // Fetch pickups if not already done (proactive)
-        // Note: fetchPickups usually called at login or app start, but good to have here too
-        
         final pickups = pickupService.getUpcomingPickupsForUser(userId);
         final totalWaste = pickupService.getTotalWasteCollectedForUser(userId);
         final wardNumber = authService.currentUser?.wardNumber;
@@ -132,48 +130,48 @@ class _DashboardTab extends StatelessWidget {
         };
 
         return Scaffold(
-      backgroundColor: AppTheme.grey50,
-      body: RefreshIndicator(
-        color: AppTheme.primaryGreen,
-        onRefresh: () async {
-          await pickupService.fetchPickups();
-        },
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            _buildSliverAppBar(context, userName, wardNumber),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-                child: Column(
-                  children: [
-                    const SizedBox(height: AppTheme.spacingM),
-                    _buildNextPickupCard(context, pickups.isNotEmpty ? pickups.first : null),
-                    const SizedBox(height: AppTheme.spacingL),
-                    _buildStatsOverview(context, stats, wardNumber),
-                    const SizedBox(height: AppTheme.spacingL),
-                    _buildQuickActionsGrid(context),
-                    const SizedBox(height: AppTheme.spacingL),
-                    _buildRecentActivity(context, referralService),
-                    const SizedBox(height: AppTheme.spacingXXL), // Extra padding at bottom
-                  ],
+          backgroundColor: AppTheme.bgSurface,
+          body: RefreshIndicator(
+            color: AppTheme.primaryEmerald,
+            onRefresh: () async {
+              await pickupService.fetchPickups();
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                _buildSliverAppBar(context, userName, wardNumber),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingL),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: AppTheme.spacingL),
+                        _buildNextPickupCard(context, pickups.isNotEmpty ? pickups.first : null),
+                        const SizedBox(height: AppTheme.spacingL),
+                        _buildStatsOverview(context, stats, wardNumber),
+                        const SizedBox(height: AppTheme.spacingL),
+                        _buildQuickActionsGrid(context),
+                        const SizedBox(height: AppTheme.spacingL),
+                        _buildRecentActivity(context, referralService),
+                        const SizedBox(height: 120),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
-  },
-);
   }
 
   Widget _buildSliverAppBar(BuildContext context, String userName, String? wardNumber) {
     return SliverAppBar(
-      expandedHeight: 200.0,
+      expandedHeight: 220.0,
       floating: false,
       pinned: true,
-      backgroundColor: AppTheme.primaryGreen,
+      backgroundColor: AppTheme.bgDark,
       elevation: 0,
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
@@ -181,65 +179,69 @@ class _DashboardTab extends StatelessWidget {
           children: [
             Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: AppTheme.slateGradient,
               ),
             ),
             Positioned(
-              right: -50,
-              top: -20,
+              right: -60,
+              top: -40,
               child: Icon(
-                Icons.eco_rounded,
-                size: 240,
-                color: Colors.white.withOpacity(0.06),
+                Icons.radar_rounded,
+                size: 280,
+                color: Colors.white.withValues(alpha: 0.04),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
+                      color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.3)),
                     ),
-                    child: Text(
-                      'STATUS: PREMIUM AMBASSADOR',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
+                        const SizedBox(width: 6),
+                        Text(
+                          'PREMIUM AMBASSADOR',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppTheme.primaryEmerald,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   Text(
-                    'Hello, $userName!',
-                    style: GoogleFonts.poppins(
+                    'Hello, $userName.',
+                    style: GoogleFonts.plusJakartaSans(
                       color: Colors.white,
-                      fontSize: 32,
+                      fontSize: 34,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -1,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.location_on_rounded, color: Colors.white.withOpacity(0.8), size: 14),
-                      const SizedBox(width: 4),
+                      Icon(Icons.location_on_rounded, color: Colors.white.withValues(alpha: 0.6), size: 16),
+                      const SizedBox(width: 6),
                       Text(
-                        'Ward ${wardNumber ?? "15"} • Kozhikode Metropolitan',
-                        style: GoogleFonts.inter(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                        'Ward ${wardNumber ?? "15"} • Kozhikode Area',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -252,24 +254,30 @@ class _DashboardTab extends StatelessWidget {
       ),
       actions: [
         Container(
+          height: 40,
+          width: 40,
           margin: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.1),
             shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
           ),
           child: IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 22),
+            icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 20),
             onPressed: () => Navigator.pushNamed(context, '/notifications'),
           ),
         ),
         Container(
+          height: 40,
+          width: 40,
           margin: const EdgeInsets.only(right: 16, top: 4, bottom: 4),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.1),
             shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
           ),
           child: IconButton(
-            icon: const Icon(Icons.power_settings_new_rounded, color: Colors.white, size: 22),
+            icon: const Icon(Icons.power_settings_new_rounded, color: Colors.white, size: 20),
             onPressed: () {
               Provider.of<AuthService>(context, listen: false).logout();
               Navigator.pushReplacementNamed(context, '/login');
@@ -285,21 +293,22 @@ class _DashboardTab extends StatelessWidget {
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: AppTheme.softShadow,
+          color: AppTheme.bgCanvas,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: AppTheme.cardShadow,
+          border: Border.all(color: AppTheme.grey200),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(28),
           child: Stack(
             children: [
               Positioned(
                 right: -20,
                 top: -20,
                 child: Icon(
-                  Icons.calendar_today_outlined,
-                  size: 100,
-                  color: AppTheme.primaryGreen.withOpacity(0.05),
+                  Icons.recycling_rounded,
+                  size: 140,
+                  color: AppTheme.grey100,
                 ),
               ),
               Padding(
@@ -307,45 +316,38 @@ class _DashboardTab extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(14),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        gradient: AppTheme.glassGradient,
-                        color: AppTheme.primaryGreen.withOpacity(0.1),
+                        color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.add_task_rounded, color: AppTheme.primaryGreen, size: 28),
+                      child: const Icon(Icons.add_task_rounded, color: AppTheme.primaryEmerald, size: 28),
                     ),
-                    const SizedBox(width: AppTheme.spacingM),
+                    const SizedBox(width: AppTheme.spacingL),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Ready to Recycle?',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            style: GoogleFonts.plusJakartaSans(
                                   fontWeight: FontWeight.w800,
+                                  fontSize: 18,
                                   color: AppTheme.grey900,
                                   letterSpacing: -0.5,
                                 ),
                           ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Pickups start from ₹10/Kg',
-                            style: TextStyle(color: AppTheme.grey600, fontSize: 13, fontWeight: FontWeight.w500),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Schedule your next pickup today.',
+                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () => onNavigate(1), // Go to Book Pickup
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryGreen,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: const Text('Book Now'),
+                      onPressed: () => onNavigate(1),
+                      child: const Text('Book'),
                     ),
                   ],
                 ),
@@ -359,25 +361,25 @@ class _DashboardTab extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: AppTheme.primaryShadow,
+        gradient: AppTheme.emeraldGradient,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.intenseShadow,
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         child: Stack(
           children: [
             Positioned(
-              right: -40,
-              bottom: -40,
+              right: -30,
+              bottom: -30,
               child: Icon(
                 Icons.local_shipping_rounded,
-                size: 200,
-                color: Colors.white.withOpacity(0.1),
+                size: 180,
+                color: Colors.white.withValues(alpha: 0.15),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(28),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -387,64 +389,58 @@ class _DashboardTab extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                         ),
-                        child: const Row(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.access_time_filled, color: Colors.white, size: 14),
-                            SizedBox(width: 6),
+                            const Icon(Icons.access_time_filled, color: Colors.white, size: 12),
+                            const SizedBox(width: 8),
                             Text(
-                              'UPCOMING PICKUP',
-                              style: TextStyle(
+                              'UPCOMING DISPATCH',
+                              style: GoogleFonts.plusJakartaSans(
                                   color: Colors.white, 
-                                  fontWeight: FontWeight.bold, 
+                                  fontWeight: FontWeight.w800, 
                                   fontSize: 10,
-                                  letterSpacing: 0.5),
+                                  letterSpacing: 1),
                             ),
                           ],
                         ),
                       ),
-                      const Icon(Icons.more_horiz, color: Colors.white70),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              pickup.scheduledDate != null
-                                  ? DateFormat('EEEE, MMM d').format(pickup.scheduledDate!)
-                                  : 'Tomorrow',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Arriving around ${pickup.formattedTime ?? '10:30 AM'}',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle),
+                        child: const Icon(Icons.more_horiz_rounded, color: Colors.white, size: 16),
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppTheme.spacingL),
+                  const SizedBox(height: 28),
+                  Text(
+                    pickup.scheduledDate != null
+                        ? DateFormat('EEEE, MMM d').format(pickup.scheduledDate!)
+                        : 'Tomorrow',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -1,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'ETA: ${pickup.formattedTime ?? '10:30 AM'} • Your Location',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
                   Row(
                     children: [
-                      _pickupTag(Icons.auto_delete_rounded, 'Dry Waste'),
+                      _pickupTag(Icons.delete_outline_rounded, 'Mixed Waste'),
                       const SizedBox(width: 12),
                       _pickupTag(Icons.eco_rounded, 'Eco Friendly'),
                     ],
@@ -460,20 +456,22 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _pickupTag(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppTheme.primaryGreen),
-          const SizedBox(width: 4),
+          Icon(icon, size: 14, color: Colors.white),
+          const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(
-              color: AppTheme.primaryGreen,
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.plusJakartaSans(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
               fontSize: 12,
             ),
           ),
@@ -488,13 +486,13 @@ class _DashboardTab extends StatelessWidget {
         Expanded(
           child: _expressCard(context, wardNumber),
         ),
-        const SizedBox(width: AppTheme.spacingM),
+        const SizedBox(width: 16),
         Expanded(
           child: _statCard(
             context,
-            'Kg Collected',
+            'Recycled (Kg)',
             stats['totalWaste'].toStringAsFixed(1),
-            Icons.scale,
+            Icons.scale_rounded,
             AppTheme.info,
           ),
         ),
@@ -505,26 +503,17 @@ class _DashboardTab extends StatelessWidget {
   Widget _expressCard(BuildContext context, String? wardNumber) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to live map screen showing truck location
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Opening live truck tracking map...'),
-            duration: Duration(seconds: 2),
-          ),
+          const SnackBar(content: Text('Initializing live tracking module...')),
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: AppTheme.infoGradient,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.info.withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          color: AppTheme.bgCanvas,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: AppTheme.cardShadow,
+          border: Border.all(color: AppTheme.grey200),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,43 +522,40 @@ class _DashboardTab extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: AppTheme.info.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(
-                    Icons.local_shipping_rounded,
-                    color: Colors.white,
+                    Icons.route_rounded,
+                    color: AppTheme.info,
                     size: 24,
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
+                    color: AppTheme.error.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Container(
-                        width: 8,
-                        height: 8,
+                        width: 6,
+                        height: 6,
                         decoration: const BoxDecoration(
-                          color: Color(0xFF00E676),
+                          color: AppTheme.error,
                           shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(color: Color(0xFF00E676), blurRadius: 4),
-                          ],
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Text(
+                      Text(
                         'LIVE',
-                        style: TextStyle(
-                          color: Colors.white,
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppTheme.error,
                           fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w800,
                           letterSpacing: 1.0,
                         ),
                       ),
@@ -578,31 +564,31 @@ class _DashboardTab extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Truck Tracking',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            const SizedBox(height: 32),
+            Text(
+              'Fleet Tracking',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.grey900,
                 letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Row(
               children: [
                 Text(
-                  'On the way to Ward ${wardNumber ?? "15"}',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                  'Ward ${wardNumber ?? "15"}',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppTheme.grey500,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 4),
                 const Icon(
                   Icons.arrow_forward_rounded,
-                  color: Colors.white54,
+                  color: AppTheme.info,
                   size: 14,
                 ),
               ],
@@ -617,16 +603,10 @@ class _DashboardTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 5),
-          ),
-        ],
-        border: Border.all(color: color.withOpacity(0.1), width: 1.5),
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -634,24 +614,25 @@ class _DashboardTab extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 28),
           Text(
             value,
-            style: GoogleFonts.poppins(
-              fontSize: 28,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 32,
               fontWeight: FontWeight.w800,
               color: AppTheme.grey900,
               letterSpacing: -1,
             ),
           ),
+          const SizedBox(height: 2),
           Text(
             title.toUpperCase(),
-            style: TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 10,
               color: AppTheme.grey500,
               fontWeight: FontWeight.w800,
@@ -665,20 +646,20 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildQuickActionsGrid(BuildContext context) {
     final actions = [
-      {'icon': Icons.add_circle_rounded, 'label': 'Book Pickup', 'color': AppTheme.primaryGreen, 'index': 1},
-      {'icon': Icons.history_rounded, 'label': 'My History', 'color': const Color(0xFF3B82F6), 'index': -1},
+      {'icon': Icons.add_rounded, 'label': 'Book Pickup', 'color': AppTheme.primaryEmerald, 'index': 1},
+      {'icon': Icons.history_rounded, 'label': 'History', 'color': AppTheme.accentIndigo, 'index': -1},
       {'icon': Icons.support_agent_rounded, 'label': 'Support', 'color': const Color(0xFF8B5CF6), 'index': -1},
-      {'icon': Icons.auto_awesome_rounded, 'label': 'Rewards', 'color': Colors.orange, 'index': 2},
+      {'icon': Icons.military_tech_rounded, 'label': 'Rewards', 'color': const Color(0xFFF59E0B), 'index': 2},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'QUICK ACTIONS',
-          style: TextStyle(
+        Text(
+          'QUICK LAUNCH',
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w800,
             color: AppTheme.grey500,
             letterSpacing: 1.5,
           ),
@@ -695,17 +676,12 @@ class _DashboardTab extends StatelessWidget {
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 6),
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.bgCanvas,
                     borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                    boxShadow: AppTheme.cardShadow,
+                    border: Border.all(color: AppTheme.grey200),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -713,17 +689,17 @@ class _DashboardTab extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(16),
+                          color: color.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
                         ),
-                        child: Icon(action['icon'] as IconData, color: color, size: 22),
+                        child: Icon(action['icon'] as IconData, color: color, size: 24),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       Text(
                         (action['label'] as String).split(' ')[0],
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
                           color: AppTheme.grey700,
                           letterSpacing: 0.2,
                         ),
@@ -749,23 +725,23 @@ class _DashboardTab extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'RECENT ACTIVITY',
-              style: TextStyle(
+            Text(
+              'NETWORK LOG',
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w800,
                 color: AppTheme.grey500,
                 letterSpacing: 1.5,
               ),
             ),
             GestureDetector(
               onTap: () {},
-              child: const Text(
+              child: Text(
                 'VIEW ALL',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  color: AppTheme.primaryGreen,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.primaryEmerald,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -775,31 +751,27 @@ class _DashboardTab extends StatelessWidget {
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.bgCanvas,
             borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey200),
           ),
           child: ListView.separated(
             shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(vertical: 8),
             physics: const NeverScrollableScrollPhysics(),
             itemCount: activities.isEmpty ? 2 : activities.length,
-            separatorBuilder: (_, __) => Divider(color: AppTheme.grey100, height: 1, indent: 72, endIndent: 20),
+            separatorBuilder: (_, __) => Divider(color: AppTheme.grey200, height: 1, indent: 24, endIndent: 24),
             itemBuilder: (context, index) {
               if (activities.isEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(32),
                   child: Center(
                     child: Column(
                       children: [
-                        Icon(Icons.history_rounded, size: 40, color: AppTheme.grey300),
-                        const SizedBox(height: 8),
-                        const Text('No recent activity', style: TextStyle(color: AppTheme.grey400, fontWeight: FontWeight.w600)),
+                        Icon(Icons.hub_rounded, size: 48, color: AppTheme.grey200),
+                        const SizedBox(height: 12),
+                        Text('No network activity detected', style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w600, fontSize: 13)),
                       ],
                     ),
                   ),
@@ -808,17 +780,17 @@ class _DashboardTab extends StatelessWidget {
               final item = activities[index];
               final isPaid = item.amount > 0;
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Row(
                   children: [
                     Container(
-                      width: 44,
-                      height: 44,
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryGreen.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(14),
+                        color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const Icon(Icons.person_add_rounded, color: AppTheme.primaryGreen, size: 20),
+                      child: const Icon(Icons.person_add_rounded, color: AppTheme.primaryEmerald, size: 20),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -827,16 +799,17 @@ class _DashboardTab extends StatelessWidget {
                         children: [
                           Text(
                             item.name,
-                            style: const TextStyle(
+                            style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.w800,
-                              fontSize: 14,
+                              fontSize: 15,
                               color: AppTheme.grey900,
                             ),
                           ),
+                          const SizedBox(height: 4),
                           Text(
                             item.date,
-                            style: const TextStyle(
-                              fontSize: 11,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
                               color: AppTheme.grey500,
                               fontWeight: FontWeight.w600,
                             ),
@@ -850,24 +823,25 @@ class _DashboardTab extends StatelessWidget {
                         if (isPaid)
                           Text(
                             '+₹${item.amount.toStringAsFixed(0)}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 14,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
                               color: AppTheme.success,
                             ),
                           ),
+                        const SizedBox(height: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: (isPaid ? AppTheme.success : AppTheme.grey400).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(6),
+                            color: (isPaid ? AppTheme.success : AppTheme.grey400).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             item.status.toUpperCase(),
-                            style: TextStyle(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 9,
                               fontWeight: FontWeight.w900,
-                              color: isPaid ? AppTheme.success : AppTheme.grey400,
+                              color: isPaid ? AppTheme.success : AppTheme.grey500,
                               letterSpacing: 0.5,
                             ),
                           ),

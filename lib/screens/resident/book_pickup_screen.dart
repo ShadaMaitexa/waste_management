@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../models/pickup.dart';
-import '../../models/pickup_slot.dart';
 import '../../services/pickup_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -15,24 +14,16 @@ class BookPickupScreen extends StatefulWidget {
 
 class _BookPickupScreenState extends State<BookPickupScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _addressController = TextEditingController(text: '123 Green Street, Ward 15');
+  final _addressController = TextEditingController(text: '123 Smart Residences, Ward 15');
   final _notesController = TextEditingController();
-  final _specialInstructionsController = TextEditingController();
 
   final List<WasteType> _selectedWasteTypes = [];
   bool _isLoading = false;
 
   @override
-  void initState() {
-    super.initState();
-    // No need to fetch slots if we are just booking for the standard time
-  }
-
-  @override
   void dispose() {
     _addressController.dispose();
     _notesController.dispose();
-    _specialInstructionsController.dispose();
     super.dispose();
   }
 
@@ -72,15 +63,12 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         wardNumber: '15',
         type: PickupType.regular,
         status: PickupStatus.scheduled,
-        scheduledDate: DateTime.now(), // Admin will manage actual time
-        scheduledTime: const TimeOfDay(hour: 8, minute: 0), // Default placeholder
+        scheduledDate: DateTime.now(), 
+        scheduledTime: const TimeOfDay(hour: 8, minute: 0), 
         notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
         createdAt: DateTime.now(),
         wasteTypes: _selectedWasteTypes,
         estimatedDuration: 30.0,
-        specialInstructions: _specialInstructionsController.text.trim().isNotEmpty
-            ? _specialInstructionsController.text.trim()
-            : null,
       );
 
       final success = await pickupService.createPickup(pickup);
@@ -110,30 +98,31 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
-        title: const Text(
-          'Waste Collection',
-          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5),
+        title: Text(
+          'Schedule Dispatch',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 18),
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.bgSurface,
         foregroundColor: AppTheme.grey900,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: Navigator.canPop(context) 
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
       ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -142,13 +131,13 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                     _buildStepHeader('01', 'WASTE CLASSIFICATION'),
                     const SizedBox(height: 20),
                     _buildWasteTypeGrid(),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 48),
 
-                    _buildStepHeader('02', 'COLLECTION DETAILS'),
-                    const SizedBox(height: 20),
-                    _buildCollectionInfo(),
+                    _buildStepHeader('02', 'COLLECTION POINT'),
                     const SizedBox(height: 20),
                     _buildAddressSection(),
+                    const SizedBox(height: 24),
+                    _buildCollectionInfo(),
                     const SizedBox(height: 48),
 
                     _buildSubmitButton(),
@@ -167,20 +156,19 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     return Row(
       children: [
         Container(
-          width: 44,
-          height: 44,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
-            color: AppTheme.primaryGreen.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
           ),
           alignment: Alignment.center,
           child: Text(
             step,
-            style: const TextStyle(
-              color: AppTheme.primaryGreen,
+            style: GoogleFonts.plusJakartaSans(
+              color: AppTheme.primaryEmerald,
               fontWeight: FontWeight.w900,
-              fontSize: 16,
-              letterSpacing: -0.5,
+              fontSize: 15,
             ),
           ),
         ),
@@ -191,19 +179,19 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 18,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: AppTheme.grey900,
-                  letterSpacing: -0.5,
+                  color: AppTheme.grey500,
+                  letterSpacing: 1.5,
                 ),
               ),
+              const SizedBox(height: 4),
               Container(
                 height: 2,
                 width: 32,
-                margin: const EdgeInsets.only(top: 4),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryGreen,
+                  color: AppTheme.grey200,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -214,14 +202,13 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     );
   }
 
-
   Widget _buildWasteTypeGrid() {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 1.8,
+        childAspectRatio: 1.6,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
@@ -232,21 +219,20 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         return GestureDetector(
           onTap: () => _toggleWasteType(type),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            padding: const EdgeInsets.all(20),
+            duration: const Duration(milliseconds: 250),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.primaryGreen : Colors.white,
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: [
+              color: isSelected ? AppTheme.primaryEmerald : AppTheme.bgCanvas,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: isSelected ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                )
+              ] : AppTheme.cardShadow,
               border: Border.all(
-                color: isSelected ? AppTheme.primaryGreen : AppTheme.grey100,
-                width: 1.5,
+                color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200,
               ),
             ),
             child: Column(
@@ -257,21 +243,23 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                   children: [
                     Icon(
                       _getWasteIcon(type),
-                      color: isSelected ? Colors.white : AppTheme.primaryGreen,
-                      size: 22,
+                      color: isSelected ? Colors.white : AppTheme.grey500,
+                      size: 24,
                     ),
                     const Spacer(),
                     if (isSelected)
-                      const Icon(Icons.verified_rounded, color: Colors.white, size: 16),
+                      const Icon(Icons.check_circle_rounded, color: Colors.white, size: 18)
+                    else 
+                      Icon(Icons.circle_outlined, color: AppTheme.grey300, size: 18),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   _getWasteTypeTitle(type).toUpperCase(),
-                  style: TextStyle(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    color: isSelected ? Colors.white : AppTheme.grey900,
+                    fontWeight: FontWeight.w800,
+                    color: isSelected ? Colors.white : AppTheme.grey700,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -285,27 +273,33 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   Widget _buildCollectionInfo() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppTheme.primaryGreen.withOpacity(0.05),
+        color: AppTheme.info.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.primaryGreen.withOpacity(0.1)),
+        border: Border.all(color: AppTheme.info.withValues(alpha: 0.2)),
       ),
-      child: const Row(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.info_outline_rounded, color: AppTheme.primaryGreen),
-          SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: AppTheme.info.withValues(alpha: 0.1), shape: BoxShape.circle),
+            child: const Icon(Icons.info_rounded, color: AppTheme.info, size: 20),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Standard Daily Collection',
-                  style: TextStyle(fontWeight: FontWeight.w800, color: AppTheme.primaryGreen),
+                  'Standard Dispatch Protocol',
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, color: AppTheme.info, fontSize: 13),
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  'Pickup time: Tomorrow (8:00 AM - 10:00 AM)',
-                  style: TextStyle(fontSize: 12, color: AppTheme.grey600),
+                  'Your area is scheduled for daily collection between 8:00 AM and 10:00 AM.',
+                  style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppTheme.grey600),
                 ),
               ],
             ),
@@ -318,41 +312,25 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   Widget _buildAddressSection() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.bgCanvas,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey200),
       ),
       child: Column(
         children: [
           TextFormField(
             controller: _addressController,
-            style: const TextStyle(fontWeight: FontWeight.w700, color: AppTheme.grey900),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900, fontSize: 14),
             decoration: InputDecoration(
-              labelText: 'COLLECTION POINT',
-              labelStyle: const TextStyle(color: AppTheme.grey500, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 1),
-              border: OutlineInputBorder(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: Colors.white,
+              labelText: 'SERVICE LOCATION',
+              labelStyle: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontWeight: FontWeight.w800, fontSize: 10, letterSpacing: 1),
+              border: OutlineInputBorder(borderRadius: const BorderRadius.vertical(top: Radius.circular(28)), borderSide: BorderSide.none),
+              enabledBorder: OutlineInputBorder(borderRadius: const BorderRadius.vertical(top: Radius.circular(28)), borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(borderRadius: const BorderRadius.vertical(top: Radius.circular(28)), borderSide: BorderSide.none),
               prefixIcon: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(Icons.location_on_rounded, color: AppTheme.primaryGreen, size: 22),
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Icon(Icons.location_on_rounded, color: AppTheme.primaryEmerald, size: 22),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
             ),
@@ -360,31 +338,20 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Divider(height: 1, color: AppTheme.grey100),
+            child: Divider(height: 1, color: AppTheme.grey200),
           ),
           TextFormField(
             controller: _notesController,
-            style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.grey700, fontSize: 14),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, color: AppTheme.grey700, fontSize: 14),
             decoration: InputDecoration(
-              labelText: 'SPECIAL INSTRUCTIONS',
-              labelStyle: const TextStyle(color: AppTheme.grey500, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 1),
-              border: OutlineInputBorder(
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: Colors.white,
+              labelText: 'OPERATIONAL NOTES (OPTIONAL)',
+              labelStyle: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontWeight: FontWeight.w800, fontSize: 10, letterSpacing: 1),
+              border: OutlineInputBorder(borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)), borderSide: BorderSide.none),
+              enabledBorder: OutlineInputBorder(borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)), borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)), borderSide: BorderSide.none),
               prefixIcon: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(Icons.maps_ugc_rounded, color: AppTheme.info, size: 22),
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Icon(Icons.speaker_notes_rounded, color: AppTheme.accentIndigo, size: 22),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
             ),
@@ -397,21 +364,11 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   Widget _buildSubmitButton() {
     return Container(
       width: double.infinity,
-      height: 72,
+      height: 64,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
-          colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryGreen.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        gradient: AppTheme.emeraldGradient,
+        boxShadow: AppTheme.intenseShadow,
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -421,40 +378,38 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         ),
         onPressed: _isLoading ? null : _submitPickup,
         child: _isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
+            ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                    Text(
-                    'SCHEDULE PICKUP',
-                    style: TextStyle(
+                    'INITIALIZE DISPATCH',
+                    style: GoogleFonts.plusJakartaSans(
                       color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 15,
-                      letterSpacing: 1,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                      letterSpacing: 1.5,
                     ),
                   ),
-                  SizedBox(width: 12),
-                  Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                  const SizedBox(width: 12),
+                  const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
                 ],
               ),
       ),
     );
   }
 
-
   IconData _getWasteIcon(WasteType type) {
      switch (type) {
-      case WasteType.mixed: return Icons.delete_outline;
-      case WasteType.dry: return Icons.description_outlined; // paper/dry
-      case WasteType.wet: return Icons.water_drop_outlined;
-      case WasteType.organic: return Icons.eco_outlined;
-      case WasteType.recyclable: return Icons.recycling_outlined;
-      case WasteType.electronic: return Icons.computer_outlined;
-      case WasteType.hazardous: return Icons.warning_amber_outlined;
+      case WasteType.mixed: return Icons.delete_sweep_rounded;
+      case WasteType.dry: return Icons.feed_rounded; 
+      case WasteType.wet: return Icons.water_drop_rounded;
+      case WasteType.organic: return Icons.eco_rounded;
+      case WasteType.recyclable: return Icons.recycling_rounded;
+      case WasteType.electronic: return Icons.memory_rounded;
+      case WasteType.hazardous: return Icons.warning_rounded;
     }
   }
-
 
   String _getWasteTypeTitle(WasteType type) {
      final str = type.toString().split('.').last;

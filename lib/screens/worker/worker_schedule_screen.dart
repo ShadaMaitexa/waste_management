@@ -128,7 +128,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                         color: isSelected 
                             ? AppTheme.primaryGreen
                             : isToday 
-                                ? AppTheme.secondaryGreen.withOpacity(0.2)
+                                ? AppTheme.secondaryGreen.withValues(alpha: 0.2)
                                 : null,
                         borderRadius: BorderRadius.circular(AppTheme.radiusS),
                       ),
@@ -230,10 +230,10 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: shift['type'] == 'Morning' 
-                        ? AppTheme.info.withOpacity(0.1)
+                        ? AppTheme.info.withValues(alpha: 0.1)
                         : shift['type'] == 'Evening'
-                            ? AppTheme.warning.withOpacity(0.1)
-                            : AppTheme.primaryGreen.withOpacity(0.1),
+                            ? AppTheme.warning.withValues(alpha: 0.1)
+                            : AppTheme.primaryGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusS),
                   ),
                   child: Icon(
@@ -277,8 +277,8 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: shift['status'] == 'Confirmed' 
-                        ? AppTheme.success.withOpacity(0.1)
-                        : AppTheme.warning.withOpacity(0.1),
+                        ? AppTheme.success.withValues(alpha: 0.1)
+                        : AppTheme.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusS),
                   ),
                   child: Text(
@@ -405,7 +405,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
               final shift = upcomingShifts[index];
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: AppTheme.primaryGreen.withOpacity(0.1),
+                  backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
                   child: Icon(Icons.schedule, color: AppTheme.primaryGreen),
                 ),
                 title: Text(

@@ -41,7 +41,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
             ),
             _buildSwitchTile(
               'Maintenance Mode',
-              'Suspend all non-essential system operations',
+             'Suspend all non-essential system operations', // Reverted to original subtitle string
               _maintenanceMode,
               (v) => setState(() => _maintenanceMode = v),
             ),
@@ -106,7 +106,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -155,7 +155,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryGreen.withOpacity(0.1),
+              color: AppTheme.primaryGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(Icons.verified_user_rounded, color: AppTheme.primaryGreen, size: 20),
@@ -187,7 +187,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -217,7 +217,8 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey600)),
       value: value,
       onChanged: onChanged,
-      activeColor: AppTheme.primaryGreen,
+      activeTrackColor: AppTheme.primaryGreen.withValues(alpha: 0.5),
+      activeThumbColor: AppTheme.primaryGreen,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     );
   }
@@ -241,7 +242,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 18),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          backgroundColor: AppTheme.error.withOpacity(0.05),
+          backgroundColor: AppTheme.error.withValues(alpha: 0.05),
         ),
         child: const Text(
           'Logout Session',

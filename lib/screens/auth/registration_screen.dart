@@ -121,7 +121,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Icon(
               Icons.eco_rounded,
               size: 350,
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
             ),
           ),
           Center(
@@ -171,9 +171,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.5),
           ),
           child: const Icon(
             Icons.person_add_alt_1_rounded,
@@ -195,7 +195,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         Text(
           'JOIN THE GREEN REVOLUTION',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: 10,
             fontWeight: FontWeight.w800,
             letterSpacing: 2,
@@ -288,17 +288,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Widget _buildUserTypeSelector() {
     return DropdownButtonFormField<UserType>(
-      value: _selectedUserType,
+      initialValue: _selectedUserType,
       dropdownColor: AppTheme.primaryGreen,
       borderRadius: BorderRadius.circular(24),
       style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
       iconEnabledColor: Colors.white,
       decoration: InputDecoration(
         hintText: 'Select Role',
-        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
         prefixIcon: const Icon(Icons.badge_outlined, color: Colors.white, size: 20),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.15),
+        fillColor: Colors.white.withValues(alpha: 0.15),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
@@ -306,7 +306,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1), width: 1.5),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
         ),
       ),
       items: UserType.values.map<DropdownMenuItem<UserType>>((UserType type) {
@@ -347,11 +347,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
       decoration: InputDecoration(
         hintText: label,
-        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 16),
+        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16),
         prefixIcon: Icon(icon, color: Colors.white, size: 20),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.15),
+        fillColor: Colors.white.withValues(alpha: 0.15),
         contentPadding: const EdgeInsets.all(20),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
@@ -359,7 +359,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1), width: 1.5),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
@@ -379,7 +379,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),

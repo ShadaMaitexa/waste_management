@@ -40,7 +40,7 @@ class RecyclerDashboardTab extends StatelessWidget {
                     child: Icon(
                       Icons.recycling_rounded,
                       size: 180,
-                      color: Colors.white.withOpacity(0.08),
+                      color: Colors.white.withValues(alpha: 0.08),
                     ),
                   ),
                   Padding(
@@ -119,7 +119,7 @@ class RecyclerDashboardTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
          boxShadow: [
           BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.5),
+            color: AppTheme.grey300.withValues(alpha: 0.5),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -140,7 +140,7 @@ class RecyclerDashboardTab extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.success.withOpacity(0.1),
+              color: AppTheme.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -211,7 +211,7 @@ class RecyclerDashboardTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -223,7 +223,7 @@ class RecyclerDashboardTab extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
+              color: color.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 28),
@@ -276,7 +276,7 @@ class RecyclerDashboardTab extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.grey300.withOpacity(0.3),
+                color: AppTheme.grey300.withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 5),
               ),
@@ -320,7 +320,7 @@ class RecyclerDashboardTab extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: isIncoming ? AppTheme.info.withOpacity(0.1) : AppTheme.success.withOpacity(0.1),
+          color: isIncoming ? AppTheme.info.withValues(alpha: 0.1) : AppTheme.success.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -365,9 +365,9 @@ class RecyclerDashboardTab extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
+          color: color.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.1), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
         ),
         child: Column(
           children: [

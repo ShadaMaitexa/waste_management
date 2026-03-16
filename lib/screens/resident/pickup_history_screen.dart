@@ -90,8 +90,8 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
                             boxShadow: [
                               BoxShadow(
                                 color: isSelected 
-                                  ? AppTheme.primaryGreen.withOpacity(0.3)
-                                  : Colors.black.withOpacity(0.04),
+                                  ? AppTheme.primaryGreen.withValues(alpha: 0.3)
+                                  : Colors.black.withValues(alpha: 0.04),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -139,7 +139,7 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -151,7 +151,7 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -208,7 +208,7 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -224,7 +224,7 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(statusIcon, color: statusColor, size: 22),
@@ -382,27 +382,37 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
   void _showFilterDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Filter Pickups'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: _filters.map((filter) {
-            return RadioListTile<String>(
-              title: Text(filter),
-              value: filter,
-              groupValue: _selectedFilter,
-              onChanged: (value) {
-                setState(() {
-                  _selectedFilter = value!;
-                });
-                Navigator.pop(context);
-              },
-            );
-          }).toList(),
-        ),
-      ),
+      builder: (context) {
+        String tempFilter = _selectedFilter;
+        return StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            title: const Text('Filter Pickups'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _filters.map((filter) {
+                return ListTile(
+                  title: Text(filter),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: Radio<String>(
+                    value: filter,
+                    groupValue: tempFilter,
+                    activeColor: AppTheme.primaryEmerald,
+                    onChanged: (value) {
+                      setDialogState(() => tempFilter = value!);
+                      setState(() => _selectedFilter = value!);
+                      Navigator.pop(context);
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
     );
   }
+
 
   void _reschedulePickup(Map<String, dynamic> pickup) {
     showDialog(

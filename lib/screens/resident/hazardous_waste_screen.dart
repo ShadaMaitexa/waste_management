@@ -14,40 +14,24 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
   final List<Map<String, dynamic>> _tabs = [
     {
-      'title': 'Yellow\nCategory',
+      'title': 'Yellow\nSanitary',
       'color': const Color(0xFFFFD54F),
-      'bgActive': Colors.transparent,
-      'bgInactive': Colors.transparent,
-      'textActive': const Color(0xFFFFD54F),
-      'textInactive': const Color(0xFFFFD54F),
-      'icon': Icons.coronavirus_outlined
+      'icon': Icons.clean_hands_rounded
     },
     {
-      'title': 'Red\nCategory',
+      'title': 'Red\nClinical',
       'color': const Color(0xFFE53935),
-      'bgActive': const Color(0xFFE53935),
-      'bgInactive': const Color(0xFFE53935),
-      'textActive': Colors.white,
-      'textInactive': Colors.white,
-      'icon': Icons.coronavirus_outlined
+      'icon': Icons.medical_information_rounded
     },
     {
-      'title': 'White\nCategory',
+      'title': 'White\nSharps',
       'color': Colors.white,
-      'bgActive': Colors.white,
-      'bgInactive': Colors.white,
-      'textActive': Colors.black,
-      'textInactive': Colors.black,
-      'icon': Icons.coronavirus_outlined
+      'icon': Icons.biotech_rounded
     },
     {
-      'title': 'Blue\nCategory',
+      'title': 'Blue\nMedicine',
       'color': const Color(0xFF42A5F5),
-      'bgActive': const Color(0xFF42A5F5),
-      'bgInactive': const Color(0xFF42A5F5),
-      'textActive': Colors.black,
-      'textInactive': Colors.black,
-      'icon': Icons.coronavirus_outlined
+      'icon': Icons.medication_rounded
     },
   ];
 
@@ -61,17 +45,20 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
       {'name': 'Hair', 'icon': Icons.face_retouching_natural_rounded},
     ],
     1: [
-      {'name': 'Syringes', 'icon': Icons.vaccines_rounded},
+      {'name': 'Urine Bags', 'icon': Icons.bloodtype_outlined},
+      {'name': 'Tubing', 'icon': Icons.linear_scale_rounded},
+      {'name': 'Intravenous Tubes', 'icon': Icons.biotech_rounded},
       {'name': 'Gloves', 'icon': Icons.back_hand_rounded},
-      {'name': 'IV Tubes', 'icon': Icons.bubble_chart_rounded},
+      {'name': 'Catheters', 'icon': Icons.device_thermostat_rounded},
     ],
     2: [
-      {'name': 'Needles', 'icon': Icons.push_pin_rounded},
       {'name': 'Scalpels', 'icon': Icons.content_cut_rounded},
+      {'name': 'Needles', 'icon': Icons.push_pin_rounded},
+      {'name': 'Blades', 'icon': Icons.architecture_rounded},
     ],
     3: [
-      {'name': 'Glass Vials', 'icon': Icons.science_rounded},
-      {'name': 'Broken Glass', 'icon': Icons.view_in_ar_rounded},
+      {'name': 'Medicine Vials', 'icon': Icons.science_rounded},
+      {'name': 'Ampoules', 'icon': Icons.vaccines_rounded},
     ],
   };
 
@@ -104,7 +91,7 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: const Text(
-            'Biohazard Selection',
+            'Sanitary & Bio-Waste',
             style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white, letterSpacing: -0.5),
           ),
           centerTitle: true,
@@ -139,21 +126,25 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
   }
 
   Widget _buildTopBanner() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-      child: Container(
+    final tab = _tabs[_selectedTabIndex];
+    return Container(
+        margin: const EdgeInsets.fromLTRB(20, 16, 20, 16),
         height: 100,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF7B1FA2), Color(0xFF4A148C)],
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFF1A1A1A),
+              tab['color'].withValues(alpha: 0.15),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: tab['color'].withValues(alpha: 0.2), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF4A148C).withOpacity(0.4),
+              color: Colors.black.withValues(alpha: 0.4), // Darker shadow for slate theme
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -172,7 +163,7 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                   ),
                   Text(
                     'SAFE DISPOSAL PROTOCOL',
-                    style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
                   ),
                 ],
               ),
@@ -190,22 +181,21 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                       '₹45',
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 24),
                     ),
-                    const SizedBox(width: 2),
+                    const SizedBox(width: AppTheme.spacingS),
                     Text(
                       '/KG',
-                      style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.w800),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 10, fontWeight: FontWeight.w800),
                     ),
                   ],
                 ),
                 Text(
                   '+GST EXTRA',
-                  style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 8, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 8, fontWeight: FontWeight.w700),
                 ),
               ],
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -226,11 +216,11 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withOpacity(0.1) : Colors.transparent,
+                color: isSelected ? Colors.white.withValues(alpha: 0.1) : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: isSelected 
-                    ? Border.all(color: tab['color'].withOpacity(0.5), width: 1.5)
-                    : Border.all(color: Colors.white.withOpacity(0.05), width: 1.5),
+                    ? Border.all(color: tab['color'].withValues(alpha: 0.5), width: 1.5)
+                    : Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1.5),
               ),
               child: Column(
                 children: [
@@ -246,6 +236,15 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                       color: isSelected ? Colors.white : Colors.white24,
                       fontWeight: FontWeight.w900,
                       fontSize: 10,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  Text(
+                    tab['title'].split('\n')[1].toUpperCase(),
+                    style: TextStyle(
+                      color: isSelected ? tab['color'] : Colors.white24,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 8,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -288,12 +287,12 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                     end: Alignment.bottomRight,
                   ),
                   border: Border.all(
-                    color: isSelected ? AppTheme.primaryGreen.withOpacity(0.5) : Colors.white.withOpacity(0.05),
+                    color: isSelected ? AppTheme.primaryGreen.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -302,10 +301,10 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(AppTheme.spacingS),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusS),
                       ),
                       child: Icon(item['icon'], color: Colors.white, size: 24),
                     ),
@@ -323,7 +322,7 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                     if (isSelected)
                       const Icon(Icons.check_circle_rounded, color: AppTheme.primaryGreen, size: 24)
                     else
-                      Icon(Icons.add_circle_outline_rounded, color: Colors.white.withOpacity(0.2), size: 24),
+                      Icon(Icons.add_circle_outline_rounded, color: Colors.white.withValues(alpha: 0.2), size: 24),
                   ],
                 ),
               ),
@@ -344,7 +343,7 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             offset: const Offset(0, -10),
             blurRadius: 30,
           ),
@@ -363,7 +362,7 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                 ),
                 Text(
                   'READY FOR COLLECTION',
-                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10, fontWeight: FontWeight.w700),
                 ),
               ],
             ),
@@ -376,7 +375,7 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryGreen.withOpacity(0.3),
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 ),

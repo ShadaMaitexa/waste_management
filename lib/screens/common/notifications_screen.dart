@@ -128,7 +128,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           // Handle filter selection
         });
       },
-      selectedColor: AppTheme.primaryGreen.withOpacity(0.2),
+      selectedColor: AppTheme.primaryGreen.withValues(alpha: 0.2),
       checkmarkColor: AppTheme.primaryGreen,
     );
   }
@@ -147,7 +147,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppTheme.radiusS),
           ),
           child: Icon(icon, color: color, size: 20),

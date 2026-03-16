@@ -128,7 +128,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           decoration: BoxDecoration(
                             color: _currentPage == index
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.3),
+                                : Colors.white.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -177,10 +177,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppTheme.radiusXL),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 2,
               ),
             ),

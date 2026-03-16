@@ -111,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Icon(
               Icons.eco_rounded,
               size: 400,
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
             ),
           ),
           Center(
@@ -161,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           'SMART WASTE MANAGEMENT',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: 12,
             fontWeight: FontWeight.w800,
             letterSpacing: 3,
@@ -216,10 +216,10 @@ class _LoginScreenState extends State<LoginScreen> {
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
             hintText: 'Email Address',
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 16),
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16),
             prefixIcon: const Icon(Icons.email_outlined, color: Colors.white, size: 20),
             filled: true,
-            fillColor: Colors.white.withOpacity(0.15),
+            fillColor: Colors.white.withValues(alpha: 0.15),
             contentPadding: const EdgeInsets.all(20),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
@@ -227,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1), width: 1.5),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
@@ -247,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
             hintText: 'Password',
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 16),
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16),
             prefixIcon: const Icon(Icons.lock_outline_rounded, color: Colors.white, size: 20),
             suffixIcon: IconButton(
               icon: Icon(
@@ -258,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
             ),
             filled: true,
-            fillColor: Colors.white.withOpacity(0.15),
+            fillColor: Colors.white.withValues(alpha: 0.15),
             contentPadding: const EdgeInsets.all(20),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
@@ -266,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1), width: 1.5),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
@@ -292,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 25,
             offset: const Offset(0, 10),
           ),

@@ -194,11 +194,11 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   Widget _buildMapControls() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -238,7 +238,7 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
 
   Widget _buildWardSelector() {
     return DropdownButtonFormField<String>(
-      value: _selectedWard,
+      initialValue: _selectedWard,
       decoration: InputDecoration(
         labelText: 'Ward',
         prefixIcon: const Icon(Icons.location_city, color: AppTheme.primaryGreen),
@@ -287,7 +287,7 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -303,7 +303,7 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryGreen.withOpacity(0.1),
+                    color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.route_rounded, color: AppTheme.primaryGreen, size: 20),
@@ -562,9 +562,9 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
         vertical: AppTheme.spacingXS,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppTheme.radiusS),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         text,

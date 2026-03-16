@@ -147,7 +147,7 @@ class _HelpScreenState extends State<HelpScreen> {
           // Handle category selection
         });
       },
-      selectedColor: AppTheme.primaryGreen.withOpacity(0.2),
+      selectedColor: AppTheme.primaryGreen.withValues(alpha: 0.2),
       checkmarkColor: AppTheme.primaryGreen,
     );
   }

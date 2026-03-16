@@ -65,7 +65,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -126,7 +126,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryGreen.withOpacity(0.3),
+            color: AppTheme.primaryGreen.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -150,7 +150,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
           Text(
             'Our team is ready to assist you with any questions or technical issues.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               fontSize: 14,
               fontWeight: FontWeight.w500,
               height: 1.5,
@@ -169,7 +169,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -238,7 +238,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
 
   Widget _buildDropdownField() {
     return DropdownButtonFormField<String>(
-      value: _selectedCategory,
+      initialValue: _selectedCategory,
       decoration: InputDecoration(
         labelText: 'Category',
         labelStyle: const TextStyle(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w600),
@@ -296,7 +296,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppTheme.primaryGreen.withOpacity(0.1),
+              color: AppTheme.primaryGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: AppTheme.primaryGreen, size: 18),
@@ -335,7 +335,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
               gradient: const LinearGradient(colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen]),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryGreen.withOpacity(0.3),
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 ),
@@ -403,7 +403,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -414,7 +414,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: statusColor.withOpacity(0.1),
+            color: statusColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(statusIcon, color: statusColor, size: 22),

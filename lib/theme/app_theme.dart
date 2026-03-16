@@ -2,377 +2,248 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // GreenLoop Color Palette
-  static const Color primaryGreen = Color(0xFF2E7D32);
-  static const Color secondaryGreen = Color(0xFF4CAF50);
-  static const Color lightGreen = Color(0xFF81C784);
-  static const Color darkGreen = Color(0xFF1B5E20);
-  static const Color accentGreen = Color(0xFF8BC34A);
+  // --- Professional Emerald & Slate Palette ---
+  static const Color primaryEmerald = Color(0xFF10B981);
+  static const Color primaryGreen = Color(0xFF059669);
+  static const Color secondaryGreen = Color(0xFF065F46);
+  static const Color secondarySlate = Color(0xFF0F172A);
+  static const Color accentIndigo = Color(0xFF6366F1);
+  static const Color accentGreen = Color(0xFF34D399);
+
+  // Waste Colors
+  static const Color dryWaste = Color(0xFF60A5FA);
+  static const Color wetWaste = Color(0xFFFACC15);
+  static const Color ewaste = Color(0xFFF87171);
   
-  // Neutral Colors
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color black = Color(0xFF000000);
-  static const Color grey50 = Color(0xFFFAFAFA);
-  static const Color grey100 = Color(0xFFF5F5F5);
-  static const Color grey200 = Color(0xFFEEEEEE);
-  static const Color grey300 = Color(0xFFE0E0E0);
-  static const Color grey400 = Color(0xFFBDBDBD);
-  static const Color grey500 = Color(0xFF9E9E9E);
-  static const Color grey600 = Color(0xFF757575);
-  static const Color grey700 = Color(0xFF616161);
-  static const Color grey800 = Color(0xFF424242);
-  static const Color grey900 = Color(0xFF212121);
+  // Backgrounds
+  static const Color bgSurface = Color(0xFFF8FAFC);
+  static const Color bgCanvas = Color(0xFFFFFFFF);
+  static const Color bgDark = Color(0xFF0F172A);
   
-  // Waste Type Colors
-  static const Color dryWaste = Color(0xFF8D6E63);
-  static const Color wetWaste = Color(0xFF4CAF50);
-  static const Color ewaste = Color(0xFF2196F3);
-  static const Color biomedicalWaste = Color(0xFFF44336);
+  // Greys (Slate palette)
+  static const Color grey50 = Color(0xFFF8FAFC);
+  static const Color grey100 = Color(0xFFF1F5F9);
+  static const Color grey200 = Color(0xFFE2E8F0);
+  static const Color grey300 = Color(0xFFCBD5E1);
+  static const Color grey400 = Color(0xFF94A3B8);
+  static const Color grey500 = Color(0xFF64748B);
+  static const Color grey600 = Color(0xFF475569);
+  static const Color grey700 = Color(0xFF334155);
+  static const Color grey800 = Color(0xFF1E293B);
+  static const Color grey900 = Color(0xFF0F172A);
   
-  // Status Colors
-  static const Color success = Color(0xFF4CAF50);
-  static const Color warning = Color(0xFFFF9800);
-  static const Color error = Color(0xFFF44336);
-  static const Color info = Color(0xFF2196F3);
+  // Status
+  static const Color success = Color(0xFF10B981);
+  static const Color warning = Color(0xFFF59E0B);
+  static const Color error = Color(0xFFEF4444);
+  static const Color info = Color(0xFF3B82F6);
   
-  // Gradients
-  static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primaryGreen, Color(0xFF1B5E20)],
+  // Professional Gradients
+  static const LinearGradient emeraldGradient = LinearGradient(
+    colors: [Color(0xFF10B981), Color(0xFF059669)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient accentGradient = LinearGradient(
-    colors: [secondaryGreen, accentGreen],
+  static const LinearGradient primaryGradient = emeraldGradient;
+
+  static const LinearGradient slateGradient = LinearGradient(
+    colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient alertGradient = LinearGradient(
-    colors: [error, Color(0xFFC62828)],
+  static const LinearGradient indigoGradient = LinearGradient(
+    colors: [Color(0xFF818CF8), Color(0xFF6366F1)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient infoGradient = LinearGradient(
-    colors: [info, Color(0xFF1565C0)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-  
-  static const LinearGradient glassGradient = LinearGradient(
-    colors: [
-      Color(0x33FFFFFF),
-      Color(0x11FFFFFF),
-    ],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-  
-  static const LinearGradient cardGradient = LinearGradient(
-    colors: [white, grey50],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  // Shadows
-  static List<BoxShadow> get softShadow => [
+  // Modern Shadows
+  static List<BoxShadow> get cardShadow => [
     BoxShadow(
-      color: black.withOpacity(0.05),
-      blurRadius: 15,
-      offset: const Offset(0, 5),
-    ),
-  ];
-
-  static List<BoxShadow> get primaryShadow => [
-    BoxShadow(
-      color: primaryGreen.withOpacity(0.25),
+      color: Colors.black.withValues(alpha: 0.03),
       blurRadius: 20,
       offset: const Offset(0, 10),
     ),
-  ];
-
-  static List<BoxShadow> get glassShadow => [
     BoxShadow(
-      color: black.withOpacity(0.1),
-      blurRadius: 10,
-      offset: const Offset(0, 4),
+      color: Colors.black.withValues(alpha: 0.01),
+      blurRadius: 4,
+      offset: const Offset(0, 2),
     ),
   ];
 
-  // Text Styles
+  static List<BoxShadow> get intenseShadow => [
+    BoxShadow(
+      color: primaryEmerald.withValues(alpha: 0.15),
+      blurRadius: 30,
+      offset: const Offset(0, 15),
+    ),
+  ];
+
+  // Professional Typography
   static TextTheme get textTheme => TextTheme(
-    displayLarge: GoogleFonts.poppins(
+    displayLarge: GoogleFonts.plusJakartaSans(
       fontSize: 32,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w800,
       color: grey900,
+      letterSpacing: -1,
     ),
-    displayMedium: GoogleFonts.poppins(
+    displayMedium: GoogleFonts.plusJakartaSans(
       fontSize: 28,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w800,
       color: grey900,
+      letterSpacing: -0.5,
     ),
-    displaySmall: GoogleFonts.poppins(
+    displaySmall: GoogleFonts.plusJakartaSans(
       fontSize: 24,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       color: grey900,
+      letterSpacing: -0.5,
     ),
-    headlineLarge: GoogleFonts.poppins(
+    headlineLarge: GoogleFonts.plusJakartaSans(
       fontSize: 22,
+      fontWeight: FontWeight.w700,
+      color: grey900,
+    ),
+    headlineMedium: GoogleFonts.plusJakartaSans(
+      fontSize: 20,
       fontWeight: FontWeight.w600,
       color: grey900,
     ),
-    headlineMedium: GoogleFonts.poppins(
-      fontSize: 20,
-      fontWeight: FontWeight.w500,
+    titleLarge: GoogleFonts.plusJakartaSans(
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
       color: grey900,
     ),
-    headlineSmall: GoogleFonts.poppins(
-      fontSize: 18,
-      fontWeight: FontWeight.w500,
-      color: grey900,
-    ),
-    titleLarge: GoogleFonts.poppins(
+    bodyLarge: GoogleFonts.plusJakartaSans(
       fontSize: 16,
       fontWeight: FontWeight.w500,
-      color: grey900,
-    ),
-    titleMedium: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      color: grey700,
-    ),
-    titleSmall: GoogleFonts.poppins(
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      color: grey600,
-    ),
-    bodyLarge: GoogleFonts.poppins(
-      fontSize: 16,
-      fontWeight: FontWeight.normal,
       color: grey800,
+      height: 1.5,
     ),
-    bodyMedium: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.normal,
-      color: grey700,
-    ),
-    bodySmall: GoogleFonts.poppins(
-      fontSize: 12,
-      fontWeight: FontWeight.normal,
-      color: grey600,
-    ),
-    labelLarge: GoogleFonts.poppins(
+    bodyMedium: GoogleFonts.plusJakartaSans(
       fontSize: 14,
       fontWeight: FontWeight.w500,
-      color: grey700,
-    ),
-    labelMedium: GoogleFonts.poppins(
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
       color: grey600,
+      height: 1.5,
     ),
-    labelSmall: GoogleFonts.poppins(
-      fontSize: 10,
-      fontWeight: FontWeight.w500,
-      color: grey500,
+    labelLarge: GoogleFonts.plusJakartaSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: grey700,
     ),
   );
 
-  // Light Theme
+  // Light Theme Configuration
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      primarySwatch: _createMaterialColor(primaryGreen),
-      primaryColor: primaryGreen,
-      scaffoldBackgroundColor: grey50,
+      primaryColor: primaryEmerald,
+      scaffoldBackgroundColor: bgSurface,
       textTheme: textTheme,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryGreen,
-        brightness: Brightness.light,
-        primary: primaryGreen,
-        secondary: secondaryGreen,
-        surface: white,
-        background: grey50,
+        seedColor: primaryEmerald,
+        primary: primaryEmerald,
+        secondary: grey800,
+        surface: bgCanvas,
         error: error,
-        onPrimary: white,
-        onSecondary: white,
-        onSurface: grey900,
-        onBackground: grey900,
-        onError: white,
       ),
       appBarTheme: AppBarTheme(
         elevation: 0,
-        centerTitle: true,
-        backgroundColor: primaryGreen,
-        foregroundColor: white,
-        titleTextStyle: GoogleFonts.poppins(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: white,
+        centerTitle: false,
+        backgroundColor: bgCanvas,
+        foregroundColor: grey900,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.black12,
+        titleTextStyle: GoogleFonts.plusJakartaSans(
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+          color: grey900,
         ),
+      ),
+      cardTheme: CardThemeData(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: grey200, width: 1),
+        ),
+        color: bgCanvas,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryGreen,
-          foregroundColor: white,
-          elevation: 2,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          textStyle: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: primaryGreen,
-          side: const BorderSide(color: primaryGreen, width: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          textStyle: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          backgroundColor: primaryEmerald,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15),
+        ).copyWith(
+          overlayColor: WidgetStateProperty.all(Colors.white.withValues(alpha: 0.1)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: white,
+        fillColor: bgCanvas,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: grey300),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: grey200, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: grey300),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: grey200, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryGreen, width: 2),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: primaryEmerald, width: 2),
         ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: error),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        hintStyle: GoogleFonts.poppins(
-          fontSize: 14,
-          color: grey500,
-        ),
-      ),
-      cardTheme: const CardThemeData(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-        ),
-        color: white,
-      ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: white,
-        selectedItemColor: primaryGreen,
-        unselectedItemColor: grey500,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-      ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: primaryGreen,
-        foregroundColor: white,
-        elevation: 4,
+        contentPadding: const EdgeInsets.all(20),
+        hintStyle: GoogleFonts.plusJakartaSans(color: grey400, fontSize: 14),
       ),
     );
   }
 
-  // Dark Theme
-  static ThemeData get darkTheme {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      primarySwatch: _createMaterialColor(secondaryGreen),
-      primaryColor: secondaryGreen,
-      scaffoldBackgroundColor: grey900,
-      textTheme: textTheme.apply(
-        bodyColor: white,
-        displayColor: white,
+  // Helper for Status Tags
+  static Widget statusTag(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
       ),
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: secondaryGreen,
-        brightness: Brightness.dark,
-        primary: secondaryGreen,
-        secondary: accentGreen,
-        surface: grey800,
-        background: grey900,
-        error: error,
-        onPrimary: grey900,
-        onSecondary: grey900,
-        onSurface: white,
-        onBackground: white,
-        onError: grey900,
+      child: Text(
+        label.toUpperCase(),
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
 
-  static MaterialColor _createMaterialColor(Color color) {
-    List strengths = <double>[.05];
-    Map<int, Color> swatch = <int, Color>{};
-    final int r = color.red, g = color.green, b = color.blue;
-
-    for (int i = 1; i < 10; i++) {
-      strengths.add(0.1 * i);
-    }
-    for (double strength in strengths) {
-      final double ds = 0.5 - strength;
-      swatch[(strength * 1000).round()] = Color.fromRGBO(
-        r + ((ds < 0 ? r : (255 - r)) * ds).round(),
-        g + ((ds < 0 ? g : (255 - g)) * ds).round(),
-        b + ((ds < 0 ? b : (255 - b)) * ds).round(),
-        1,
-      );
-    }
-    return MaterialColor(color.value, swatch);
-  }
-
-  // Custom Colors for Waste Types
-  static Color getWasteTypeColor(String wasteType) {
-    switch (wasteType.toLowerCase()) {
-      case 'dry':
-      case 'dry waste':
-        return dryWaste;
-      case 'wet':
-      case 'wet waste':
-        return wetWaste;
-      case 'e-waste':
-      case 'electronic':
-        return ewaste;
-      case 'biomedical':
-        return biomedicalWaste;
-      default:
-        return grey500;
-    }
-  }
-
-  // Spacing Constants
-  static const double spacingXS = 4.0;
+  // Spacing
   static const double spacingS = 8.0;
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
   static const double spacingXXL = 48.0;
 
-  // Border Radius
+  // Radius
   static const double radiusS = 8.0;
-  static const double radiusM = 12.0;
-  static const double radiusL = 16.0;
-  static const double radiusXL = 24.0;
+  static const double radiusM = 16.0;
+  static const double radiusL = 24.0;
+  static const double radiusXL = 32.0;
 
-  // Elevation
-  static const double elevationS = 2.0;
-  static const double elevationM = 4.0;
-  static const double elevationL = 8.0;
+  // New Dark Theme
+  static ThemeData get darkTheme => lightTheme.copyWith(
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: bgDark,
+  );
+
+  // Spacing XS
+  static const double spacingXS = 4.0;
 }

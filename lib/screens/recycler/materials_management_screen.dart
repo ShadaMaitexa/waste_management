@@ -137,19 +137,19 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.08),
+              color: color.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
-          border: Border.all(color: color.withOpacity(0.05), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.05), width: 1),
         ),
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 20),
@@ -194,7 +194,7 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
             child: FilterChip(
               label: Text(filter),
               selected: _selectedFilter == filter,
-              selectedColor: AppTheme.primaryGreen.withOpacity(0.2),
+              selectedColor: AppTheme.primaryGreen.withValues(alpha: 0.2),
               checkmarkColor: AppTheme.primaryGreen,
               onSelected: (_) {
                 setState(() => _selectedFilter = filter);
@@ -244,7 +244,7 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -271,7 +271,7 @@ class _MaterialsManagementScreenState extends State<MaterialsManagementScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(

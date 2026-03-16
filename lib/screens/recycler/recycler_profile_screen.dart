@@ -61,7 +61,7 @@ class RecyclerProfileScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Text(
@@ -116,7 +116,7 @@ class RecyclerProfileScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusM),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -189,7 +189,7 @@ class RecyclerProfileScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppTheme.radiusM),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -234,7 +234,7 @@ class RecyclerProfileScreen extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppTheme.primaryGreen.withOpacity(0.1),
+          color: AppTheme.primaryGreen.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: AppTheme.primaryGreen, size: 20),
@@ -253,7 +253,7 @@ class RecyclerProfileScreen extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppTheme.error.withOpacity(0.1),
+          color: AppTheme.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Icon(Icons.logout, color: AppTheme.error, size: 20),

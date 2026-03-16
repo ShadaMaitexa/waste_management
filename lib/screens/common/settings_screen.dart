@@ -55,7 +55,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _notificationsEnabled = value;
                   });
                 },
-                activeColor: AppTheme.primaryGreen,
+                activeThumbColor: AppTheme.primaryGreen,
+                activeTrackColor: AppTheme.primaryGreen.withValues(alpha: 0.5),
               ),
             ),
             _buildSettingTile(
@@ -70,7 +71,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _locationEnabled = value;
                   });
                 },
-                activeColor: AppTheme.primaryGreen,
+                activeThumbColor: AppTheme.primaryGreen,
+                activeTrackColor: AppTheme.primaryGreen.withValues(alpha: 0.5),
               ),
             ),
             _buildDropdownTile(
@@ -192,7 +194,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: AppTheme.primaryGreen.withOpacity(0.1),
+                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppTheme.radiusM),
               ),
               child: const Icon(

@@ -40,6 +40,7 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.bgSurface,
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
@@ -47,9 +48,9 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
             _selectedIndex = index;
           });
         },
-        physics: const NeverScrollableScrollPhysics(), // Disable swipe to prevent conflict with maps
+        physics: const NeverScrollableScrollPhysics(), 
         children: [
-          _DashboardTab(onNavigate: _onItemTapped), // Dashboard is internal class
+          _DashboardTab(onNavigate: _onItemTapped),
           const WorkerRoutePlannerScreen(),
           const WorkerAttendanceScreen(),
           const WorkerProfileScreen(),
@@ -59,7 +60,7 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -68,27 +69,28 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
         child: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: _onItemTapped,
-          backgroundColor: Colors.white,
-          indicatorColor: AppTheme.primaryGreen.withOpacity(0.1),
+          backgroundColor: AppTheme.bgCanvas,
+          surfaceTintColor: Colors.transparent,
+          indicatorColor: AppTheme.primaryEmerald.withValues(alpha: 0.15),
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.dashboard_outlined),
-              selectedIcon: Icon(Icons.dashboard, color: AppTheme.primaryGreen),
+              selectedIcon: Icon(Icons.dashboard_rounded, color: AppTheme.primaryEmerald),
               label: 'Dashboard',
             ),
             NavigationDestination(
               icon: Icon(Icons.map_outlined),
-              selectedIcon: Icon(Icons.map, color: AppTheme.primaryGreen),
-              label: 'Route',
+              selectedIcon: Icon(Icons.map_rounded, color: AppTheme.primaryEmerald),
+              label: 'Routing',
             ),
             NavigationDestination(
               icon: Icon(Icons.fact_check_outlined),
-              selectedIcon: Icon(Icons.fact_check, color: AppTheme.primaryGreen),
-              label: 'Attendance',
+              selectedIcon: Icon(Icons.fact_check_rounded, color: AppTheme.primaryEmerald),
+              label: 'Logbook',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline),
-              selectedIcon: Icon(Icons.person, color: AppTheme.primaryGreen),
+              selectedIcon: Icon(Icons.person_rounded, color: AppTheme.primaryEmerald),
               label: 'Profile',
             ),
           ],
@@ -107,7 +109,7 @@ class _DashboardTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer2<AuthService, PickupService>(
       builder: (context, authService, pickupService, _) {
-        final workerName = authService.currentUserName ?? 'Worker';
+        final workerName = authService.currentUserName ?? 'Technician';
         final workerId = authService.currentUser?.id ?? '';
         final todaysPickups = pickupService.getTodaysPickupsForWorker(workerId);
         final pendingCount = todaysPickups.where((p) => p.status == PickupStatus.scheduled).length;
@@ -115,9 +117,9 @@ class _DashboardTab extends StatelessWidget {
         final currentPickup = todaysPickups.isEmpty ? null : todaysPickups.firstWhere((p) => p.status == PickupStatus.inProgress, orElse: () => todaysPickups.first);
 
         return Scaffold(
-          backgroundColor: AppTheme.grey50,
+          backgroundColor: AppTheme.bgSurface,
           body: RefreshIndicator(
-            color: AppTheme.primaryGreen,
+            color: AppTheme.primaryEmerald,
             onRefresh: () async {
               await pickupService.fetchPickups();
             },
@@ -125,13 +127,13 @@ class _DashboardTab extends StatelessWidget {
               slivers: [
                 _buildSliverAppBar(context, workerName),
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM, vertical: AppTheme.spacingL),
+                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingL, vertical: AppTheme.spacingL),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       _buildStatsGrid(context, pendingCount, completedCount),
-                      const SizedBox(height: AppTheme.spacingL),
+                      const SizedBox(height: AppTheme.spacingXL),
                       _buildCurrentTaskCard(context, currentPickup),
-                      const SizedBox(height: AppTheme.spacingL),
+                      const SizedBox(height: AppTheme.spacingXL),
                       _buildQuickActions(context),
                       const SizedBox(height: AppTheme.spacingXXL),
                     ]),
@@ -151,9 +153,9 @@ class _DashboardTab extends StatelessWidget {
       floating: false,
       pinned: true,
       elevation: 0,
-      backgroundColor: AppTheme.primaryGreen,
+      backgroundColor: AppTheme.bgDark,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(36)),
       ),
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
@@ -161,52 +163,58 @@ class _DashboardTab extends StatelessWidget {
           children: [
             Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+                gradient: AppTheme.slateGradient,
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(36)),
               ),
             ),
             Positioned(
               right: -30,
               top: -20,
               child: Icon(
-                Icons.engineering_rounded,
-                size: 180,
-                color: Colors.white.withOpacity(0.08),
+                Icons.memory_rounded,
+                size: 200,
+                color: Colors.white.withValues(alpha: 0.03),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20, bottom: 20, right: 20),
+              padding: const EdgeInsets.only(left: 24, bottom: 24, right: 24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Stay Safe & Green,',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                  Text(
+                    'Operational Status: Online',
+                    style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w700),
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     name,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
                       letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.verified_user_rounded, color: Colors.white70, size: 14),
-                      const SizedBox(width: 4),
-                      const Text(
-                        'Certified Worker #GLW204',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ],
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 12),
+                        const SizedBox(width: 4),
+                        Text(
+                          'FIELD OPERATIVE #GLW204',
+                          style: GoogleFonts.plusJakartaSans(color: AppTheme.primaryEmerald, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -216,16 +224,17 @@ class _DashboardTab extends StatelessWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+          icon: const Icon(Icons.notifications_active_rounded, color: AppTheme.grey300),
           onPressed: () {},
         ),
         IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white),
+          icon: const Icon(Icons.exit_to_app_rounded, color: AppTheme.grey300),
           onPressed: () {
             Provider.of<AuthService>(context, listen: false).logout();
             Navigator.of(context).pushReplacementNamed('/login');
           },
         ),
+        const SizedBox(width: 8),
       ],
     );
   }
@@ -235,16 +244,16 @@ class _DashboardTab extends StatelessWidget {
       children: [
         Expanded(
           child: _buildStatItem(
-            'Pending',
+            'PENDING',
             pending.toString(),
             Icons.pending_actions_rounded,
             AppTheme.warning,
           ),
         ),
-        const SizedBox(width: AppTheme.spacingM),
+        const SizedBox(width: AppTheme.spacingL),
         Expanded(
           child: _buildStatItem(
-            'Completed',
+            'COMPLETED',
             completed.toString(),
             Icons.task_alt_rounded,
             AppTheme.success,
@@ -256,17 +265,12 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildStatItem(String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.12),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,27 +278,29 @@ class _DashboardTab extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 26),
+            child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 26,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 28,
               fontWeight: FontWeight.w800,
               color: AppTheme.grey900,
               letterSpacing: -1,
             ),
           ),
+          const SizedBox(height: 4),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppTheme.grey600,
-              fontWeight: FontWeight.w600,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
+              color: AppTheme.grey500,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1,
             ),
           ),
         ],
@@ -305,13 +311,21 @@ class _DashboardTab extends StatelessWidget {
   Widget _buildCurrentTaskCard(BuildContext context, Pickup? pickup) {
     if (pickup == null) {
       return Container(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(AppTheme.spacingXL),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppTheme.radiusL),
+          color: AppTheme.bgCanvas,
+          borderRadius: BorderRadius.circular(AppTheme.radiusXL),
           border: Border.all(color: AppTheme.grey200),
         ),
-        child: const Center(child: Text('No pickups assigned today')),
+        child: Center(
+          child: Column(
+            children: [
+              Icon(Icons.inbox_rounded, size: 48, color: AppTheme.grey300),
+              const SizedBox(height: 16),
+              Text('Logistics Queue Empty', style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w700)),
+            ],
+          ),
+        ),
       );
     }
 
@@ -322,40 +336,48 @@ class _DashboardTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Current Route',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              'Active Waypoint',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.grey900,
+                letterSpacing: -0.5,
+              ),
             ),
             TextButton(
-              onPressed: () => onNavigate(1), // Go to Route tab
-              child: const Text('View All'),
+              onPressed: () => onNavigate(1),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                backgroundColor: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text('ROUTE MAP', style: GoogleFonts.plusJakartaSans(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5, color: AppTheme.primaryEmerald)),
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacingS),
+        const SizedBox(height: AppTheme.spacingL),
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            gradient: AppTheme.primaryGradient,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: AppTheme.primaryShadow,
+            gradient: AppTheme.emeraldGradient,
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: AppTheme.intenseShadow,
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(32),
             child: Stack(
               children: [
                 Positioned(
                   right: -40,
                   bottom: -40,
                   child: Icon(
-                    Icons.local_shipping_rounded,
+                    Icons.location_city_rounded,
                     size: 200,
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(28),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -365,85 +387,87 @@ class _DashboardTab extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Row(
+                            child: Row(
                               children: [
-                                Icon(Icons.location_on, color: Colors.white, size: 14),
-                                SizedBox(width: 6),
+                                const Icon(Icons.gps_fixed_rounded, color: Colors.white, size: 14),
+                                const SizedBox(width: 6),
                                 Text(
-                                  'CURRENT PICKUP',
-                                  style: TextStyle(
+                                  'PRIORITY DISPATCH',
+                                  style: GoogleFonts.plusJakartaSans(
                                       color: Colors.white, 
-                                      fontWeight: FontWeight.bold, 
+                                      fontWeight: FontWeight.w800, 
                                       fontSize: 10,
-                                      letterSpacing: 0.5),
+                                      letterSpacing: 1),
                                 ),
                               ],
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
+                              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
                             ),
                             child: Text(
                               'Ward ${pickup.wardNumber}',
-                              style: const TextStyle(
-                                color: AppTheme.primaryGreen,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppTheme.primaryEmerald,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 11,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 28),
                       Text(
                         pickup.address,
-                        style: const TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
                           letterSpacing: -0.5,
+                          height: 1.2,
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       Row(
                         children: [
-                          const Icon(Icons.access_time_filled, color: Colors.white70, size: 16),
-                          const SizedBox(width: 6),
+                          Icon(Icons.schedule_rounded, color: Colors.white.withValues(alpha: 0.8), size: 18),
+                          const SizedBox(width: 8),
                           Text(
                             'ETA: ${pickup.formattedTime}',
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                            style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14),
                           ),
                           const Spacer(),
                           Text(
-                            '${pickup.wasteTypes.length} Items',
-                            style: const TextStyle(color: Colors.white70, fontSize: 13),
+                            '${pickup.wasteTypes.length} Classes',
+                            style: GoogleFonts.plusJakartaSans(color: Colors.white.withValues(alpha: 0.8), fontSize: 13, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 28),
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: AppTheme.primaryGreen,
+                          foregroundColor: AppTheme.primaryEmerald,
                           elevation: 0,
-                          minimumSize: const Size(double.infinity, 50),
+                          minimumSize: const Size(double.infinity, 56),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.check_circle_rounded),
-                            SizedBox(width: 10),
-                            Text('Mark as Handed Over', style: TextStyle(fontWeight: FontWeight.bold)),
+                            const Icon(Icons.verified_rounded, size: 20),
+                            const SizedBox(width: 12),
+                            Text('CONFIRM EXTRACTION', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1)),
                           ],
                         ),
                       ),
@@ -463,24 +487,26 @@ class _DashboardTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+          'Operational Tools',
+          style: GoogleFonts.plusJakartaSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.grey900,
                 letterSpacing: -0.5,
               ),
         ),
-        const SizedBox(height: AppTheme.spacingM),
+        const SizedBox(height: AppTheme.spacingL),
         GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: AppTheme.spacingM,
           crossAxisSpacing: AppTheme.spacingM,
-          childAspectRatio: 0.9,
+          childAspectRatio: 0.85,
           children: [
-            _actionCard('Report', Icons.add_a_photo_rounded, AppTheme.info),
-            _actionCard('History', Icons.history_rounded, AppTheme.primaryGreen),
-            _actionCard('Support', Icons.support_agent_rounded, AppTheme.warning),
+            _actionCard('Reporting', Icons.camera_alt_rounded, AppTheme.accentIndigo),
+            _actionCard('Manifest', Icons.history_edu_rounded, AppTheme.info),
+            _actionCard('Signal Command', Icons.headset_mic_rounded, const Color(0xFFF59E0B)),
           ],
         ),
       ],
@@ -490,35 +516,30 @@ class _DashboardTab extends StatelessWidget {
   Widget _actionCard(String label, IconData icon, Color color) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.06),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-        border: Border.all(color: color.withOpacity(0.05), width: 1),
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey200),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
               color: AppTheme.grey800,
+              letterSpacing: 0.5,
             ),
           ),
         ],

@@ -101,7 +101,7 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: (_isOnDuty ? AppTheme.success : AppTheme.grey400).withOpacity(0.12),
+            color: (_isOnDuty ? AppTheme.success : AppTheme.grey400).withValues(alpha: 0.12),
             blurRadius: 25,
             offset: const Offset(0, 12),
           ),
@@ -126,7 +126,7 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -149,7 +149,7 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                 Text(
                   DateFormat('EEEE, MMMM d').format(DateTime.now()),
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -218,7 +218,7 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
         height: 56,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
-          color: _isOnDuty ? Colors.red.shade50 : AppTheme.primaryGreen.withOpacity(0.1),
+          color: _isOnDuty ? Colors.red.shade50 : AppTheme.primaryGreen.withValues(alpha: 0.1),
           border: Border.all(
             color: _isOnDuty ? Colors.red : AppTheme.primaryGreen,
             width: 1.5
@@ -258,12 +258,12 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.08),
+            color: color.withValues(alpha: 0.08),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
         ],
-        border: Border.all(color: color.withOpacity(0.08), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.08), width: 1),
       ),
       child: Column(
         children: [

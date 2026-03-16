@@ -115,19 +115,19 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.08),
+              color: color.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
-          border: Border.all(color: color.withOpacity(0.05), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.05), width: 1),
         ),
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 20),
@@ -170,7 +170,7 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
             child: FilterChip(
               label: Text(filter),
               selected: _selectedFilter == filter,
-              selectedColor: AppTheme.primaryGreen.withOpacity(0.2),
+              selectedColor: AppTheme.primaryGreen.withValues(alpha: 0.2),
               checkmarkColor: AppTheme.primaryGreen,
               onSelected: (_) {
                 setState(() => _selectedFilter = filter);
@@ -218,7 +218,7 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.06),
+            color: color.withValues(alpha: 0.06),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -237,7 +237,7 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(

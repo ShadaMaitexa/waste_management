@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../models/user.dart';
+
 import '../models/pickup.dart';
 import '../models/complaint.dart';
 import '../utils/api_constants.dart';
@@ -13,12 +13,14 @@ class AdminService extends ChangeNotifier {
   List<User> _users = [];
   List<Pickup> _pickups = [];
   List<Complaint> _complaints = [];
-  Map<String, dynamic> _systemStats = {};
+  final Map<String, dynamic> _systemStats = {};
   bool _isLoading = false;
 
   List<User> get allUsers => List.unmodifiable(_users);
   List<Pickup> get allPickups => List.unmodifiable(_pickups);
+  List<Pickup> get pickups => List.unmodifiable(_pickups);
   List<Complaint> get allComplaints => List.unmodifiable(_complaints);
+  List<Complaint> get complaints => List.unmodifiable(_complaints);
   Map<String, dynamic> get systemStats => Map.unmodifiable(_systemStats);
   bool get isLoading => _isLoading;
 
@@ -44,6 +46,7 @@ class AdminService extends ChangeNotifier {
           _systemStats['active_routes'] = m['active_routes'] ?? '24';
           _systemStats['collection_rate'] = m['collection_rate'] ?? '94.5%';
           _systemStats['complaints_count'] = m['complaints_count'];
+          _systemStats['total_revenue'] = m['total_revenue'] ?? m['revenue'] ?? '4.8L';
         }
       }
 

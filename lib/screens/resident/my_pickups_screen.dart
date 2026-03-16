@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 
 class MyPickupsScreen extends StatefulWidget {
@@ -27,42 +28,50 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
-        title: const Text(
-          'My Appointments',
-          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: -0.5),
+        title: Text(
+          'Operational Schedule',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 18),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         foregroundColor: AppTheme.grey900,
         elevation: 0,
+        leading: Navigator.canPop(context) 
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(70),
           child: Container(
             margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.bgCanvas,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              boxShadow: AppTheme.cardShadow,
+              border: Border.all(color: AppTheme.grey200),
             ),
             child: TabBar(
               controller: _tabController,
               indicator: BoxDecoration(
-                color: AppTheme.primaryGreen,
+                color: AppTheme.primaryEmerald,
                 borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               ),
               labelColor: Colors.white,
               unselectedLabelColor: AppTheme.grey500,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 0.5),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+              labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 11, letterSpacing: 0.5),
+              unselectedLabelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 11),
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,
               tabs: const [
@@ -84,9 +93,9 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.pushNamed(context, '/book-pickup'),
-        backgroundColor: AppTheme.primaryGreen,
-        icon: const Icon(Icons.add),
-        label: const Text('Book New'),
+        backgroundColor: AppTheme.primaryEmerald,
+        icon: const Icon(Icons.add_task_rounded, color: Colors.white),
+        label: Text('Schedule', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -99,11 +108,11 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox_outlined, size: 64, color: AppTheme.grey400),
+            Icon(Icons.inbox_rounded, size: 64, color: AppTheme.grey200),
             const SizedBox(height: 16),
             Text(
-              'No $status pickups',
-              style: const TextStyle(color: AppTheme.grey600),
+              'No $status schedules',
+              style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -111,7 +120,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.all(AppTheme.spacingL),
       itemCount: mockPickups.length,
       itemBuilder: (context, index) {
         return _buildPickupCard(mockPickups[index]);
@@ -126,56 +135,51 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.bgCanvas,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey200),
       ),
       child: Column(
         children: [
            Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Date Box
                 Container(
                   width: 56,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryGreen.withOpacity(0.05),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: statusColor.withValues(alpha: 0.2)),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         DateFormat('dd').format(pickup['date']),
-                        style: const TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          color: AppTheme.primaryGreen,
+                          fontWeight: FontWeight.w800,
+                          color: statusColor,
                           height: 1,
                         ),
                       ),
                       Text(
                         DateFormat('MMM').format(pickup['date']).toUpperCase(),
-                        style: const TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          color: AppTheme.primaryGreen,
+                          fontWeight: FontWeight.w800,
+                          color: statusColor,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 16),
-                // Details
+                const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,9 +189,9 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                          children: [
                            Text(
                              DateFormat('h:mm a').format(pickup['date']),
-                             style: const TextStyle(
+                             style: GoogleFonts.plusJakartaSans(
                                fontSize: 16,
-                               fontWeight: FontWeight.w900,
+                               fontWeight: FontWeight.w800,
                                color: AppTheme.grey900,
                                letterSpacing: -0.5,
                              ),
@@ -198,7 +202,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                        const SizedBox(height: 6),
                        Text(
                          pickup['address'],
-                         style: const TextStyle(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w500),
+                         style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w600),
                          maxLines: 1,
                          overflow: TextOverflow.ellipsis,
                        ),
@@ -209,14 +213,14 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                            return Container(
                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                              decoration: BoxDecoration(
-                               color: AppTheme.grey50,
+                               color: AppTheme.grey100,
                                borderRadius: BorderRadius.circular(8),
                              ),
                              child: Text(
                                type.toUpperCase(),
-                               style: TextStyle(
+                               style: GoogleFonts.plusJakartaSans(
                                  fontSize: 9,
-                                 fontWeight: FontWeight.w900,
+                                 fontWeight: FontWeight.w800,
                                  color: AppTheme.grey700,
                                  letterSpacing: 0.5,
                                ),
@@ -231,21 +235,26 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
             ),
            ),
            if (isUpcoming) ...[
+             const Padding(
+               padding: EdgeInsets.symmetric(horizontal: 24),
+               child: Divider(height: 1, color: AppTheme.grey200),
+             ),
              Padding(
-               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+               padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
                child: Row(
                  children: [
                     Expanded(
                       child: TextButton(
                         onPressed: () {},
                         style: TextButton.styleFrom(
-                          backgroundColor: AppTheme.grey50,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: AppTheme.bgSurface,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          side: const BorderSide(color: AppTheme.grey200),
                         ),
-                        child: const Text(
-                          'RESCHEDULE',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                        child: Text(
+                          'MODIFY',
+                          style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5, color: AppTheme.grey700),
                         ),
                       ),
                     ),
@@ -254,14 +263,13 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                       child: TextButton(
                         onPressed: () {},
                         style: TextButton.styleFrom(
-                          backgroundColor: AppTheme.error.withOpacity(0.05),
-                          foregroundColor: AppTheme.error,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: AppTheme.error.withValues(alpha: 0.05),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),
-                        child: const Text(
-                          'CANCEL',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                        child: Text(
+                          'ABORT',
+                          style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5, color: AppTheme.error),
                         ),
                       ),
                     ),
@@ -277,18 +285,19 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
   Widget _buildStatusBadge(String status, Color color) {
     String label = status.toUpperCase();
     if (status == 'upcoming') label = 'CONFIRMED';
-    if (status == 'completed') label = 'COMPLETED';
-    if (status == 'cancelled') label = 'CANCELLED';
+    if (status == 'completed') label = 'RESOLVED';
+    if (status == 'cancelled') label = 'ABORTED';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: GoogleFonts.plusJakartaSans(
           color: color,
           fontSize: 9,
           fontWeight: FontWeight.w900,
@@ -300,10 +309,10 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'upcoming': return AppTheme.primaryGreen;
-      case 'completed': return AppTheme.grey600; // Muted for completed
+      case 'upcoming': return AppTheme.primaryEmerald;
+      case 'completed': return AppTheme.grey500;
       case 'cancelled': return AppTheme.error;
-      default: return AppTheme.grey500;
+      default: return AppTheme.grey400;
     }
   }
 
@@ -314,28 +323,28 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
         'date': DateTime.now().add(const Duration(hours: 2)),
         'status': 'upcoming',
         'wasteTypes': ['Dry', 'Wet'],
-        'address': '123 Green Street, Ward 15',
+        'address': '123 Smart Residences, Ward 15',
       },
       {
         'id': 'PK2025005',
         'date': DateTime.now().add(const Duration(days: 2)),
         'status': 'upcoming',
         'wasteTypes': ['E-Waste'],
-        'address': '123 Green Street, Ward 15',
+        'address': '123 Smart Residences, Ward 15',
       },
       {
         'id': 'PK2025002',
         'date': DateTime.now().subtract(const Duration(days: 1)),
         'status': 'completed',
         'wasteTypes': ['Plastic', 'Dry'],
-        'address': '456 Beach Road, Ward 15',
+        'address': '456 Coastal Road, Ward 15',
       },
       {
         'id': 'PK2025004',
         'date': DateTime.now().subtract(const Duration(days: 7)),
         'status': 'cancelled',
         'wasteTypes': ['Bulk'],
-        'address': '321 Calicut Beach, Ward 15',
+        'address': '321 Calicut Strip, Ward 15',
       },
     ];
     return allPickups.where((p) => p['status'] == status).toList();

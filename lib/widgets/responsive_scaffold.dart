@@ -74,7 +74,7 @@ class ResponsiveScaffold extends StatelessWidget {
               selectedIndex: selectedIndex,
               onDestinationSelected: onDestinationSelected,
               backgroundColor: Colors.white,
-              indicatorColor: AppTheme.primaryGreen.withOpacity(0.1),
+              indicatorColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
               destinations: destinations,
             )
           : null,

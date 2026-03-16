@@ -12,11 +12,11 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
   bool _isEditing = false;
   
   // Profile data
-  String _workerName = 'Mohammed Rafi';
-  String _employeeId = 'HKS-2024-001';
-  String _phoneNumber = '+91 9876543210';
-  String _email = 'rafi.mohammed@hks.gov.in';
-  String _ward = 'Ward 15';
+  final String _workerName = 'Mohammed Rafi';
+  final String _employeeId = 'HKS-2024-001';
+  final String _phoneNumber = '+91 9876543210';
+  final String _email = 'rafi.mohammed@hks.gov.in';
+  final String _ward = 'Ward 15';
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +114,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: AppTheme.primaryGreen.withOpacity(0.1),
+            color: AppTheme.primaryGreen.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -153,7 +153,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -209,7 +209,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -273,7 +273,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

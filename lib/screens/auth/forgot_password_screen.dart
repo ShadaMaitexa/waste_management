@@ -32,7 +32,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       final authService = Provider.of<AuthService>(context, listen: false);
       final success = await authService.forgotPassword(_emailController.text.trim());
 
-      if (success && mounted) {
+      if (success && context.mounted) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -51,12 +51,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: $e'),
-          backgroundColor: AppTheme.error,
         ),
       );
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -91,7 +92,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppTheme.radiusXL),
                   ),
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   child: Padding(
                     padding: const EdgeInsets.all(AppTheme.spacingL),
                     child: Form(
@@ -144,7 +145,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 borderSide: const BorderSide(color: Colors.white),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
+                              fillColor: Colors.white.withValues(alpha: 0.1),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) return 'Please enter your email';

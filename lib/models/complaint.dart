@@ -10,6 +10,8 @@ class Complaint {
   final String? imageUrl;
   final String category;
 
+  final String? wardNumber;
+
   Complaint({
     required this.id,
     required this.title,
@@ -19,6 +21,7 @@ class Complaint {
     this.response,
     this.imageUrl,
     required this.category,
+    this.wardNumber,
   });
 
   factory Complaint.fromJson(Map<String, dynamic> json) {
@@ -34,6 +37,7 @@ class Complaint {
       response: json['response'],
       imageUrl: json['image'],
       category: json['category'] ?? 'General',
+      wardNumber: json['ward_number']?.toString(),
     );
   }
 

@@ -29,63 +29,102 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
 
         return Scaffold(
           backgroundColor: AppTheme.grey50,
-          appBar: AppBar(
-            title: const Text(
-              'Strategic Analytics',
-              style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
-            ),
-            backgroundColor: AppTheme.primaryGreen,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            actions: [
-              PopupMenuButton<String>(
-                onSelected: (value) {
-                  setState(() => _selectedPeriod = value);
-                },
-                itemBuilder: (_) => _periods
-                    .map(
-                      (p) => PopupMenuItem(
-                        value: p,
-                        child: Text(p, style: const TextStyle(fontWeight: FontWeight.w500)),
-                      ),
-                    )
-                    .toList(),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white24),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        _selectedPeriod,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 20),
-                    ],
-                  ),
-                ),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(80),
+            child: Container(
+              padding: const EdgeInsets.only(top: 10),
+              decoration: const BoxDecoration(
+                gradient: AppTheme.emeraldGradient,
               ),
-            ],
+              child: AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Strategic Analytics',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 22,
+                        color: Colors.white,
+                        letterSpacing: -0.8,
+                      ),
+                    ),
+                    Text(
+                      'Real-time system insight dashboard',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                foregroundColor: Colors.white,
+                actions: [
+                  PopupMenuButton<String>(
+                    onSelected: (value) {
+                      setState(() => _selectedPeriod = value);
+                    },
+                    offset: const Offset(0, 50),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    itemBuilder: (_) => _periods
+                        .map(
+                          (p) => PopupMenuItem(
+                            value: p,
+                            child: Row(
+                              children: [
+                                Icon(Icons.calendar_today_rounded, size: 16, color: AppTheme.grey400),
+                                const SizedBox(width: 12),
+                                Text(p, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                              ],
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      margin: const EdgeInsets.only(right: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            _selectedPeriod.toUpperCase(),
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 11, letterSpacing: 0.5),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 18),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           body: RefreshIndicator(
             onRefresh: () => adminService.fetchDashboardStats(),
+            color: AppTheme.primaryEmerald,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppTheme.spacingM),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              physics: const BouncingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildKeyMetricsSection(stats),
-                  const SizedBox(height: AppTheme.spacingL),
+                  const SizedBox(height: 32),
                   _buildChartsSection(),
-                  const SizedBox(height: AppTheme.spacingL),
+                  const SizedBox(height: 32),
                   _buildWardPerformanceSection(stats),
-                  const SizedBox(height: AppTheme.spacingL),
+                  const SizedBox(height: 32),
                   _buildRecentAlertsSection(),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
@@ -102,19 +141,28 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryGreen.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.insert_chart_outlined_rounded, color: AppTheme.primaryGreen, size: 20),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.analytics_rounded, color: AppTheme.primaryEmerald, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'Key Indicators',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.5),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            const Text(
-              'Key Performance Metrics',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.grey900, letterSpacing: -0.5),
+            Text(
+              'LIVE',
+              style: TextStyle(color: AppTheme.error, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
             ),
           ],
         ),
@@ -125,34 +173,34 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
           crossAxisCount: 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 1.2,
+          childAspectRatio: 1.1,
           children: [
             _MetricCard(
-              title: 'TOTAL PICKUPS',
+              title: 'TOTAL REVENUE',
+              value: '₹${stats['total_revenue'] ?? '4.8L'}',
+              change: '+18.2%',
+              icon: Icons.account_balance_wallet_rounded,
+              color: AppTheme.primaryEmerald,
+            ),
+            _MetricCard(
+              title: 'LOAD VOLUME',
               value: '${stats['total_pickups'] ?? '2,456'}',
               change: '+12%',
-              icon: Icons.recycling_rounded,
-              color: const Color(0xFF6366F1),
+              icon: Icons.local_shipping_rounded,
+              color: AppTheme.accentIndigo,
             ),
             _MetricCard(
-              title: 'COLLECTION RATE',
-              value: '${stats['collection_rate'] ?? '94.5%'}',
-              change: '+2.1%',
-              icon: Icons.trending_up_rounded,
-              color: AppTheme.success,
-            ),
-            _MetricCard(
-              title: 'ACTIVE ROUTES',
+              title: 'ACTIVE FLEET',
               value: '${stats['active_routes'] ?? '24'}',
-              change: '+2',
+              change: 'Stable',
               icon: Icons.route_rounded,
               color: AppTheme.info,
             ),
             _MetricCard(
-              title: 'COMPLAINTS',
-              value: '${stats['complaints_count'] ?? '12'}',
-              change: '-8',
-              icon: Icons.report_problem_rounded,
+              title: 'RESOLUTION',
+              value: '92%',
+              change: '+4%',
+              icon: Icons.verified_user_rounded,
               color: AppTheme.warning,
             ),
           ],
@@ -167,13 +215,26 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Analytics Overview',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.accentIndigo.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.pie_chart_rounded, color: AppTheme.accentIndigo, size: 20),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'System Distribution',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.5),
+            ),
+          ],
         ),
-        const SizedBox(height: AppTheme.spacingM),
+        const SizedBox(height: 20),
         _buildLineChart(),
-        const SizedBox(height: AppTheme.spacingM),
+        const SizedBox(height: 16),
         _buildPieChart(),
       ],
     );
@@ -184,13 +245,8 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -198,10 +254,10 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Weekly Collection Volume (kg)',
-              style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.grey600, fontSize: 13),
+              'Collection Velocity (Weekly)',
+              style: TextStyle(fontWeight: FontWeight.w800, color: AppTheme.grey700, fontSize: 13, letterSpacing: 0.5),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             SizedBox(
               height: 200,
               child: LineChart(
@@ -214,21 +270,37 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                       strokeWidth: 1,
                     ),
                   ),
-                  titlesData: FlTitlesData(show: false),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                          if (value.toInt() >= 0 && value.toInt() < days.length) {
+                            return Text(days[value.toInt()], style: const TextStyle(fontSize: 10, color: AppTheme.grey400, fontWeight: FontWeight.bold));
+                          }
+                          return const Text('');
+                        },
+                      ),
+                    ),
+                  ),
                   borderData: FlBorderData(show: false),
                   lineBarsData: [
                     LineChartBarData(
                       isCurved: true,
-                      barWidth: 4,
-                      color: AppTheme.primaryGreen,
+                      barWidth: 5,
+                      color: AppTheme.primaryEmerald,
                       isStrokeCapRound: true,
                       dotData: FlDotData(show: false),
                       belowBarData: BarAreaData(
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            AppTheme.primaryGreen.withOpacity(0.2),
-                            AppTheme.primaryGreen.withOpacity(0.0),
+                            AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                            AppTheme.primaryEmerald.withValues(alpha: 0.0),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -258,50 +330,72 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: SizedBox(
-          height: 200,
-          child: PieChart(
-            PieChartData(
-              sections: [
-                PieChartSectionData(
-                  value: 35,
-                  title: '35%',
-                  radius: 60,
-                  color: AppTheme.dryWaste,
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Waste Composition',
+                  style: TextStyle(fontWeight: FontWeight.w800, color: AppTheme.grey700, fontSize: 13, letterSpacing: 0.5),
                 ),
-                PieChartSectionData(
-                  value: 25,
-                  title: '25%',
-                  radius: 60,
-                  color: AppTheme.wetWaste,
+                Icon(Icons.more_vert_rounded, color: AppTheme.grey300, size: 20),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                SizedBox(
+                  height: 160,
+                  width: 160,
+                  child: PieChart(
+                    PieChartData(
+                      sectionsSpace: 4,
+                      centerSpaceRadius: 40,
+                      sections: [
+                        PieChartSectionData(value: 35, color: AppTheme.dryWaste, radius: 20, showTitle: false),
+                        PieChartSectionData(value: 25, color: AppTheme.wetWaste, radius: 22, showTitle: false),
+                        PieChartSectionData(value: 20, color: AppTheme.accentGreen, radius: 18, showTitle: false),
+                        PieChartSectionData(value: 20, color: AppTheme.ewaste, radius: 20, showTitle: false),
+                      ],
+                    ),
+                  ),
                 ),
-                PieChartSectionData(
-                  value: 20,
-                  title: '20%',
-                  radius: 60,
-                  color: AppTheme.accentGreen,
-                ),
-                PieChartSectionData(
-                  value: 20,
-                  title: '20%',
-                  radius: 60,
-                  color: AppTheme.ewaste,
+                const SizedBox(width: 24),
+                Expanded(
+                  child: Column(
+                    children: [
+                      _buildChartLegend('Dry Waste', '35%', AppTheme.dryWaste),
+                      _buildChartLegend('Wet Waste', '25%', AppTheme.wetWaste),
+                      _buildChartLegend('Bio-Waste', '20%', AppTheme.accentGreen),
+                      _buildChartLegend('E-Waste', '20%', AppTheme.ewaste),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildChartLegend(String label, String value, Color color) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+          const SizedBox(width: 8),
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppTheme.grey600))),
+          Text(value, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: AppTheme.grey900)),
+        ],
       ),
     );
   }
@@ -311,41 +405,54 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
   Widget _buildWardPerformanceSection(Map<String, dynamic> stats) {
     final hasWardStats = stats['ward'] != null && stats['ward']['ward_wise_stats'] != null;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            const Text(
-              'Ward-wise Performance',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.warning.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.location_on_rounded, color: AppTheme.warning, size: 20),
             ),
-            const SizedBox(height: AppTheme.spacingM),
-            if (hasWardStats) ..._buildDynamicWards(stats['ward']['ward_wise_stats'] as List)
-            else ...const [
-              _WardItem('Ward 15', '98%', 'Excellent', AppTheme.success),
-              Divider(),
-              _WardItem('Ward 12', '94%', 'Good', AppTheme.success),
-              Divider(),
-              _WardItem('Ward 8', '89%', 'Average', AppTheme.warning),
-              Divider(),
-              _WardItem('Ward 5', '85%', 'Needs Improvement', AppTheme.error),
-            ],
+            const SizedBox(width: 12),
+            const Text(
+              'Ward Performance',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.5),
+            ),
           ],
         ),
-      ),
+        const SizedBox(height: 20),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey100),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (hasWardStats) ..._buildDynamicWards(stats['ward']['ward_wise_stats'] as List)
+                else ...const [
+                  _WardItem('Ward 15 (Corporate)', '98%', 'Optimal', AppTheme.primaryEmerald),
+                  Divider(height: 32),
+                  _WardItem('Ward 12 (Residential)', '94%', 'Stable', AppTheme.primaryEmerald),
+                  Divider(height: 32),
+                  _WardItem('Ward 8 (Industrial)', '89%', 'Threshold', AppTheme.warning),
+                  Divider(height: 32),
+                  _WardItem('Ward 5 (Market Area)', '85%', 'Critical', AppTheme.error),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -357,17 +464,16 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
         final int pickups = wardObj['total_pickups'] ?? 0;
         final int complaints = wardObj['total_complaints'] ?? 0;
         
-        // Compute pseudo performance
         double perf = pickups == 0 ? 0 : 100.0 - (complaints / (pickups + complaints)) * 100.0;
         if (perf.isNaN) perf = 90.0;
-        String status = 'Excellent';
-        Color color = AppTheme.success;
-        if (perf < 90 && perf >= 80) { status = 'Good'; }
-        else if (perf < 80 && perf >= 60) { status = 'Average'; color = AppTheme.warning; }
-        else if (perf < 60) { status = 'Needs Improvement'; color = AppTheme.error; }
+        String status = 'Optimal';
+        Color color = AppTheme.primaryEmerald;
+        if (perf < 90 && perf >= 80) { status = 'Stable'; }
+        else if (perf < 80 && perf >= 60) { status = 'Threshold'; color = AppTheme.warning; }
+        else if (perf < 60) { status = 'Critical'; color = AppTheme.error; }
         
         widgets.add(_WardItem(wardName, '${perf.toStringAsFixed(0)}%', status, color));
-        if (i < dynamicWards.length - 1) widgets.add(const Divider());
+        if (i < dynamicWards.length - 1) widgets.add(const Divider(height: 32));
     }
     return widgets;
   }
@@ -375,44 +481,49 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
   // ---------------- ALERTS ----------------
 
   Widget _buildRecentAlertsSection() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              'Recent Alerts',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.error.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.emergency_rounded, color: AppTheme.error, size: 20),
             ),
-            SizedBox(height: AppTheme.spacingM),
-            _AlertItem(
-              'High collection volume in Ward 12',
-              '2 hours ago',
-              Icons.info,
-              AppTheme.info,
-            ),
-            Divider(),
-            _AlertItem(
-              'Worker attendance low in Ward 5',
-              '4 hours ago',
-              Icons.warning,
-              AppTheme.warning,
+            const SizedBox(width: 12),
+            const Text(
+              'System Compliance',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.5),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 20),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey100),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                _AlertItem('Capacity limit reached in Central Hub', 'JUST NOW', Icons.error_rounded, AppTheme.error),
+                Divider(height: 32),
+                _AlertItem('Ward 12 collection volume exceeds forecast', '2H AGO', Icons.info_rounded, AppTheme.info),
+                Divider(height: 32),
+                _AlertItem('Low worker check-in rate in Zone 5', '4H AGO', Icons.warning_rounded, AppTheme.warning),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -442,12 +553,12 @@ class _MetricCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.08),
+            color: color.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
         ],
-        border: Border.all(color: color.withOpacity(0.05), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.05), width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -460,7 +571,7 @@ class _MetricCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: color, size: 20),
@@ -468,7 +579,7 @@ class _MetricCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isPositive ? AppTheme.success.withOpacity(0.1) : AppTheme.error.withOpacity(0.1),
+                    color: isPositive ? AppTheme.success.withValues(alpha: 0.1) : AppTheme.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -549,7 +660,7 @@ class _WardItem extends StatelessWidget {
               height: 4,
               child: LinearProgressIndicator(
                 value: value / 100,
-                backgroundColor: color.withOpacity(0.2),
+                backgroundColor: color.withValues(alpha: 0.2),
                 valueColor: AlwaysStoppedAnimation(color),
               ),
             ),
@@ -574,7 +685,7 @@ class _AlertItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: color, size: 22),

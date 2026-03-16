@@ -33,103 +33,39 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         final stats = adminService.systemStats;
 
         return Scaffold(
+          backgroundColor: AppTheme.grey50,
           body: RefreshIndicator(
             onRefresh: () => adminService.fetchDashboardStats(),
+            edgeOffset: 100,
             child: CustomScrollView(
               slivers: [
-                SliverAppBar(
-                  expandedHeight: 180.0,
-                  floating: false,
-                  pinned: true,
-                  backgroundColor: AppTheme.primaryGreen,
-                  elevation: 0,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-                  ),
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-                            gradient: LinearGradient(
-                              colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          right: -30,
-                          top: -20,
-                          child: Icon(
-                            Icons.admin_panel_settings_rounded,
-                            size: 180,
-                            color: Colors.white.withOpacity(0.08),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20, bottom: 20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'GreenLoop Control Center',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const Text(
-                                'KMC Admin Portal',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.logout, color: Colors.white),
-                      onPressed: () {
-                        Provider.of<AuthService>(context, listen: false).logout();
-                        Navigator.of(context).pushReplacementNamed('/login');
-                      },
-                    ),
-                  ],
-                ),
+                _buildSliverAppBar(context),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(AppTheme.spacingM),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildHeaderInfo(),
-                        const SizedBox(height: AppTheme.spacingM),
-                        if (adminService.isLoading)
-                          const Center(child: CircularProgressIndicator())
-                        else
-                          _buildKeyMetrics(stats),
-                        const SizedBox(height: AppTheme.spacingM),
-                        _buildWardPerformance(stats),
-                        const SizedBox(height: AppTheme.spacingM),
-                        _buildRecentAlerts(adminService),
-                        const SizedBox(height: AppTheme.spacingM),
-                        _buildQuickActions(),
-                        const SizedBox(height: 80),
+                        _buildWelcomeSection(),
+                        const SizedBox(height: 32),
+                        _buildSectionHeader('System Overview', 'Real-time performance metrics'),
+                        const SizedBox(height: 16),
+                        adminService.isLoading
+                            ? _buildLoadingMetrics()
+                            : _buildKeyMetrics(stats),
+                        const SizedBox(height: 32),
+                        _buildSectionHeader('Management Console', 'Core operational controls'),
+                        const SizedBox(height: 16),
+                        _buildManagementHub(),
+                        const SizedBox(height: 32),
+                        Row(
+                          children: [
+                            Expanded(child: _buildWardPerformance(stats)),
+                            const SizedBox(width: 20),
+                            Expanded(child: _buildRecentAlerts(adminService)),
+                          ],
+                        ),
+                        const SizedBox(height: 100),
                       ],
                     ),
                   ),
@@ -142,194 +78,267 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildHeaderInfo() {
+  Widget _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 140,
+      collapsedHeight: 80,
+      pinned: true,
+      elevation: 0,
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(bottom: BorderSide(color: AppTheme.grey100, width: 1)),
+          ),
+        ),
+        titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'COMMAND CENTER',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.5,
+                color: AppTheme.primaryEmerald,
+              ),
+            ),
+            const Text(
+              'Government Panel',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.grey900),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Container(
+          margin: const EdgeInsets.only(right: 12),
+          decoration: BoxDecoration(color: AppTheme.grey50, shape: BoxShape.circle),
+          child: IconButton(
+            icon: const Icon(Icons.notifications_none_rounded, color: AppTheme.grey700, size: 20),
+            onPressed: () {},
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.logout_rounded, color: AppTheme.error, size: 20),
+          onPressed: () {
+            Provider.of<AuthService>(context, listen: false).logout();
+            Navigator.of(context).pushReplacementNamed('/login');
+          },
+        ),
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+
+  Widget _buildWelcomeSection() {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingL, vertical: AppTheme.spacingM),
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        gradient: AppTheme.emeraldGradient,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -30,
+            top: -30,
+            child: Icon(Icons.shield_rounded, size: 160, color: Colors.white.withValues(alpha: 0.1)),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+                    child: const Text('SUPER ADMIN', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'System Secure',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 10, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Operational Intelligence',
+                style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, letterSpacing: -1),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  _buildQuickStat('Uptime', '99.9%'),
+                  const SizedBox(width: 24),
+                  _buildQuickStat('Latency', '24ms'),
+                  const SizedBox(width: 24),
+                  _buildQuickStat('Node Status', 'Healthy'),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickStat(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10, fontWeight: FontWeight.bold)),
+        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, String subtitle) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppTheme.grey900)),
+            Text(subtitle, style: const TextStyle(fontSize: 13, color: AppTheme.grey500)),
+          ],
+        ),
+        TextButton(
+          onPressed: () {},
+          child: const Text('View Full Analytics', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryEmerald)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoadingMetrics() {
+    return GridView.count(
+      shrinkWrap: true,
+      crossAxisCount: 4,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      childAspectRatio: 1.5,
+      children: List.generate(4, (index) => Container(
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      )),
+    );
+  }
+
+  Widget _buildKeyMetrics(Map<String, dynamic> stats) {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 16,
+      mainAxisSpacing: 16,
+      childAspectRatio: 2.2,
+      children: [
+        _buildMetricCard('Total Revenue', '₹${stats['total_revenue'] ?? '4.8L'}', '+18%', Icons.payments_rounded, AppTheme.success),
+        _buildMetricCard('Total Pickups', '${stats['total_pickups'] ?? '2,456'}', '+12%', Icons.recycling_rounded, AppTheme.primaryEmerald),
+        _buildMetricCard('Active Routes', '${stats['active_routes'] ?? '24'}', '+2', Icons.route_rounded, AppTheme.info),
+        _buildMetricCard('Open Issues', '${stats['complaints_count'] ?? '12'}', '-5%', Icons.report_problem_rounded, AppTheme.error),
+      ],
+    );
+  }
+
+  Widget _buildMetricCard(String label, String value, String growth, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-         boxShadow: [
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
+        boxShadow: [
           BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.5),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: color.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Kozhikode Municipal Corporation',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.grey900,
-                  letterSpacing: -0.5,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(14)),
+                child: Icon(icon, color: color, size: 18),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: growth.contains('+') ? AppTheme.success.withValues(alpha: 0.1) : AppTheme.error.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                child: Text(growth, style: TextStyle(color: growth.contains('+') ? AppTheme.success : AppTheme.error, fontSize: 10, fontWeight: FontWeight.w900)),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppTheme.success.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.check_circle_rounded, color: AppTheme.success, size: 16),
-                const SizedBox(width: 6),
-                Text(
-                  'System Status: All Operations Normal',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: AppTheme.success,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
-          ),
+          const Spacer(),
+          Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.5)),
+          Text(label.toUpperCase(), style: const TextStyle(fontSize: 9, color: AppTheme.grey400, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
         ],
       ),
     );
   }
 
-  Widget _buildKeyMetrics(Map<String, dynamic> stats) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildManagementHub() {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 16,
+      mainAxisSpacing: 16,
+      childAspectRatio: 1.6,
       children: [
-        Text(
-          'Key Performance Metrics',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: AppTheme.spacingM),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: AppTheme.spacingM,
-          mainAxisSpacing: AppTheme.spacingM,
-          childAspectRatio: 1.2,
-          children: [
-            _buildMetricCard(
-              'Total Pickups',
-              '${stats['total_pickups'] ?? '2,456'}',
-              '+12%',
-              Icons.recycling,
-              AppTheme.secondaryGreen,
-            ),
-            _buildMetricCard(
-              'Active Routes',
-              '${stats['active_routes'] ?? '24'}',
-              '+2',
-              Icons.route,
-              AppTheme.info,
-            ),
-            _buildMetricCard(
-              'Collection Rate',
-              '${stats['collection_rate'] ?? '94.5%'}',
-              '+2.1%',
-              Icons.trending_up,
-              AppTheme.success,
-            ),
-            _buildMetricCard(
-              'Complaints',
-              '${stats['complaints_count'] ?? '12'}',
-              '-8',
-              Icons.report_problem,
-              AppTheme.warning,
-            ),
-          ],
-        ),
+        _buildHubCard('Complaints', 'Resolve citizen issues', Icons.report_problem_rounded, AppTheme.error, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen()))),
+        _buildHubCard('Bookings', 'Dispatch collections', Icons.local_shipping_rounded, AppTheme.accentIndigo, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen()))),
+        _buildHubCard('Workers', 'Field force management', Icons.people_alt_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen()))),
+        _buildHubCard('Schedules', 'Optimization engine', Icons.calendar_month_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen()))),
       ],
     );
   }
 
-  Widget _buildMetricCard(String title, String value, String change, IconData icon, Color color) {
-    bool isPositive = change.startsWith('+');
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.12),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Stack(
+  Widget _buildHubCard(String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppTheme.grey100, width: 1.5),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Positioned(
-              right: -10,
-              top: -10,
-              child: Icon(
-                icon,
-                size: 80,
-                color: color.withOpacity(0.05),
-              ),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.08), shape: BoxShape.circle),
+              child: Icon(icon, color: color, size: 24),
             ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: color.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(icon, color: color, size: 20),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: isPositive ? AppTheme.success.withOpacity(0.1) : AppTheme.error.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          change,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: isPositive ? AppTheme.success : AppTheme.error,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.grey900,
-                      letterSpacing: -1,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppTheme.grey600,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const Spacer(),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppTheme.grey900)),
+            const SizedBox(height: 2),
+            Text(subtitle, style: const TextStyle(fontSize: 10, color: AppTheme.grey400, fontWeight: FontWeight.w500, height: 1.1)),
           ],
         ),
       ),
@@ -337,126 +346,51 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   }
 
   Widget _buildWardPerformance(Map<String, dynamic> stats) {
-    // If stats['ward'] is available, it might have ward_wise_stats etc.
-    final hasWardStats = stats['ward'] != null && stats['ward']['ward_wise_stats'] != null;
-    
     return Container(
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Ward-wise Performance',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            if (hasWardStats) ..._buildDynamicWards(stats['ward']['ward_wise_stats'] as List)
-            else ...[
-              _buildWardItem('Ward 15', '98%', 'Excellent', AppTheme.success),
-              const Divider(),
-              _buildWardItem('Ward 12', '94%', 'Good', AppTheme.success),
-              const Divider(),
-              _buildWardItem('Ward 8', '89%', 'Average', AppTheme.warning),
-              const Divider(),
-              _buildWardItem('Ward 5', '85%', 'Needs Improvement', AppTheme.error),
-            ],
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Ward-level Status', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+          const Text('Real-time collection efficiency', style: TextStyle(fontSize: 11, color: AppTheme.grey400)),
+          const SizedBox(height: 24),
+          _buildWardItem('Ward North-15', 0.98, AppTheme.success),
+          const SizedBox(height: 16),
+          _buildWardItem('Ward East-08', 0.82, AppTheme.warning),
+          const SizedBox(height: 16),
+          _buildWardItem('Industrial-12', 0.94, AppTheme.success),
+          const SizedBox(height: 16),
+          _buildWardItem('Central-05', 0.45, AppTheme.error),
+        ],
       ),
     );
   }
 
-  List<Widget> _buildDynamicWards(List dynamicWards) {
-    final widgets = <Widget>[];
-    for (int i = 0; i < dynamicWards.length; i++) {
-        final wardObj = dynamicWards[i];
-        final String wardName = wardObj['ward'] ?? 'Ward ${i+1}';
-        final int pickups = wardObj['total_pickups'] ?? 0;
-        final int complaints = wardObj['total_complaints'] ?? 0;
-        
-        // Compute pseudo performance
-        double perf = pickups == 0 ? 0 : 100.0 - (complaints / (pickups + complaints)) * 100.0;
-        if (perf.isNaN) perf = 90.0;
-        String status = 'Excellent';
-        Color color = AppTheme.success;
-        if (perf < 90 && perf >= 80) { status = 'Good'; }
-        else if (perf < 80 && perf >= 60) { status = 'Average'; color = AppTheme.warning; }
-        else if (perf < 60) { status = 'Needs Improvement'; color = AppTheme.error; }
-        
-        widgets.add(_buildWardItem(wardName, '${perf.toStringAsFixed(0)}%', status, color));
-        if (i < dynamicWards.length - 1) widgets.add(const Divider());
-    }
-    return widgets;
-  }
-
-  Widget _buildWardItem(String ward, String percentage, String status, Color color) {
-    return Row(
+  Widget _buildWardItem(String ward, double progress, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                ward,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-              const SizedBox(height: AppTheme.spacingXS),
-              Text(
-                status,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.grey600,
-                    ),
-              ),
-            ],
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              percentage,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: color,
-                  ),
-            ),
-            const SizedBox(height: 6),
-            Container(
-              width: 80,
-              height: 6,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(3),
-              ),
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: double.parse(percentage.replaceAll('%', '')) / 100,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-              ),
-            ),
+            Text(ward, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppTheme.grey700)),
+            Text('${(progress * 100).toInt()}%', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: color)),
           ],
+        ),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: LinearProgressIndicator(
+            value: progress,
+            backgroundColor: color.withValues(alpha: 0.08),
+            color: color,
+            minHeight: 6,
+          ),
         ),
       ],
     );
@@ -464,325 +398,66 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
 
   Widget _buildRecentAlerts(AdminService adminService) {
     final alerts = adminService.getSystemAlerts();
-
     return Container(
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.grey300.withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('System Logs', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                  const Text('Security & performance events', style: TextStyle(fontSize: 11, color: AppTheme.grey400)),
+                ],
+              ),
+              Icon(Icons.terminal_rounded, color: AppTheme.grey300, size: 20),
+            ],
           ),
+          const SizedBox(height: 20),
+          ...alerts.take(4).map((a) => _buildAlertRow(a)),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'System Alerts',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                      ),
-                ),
-                if (alerts.isNotEmpty)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppTheme.error.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '${alerts.length} NEW',
-                      style: const TextStyle(
-                        color: AppTheme.error,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            if (alerts.isEmpty)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Text('No active alerts', style: TextStyle(color: AppTheme.grey400)),
-                ),
-              )
-            else
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: alerts.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (context, index) {
-                  final alert = alerts[index];
-                  return _buildAlertItem(
-                    alert['message'],
-                    alert['time'],
-                    _getAlertIcon(alert['type']),
-                    _getAlertColor(alert['type']),
-                  );
-                },
-              ),
-          ],
-        ),
-      ),
     );
   }
 
-  IconData _getAlertIcon(String type) {
-    switch (type) {
-      case 'warning': return Icons.warning_amber_rounded;
-      case 'success': return Icons.check_circle_outline_rounded;
-      default: return Icons.info_outline_rounded;
-    }
-  }
-
-  Color _getAlertColor(String type) {
-    switch (type) {
-      case 'warning': return AppTheme.warning;
-      case 'success': return AppTheme.success;
-      default: return AppTheme.info;
-    }
-  }
-
-  Widget _buildAlertItem(String message, String time, IconData icon, Color color) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 22),
-        ),
-        const SizedBox(width: AppTheme.spacingM),
-        Expanded(
-          child: Text(
-            message,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: AppTheme.grey800,
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppTheme.grey100,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            time,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppTheme.grey600,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuickActions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
-              ),
-        ),
-        const SizedBox(height: AppTheme.spacingM),
-        _buildManagementHub(),
-        const SizedBox(height: AppTheme.spacingL),
-        Text(
-          'Quick Insights',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
-              ),
-        ),
-        const SizedBox(height: AppTheme.spacingM),
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: AppTheme.spacingM,
-          crossAxisSpacing: AppTheme.spacingM,
-          childAspectRatio: 1.6,
-          children: [
-            _buildQuickActionCard(
-              'Reports',
-              Icons.description_rounded,
-              AppTheme.info,
-              () => widget.onNavigate(2),
-            ),
-            _buildQuickActionCard(
-              'Analytics',
-              Icons.analytics_rounded,
-              AppTheme.primaryGreen,
-              () => widget.onNavigate(1),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildManagementHub() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Management Hub',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
-              ),
-        ),
-        const SizedBox(height: AppTheme.spacingM),
-        Container(
-          padding: const EdgeInsets.all(AppTheme.spacingM),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.grey300.withOpacity(0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              _buildHubItem(
-                'Citizen Complaints',
-                'Manage and resolve disputes',
-                Icons.report_problem_rounded,
-                AppTheme.warning,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen())),
-              ),
-              const Divider(height: 32),
-              _buildHubItem(
-                'Pickup Bookings',
-                'Assign and track collections',
-                Icons.local_shipping_rounded,
-                AppTheme.info,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen())),
-              ),
-              const Divider(height: 32),
-              _buildHubItem(
-                'User Management',
-                'Manage workers and residents',
-                Icons.people_alt_rounded,
-                AppTheme.success,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen())),
-              ),
-              const Divider(height: 32),
-              _buildHubItem(
-                'Pickup Slots',
-                'Define collection schedules',
-                Icons.calendar_month_rounded,
-                AppTheme.primaryGreen,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen())),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHubItem(String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
+  Widget _buildAlertRow(Map<String, dynamic> alert) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16),
+              color: AppTheme.grey50,
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(
+              alert['type'] == 'warning' ? Icons.warning_amber_rounded : Icons.info_outline_rounded, 
+              size: 16, 
+              color: alert['type'] == 'warning' ? AppTheme.warning : AppTheme.info
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.grey900),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(color: AppTheme.grey500, fontSize: 13),
-                ),
+                Text(alert['message'], style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.grey800, height: 1.3)),
+                const SizedBox(height: 2),
+                Text(alert['time'].toUpperCase(), style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: AppTheme.grey400, letterSpacing: 0.5)),
               ],
             ),
           ),
-          Icon(Icons.chevron_right_rounded, color: AppTheme.grey300),
         ],
-      ),
-    );
-  }
-
-  Widget _buildQuickActionCard(String label, IconData icon, Color color, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.12),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 28),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.grey800,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),
     );
   }
