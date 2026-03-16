@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/responsive_scaffold.dart';
 import 'materials_management_screen.dart';
 import 'recycler_certificates_screen.dart';
 import 'recycler_dashboard_tab.dart';
@@ -31,46 +31,94 @@ class _RecyclerHomeScreenState extends State<RecyclerHomeScreen> {
       curve: Curves.easeInOut,
     );
   }
-
   @override
   Widget build(BuildContext context) {
-    return ResponsiveScaffold(
-      selectedIndex: _selectedIndex,
-      onDestinationSelected: _onItemTapped,
-      destinations: const [
-        NavigationDestination(
-          icon: Icon(Icons.dashboard_outlined),
-          selectedIcon: Icon(Icons.dashboard, color: AppTheme.primaryGreen),
-          label: 'Dashboard',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.recycling_outlined),
-          selectedIcon: Icon(Icons.recycling, color: AppTheme.primaryGreen),
-          label: 'Materials',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.card_membership_outlined),
-          selectedIcon: Icon(Icons.card_membership, color: AppTheme.primaryGreen),
-          label: 'Certificates',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.person_outline),
-          selectedIcon: Icon(Icons.person, color: AppTheme.primaryGreen),
-          label: 'Profile',
-        ),
-      ],
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() => _selectedIndex = index);
-        },
-        physics: const NeverScrollableScrollPhysics(),
+    return Scaffold(
+      backgroundColor: AppTheme.bgSurface,
+      body: Stack(
         children: [
-          RecyclerDashboardTab(onNavigate: _onItemTapped),
-          const MaterialsManagementScreen(),
-          const RecyclerCertificatesScreen(),
-          const RecyclerProfileScreen(),
+          PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => _selectedIndex = index);
+            },
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              RecyclerDashboardTab(onNavigate: _onItemTapped),
+              const MaterialsManagementScreen(),
+              const RecyclerCertificatesScreen(),
+              const RecyclerProfileScreen(),
+            ],
+          ),
+          _buildFloatingBottomBar(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFloatingBottomBar() {
+    return Positioned(
+      left: 24,
+      right: 24,
+      bottom: 32,
+      child: Container(
+        height: 72,
+        decoration: BoxDecoration(
+          color: AppTheme.bgDark.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 40,
+              offset: const Offset(0, 20),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildNavItem(0, Icons.dashboard_rounded, 'Dash'),
+            _buildNavItem(1, Icons.recycling_rounded, 'Waste'),
+            _buildNavItem(2, Icons.workspace_premium_rounded, 'Badge'),
+            _buildNavItem(3, Icons.person_rounded, 'Meta'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.5),
+              size: 22,
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label.toUpperCase(),
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.primaryEmerald,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

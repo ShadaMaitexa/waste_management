@@ -116,22 +116,27 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.2)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.lens_rounded, color: AppTheme.primaryEmerald, size: 6),
-                  const SizedBox(width: 4),
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(color: AppTheme.primaryEmerald, shape: BoxShape.circle),
+                  ),
+                  const SizedBox(width: 8),
                   Text(
                     'SYSTEM OPERATIONAL',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
-                      letterSpacing: 1.5,
+                      letterSpacing: 2,
                       color: AppTheme.primaryEmerald,
                     ),
                   ),
@@ -142,10 +147,10 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
             Text(
               'Command Center',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 24, 
+                fontSize: 26, 
                 fontWeight: FontWeight.w900, 
                 color: AppTheme.grey900,
-                letterSpacing: -1.0,
+                letterSpacing: -1.2,
               ),
             ),
           ],
@@ -222,27 +227,44 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.3)),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.25)),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.shield_rounded, color: AppTheme.primaryEmerald, size: 14),
-                        SizedBox(width: 6),
-                        Text('SYSTEM SECURE', style: TextStyle(color: AppTheme.primaryEmerald, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+                        const Icon(Icons.shield_rounded, color: AppTheme.primaryEmerald, size: 14),
+                        const SizedBox(width: 8),
+                        Text(
+                          'SYSTEM SECURE', 
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppTheme.primaryEmerald, 
+                            fontSize: 10, 
+                            fontWeight: FontWeight.w900, 
+                            letterSpacing: 1.5,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.08), 
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
                     child: Text(
-                      DateFormat('MMM dd, yyyy • HH:mm').format(DateTime.now()).toUpperCase(),
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
+                      DateFormat('MMM dd, yyyy').format(DateTime.now()).toUpperCase(),
+                      style: GoogleFonts.plusJakartaSans(
+                        color: Colors.white.withValues(alpha: 0.8), 
+                        fontSize: 10, 
+                        fontWeight: FontWeight.w900, 
+                        letterSpacing: 1.5,
+                      ),
                     ),
                   ),
                 ],
@@ -265,7 +287,12 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               const SizedBox(height: 12),
               Text(
                 'Monitoring 1,248 active service nodes across the Kozhikode district network in real-time.',
-                style: GoogleFonts.inter(color: Colors.white.withValues(alpha: 0.6), fontSize: 14, fontWeight: FontWeight.w500, height: 1.5),
+                style: GoogleFonts.inter(
+                  color: Colors.white.withValues(alpha: 0.5), 
+                  fontSize: 15, 
+                  fontWeight: FontWeight.w500, 
+                  height: 1.6,
+                ),
               ),
               const SizedBox(height: 40),
               Container(
@@ -300,8 +327,8 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   Widget _buildDivider() {
     return Container(
       width: 1, 
-      height: 30, 
-      color: Colors.white.withValues(alpha: 0.1), 
+      height: 32, 
+      color: Colors.white.withValues(alpha: 0.08), 
       margin: const EdgeInsets.symmetric(horizontal: 24)
     );
   }
@@ -561,25 +588,25 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         Stack(
           children: [
             Container(
-              height: 8,
+              height: 7,
               decoration: BoxDecoration(
                 color: AppTheme.grey100,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
             AnimatedContainer(
-              duration: const Duration(milliseconds: 1000),
+              duration: const Duration(milliseconds: 1200),
               curve: Curves.fastOutSlowIn,
-              height: 8,
-              width: MediaQuery.of(context).size.width * progress, // Abstract representation for mock
+              height: 7,
+              width: MediaQuery.of(context).size.width * 0.4 * progress, 
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withValues(alpha: 0.4),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: color.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),

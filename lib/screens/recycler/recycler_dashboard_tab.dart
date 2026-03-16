@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 
 class RecyclerDashboardTab extends StatelessWidget {
@@ -9,29 +10,23 @@ class RecyclerDashboardTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.bgSurface,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 180.0,
+            expandedHeight: 200.0,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.primaryGreen,
+            backgroundColor: AppTheme.bgDark,
             elevation: 0,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-            ),
+            scrolledUnderElevation: 0,
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-                      gradient: LinearGradient(
-                        colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      gradient: AppTheme.slateGradient,
                     ),
                   ),
                   Positioned(
@@ -39,30 +34,55 @@ class RecyclerDashboardTab extends StatelessWidget {
                     top: -20,
                     child: Icon(
                       Icons.recycling_rounded,
-                      size: 180,
-                      color: Colors.white.withValues(alpha: 0.08),
+                      size: 240,
+                      color: Colors.white.withValues(alpha: 0.03),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, bottom: 20),
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Sustainability Hub,',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.verified_user_rounded, color: AppTheme.primaryEmerald, size: 10),
+                              const SizedBox(width: 6),
+                              Text(
+                                'LICENSED OPERATOR',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppTheme.primaryEmerald,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const Text(
+                        const SizedBox(height: 12),
+                        Text(
+                          'Sustainability Hub',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
                           'Recycler Portal',
-                          style: TextStyle(
+                          style: GoogleFonts.plusJakartaSans(
                             color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -1.5,
                           ),
                         ),
                       ],
@@ -72,35 +92,47 @@ class RecyclerDashboardTab extends StatelessWidget {
               ),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                onPressed: () {},
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 20),
+                  onPressed: () {},
+                ),
               ),
-              IconButton(
-                icon: const Icon(Icons.logout, color: Colors.white),
-                onPressed: () {
-                  // Logout logic via provider if needed
-                },
+              Container(
+                margin: const EdgeInsets.only(right: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.logout_rounded, color: Colors.white, size: 20),
+                  onPressed: () {},
+                ),
               ),
             ],
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingM),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                    _buildHeaderInfo(context),
-                  const SizedBox(height: AppTheme.spacingM),
+                  const SizedBox(height: 32),
                   // Monthly Summary
                   _buildMonthlySummary(context),
-                  const SizedBox(height: AppTheme.spacingM),
+                  const SizedBox(height: 32),
                   // Recent Transactions
                   _buildRecentTransactions(context),
-                  const SizedBox(height: AppTheme.spacingM),
+                  const SizedBox(height: 32),
                   // Quick Actions
                   _buildQuickActions(context),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 120),
                 ],
               ),
             ),
@@ -113,47 +145,43 @@ class RecyclerDashboardTab extends StatelessWidget {
   Widget _buildHeaderInfo(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingL),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-         boxShadow: [
-          BoxShadow(
-            color: AppTheme.grey300.withValues(alpha: 0.5),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'EcoRecycle Solutions',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.grey900,
-                  letterSpacing: -0.5,
-                ),
+            style: GoogleFonts.plusJakartaSans(
+              fontWeight: FontWeight.w900,
+              color: AppTheme.grey900,
+              fontSize: 20,
+              letterSpacing: -0.5,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.success.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified_rounded, color: AppTheme.success, size: 14),
+                const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
                 const SizedBox(width: 6),
-                const Text(
+                Text(
                   'Certified Partner • EPR Compliant',
-                  style: TextStyle(
-                    color: AppTheme.success,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                  style: GoogleFonts.inter(
+                    color: AppTheme.primaryEmerald,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 10,
                   ),
                 ),
               ],
@@ -169,32 +197,34 @@ class RecyclerDashboardTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Monthly Performance',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
-              ),
+          'MONTHLY PERFORMANCE',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w900,
+            fontSize: 11,
+            color: AppTheme.grey400,
+            letterSpacing: 1.5,
+          ),
         ),
-        const SizedBox(height: AppTheme.spacingM),
+        const SizedBox(height: 20),
         Row(
           children: [
             Expanded(
               child: _summaryCard(
                 context,
                 'Processed',
-                '24 Tons',
+                '24.2 Tons',
                 Icons.analytics_rounded,
                 AppTheme.info,
               ),
             ),
-            const SizedBox(width: AppTheme.spacingM),
+            const SizedBox(width: 20),
             Expanded(
               child: _summaryCard(
                 context,
                 'Collected',
-                '18.5k',
-                Icons.savings_rounded,
-                AppTheme.success,
+                '₹18.5k',
+                Icons.wallet_rounded,
+                AppTheme.primaryEmerald,
               ),
             ),
           ],
@@ -205,44 +235,43 @@ class RecyclerDashboardTab extends StatelessWidget {
 
   Widget _summaryCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingL),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 28),
+            child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Text(
             value,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.grey900,
-                  letterSpacing: -0.5,
-                ),
+            style: GoogleFonts.plusJakartaSans(
+              fontWeight: FontWeight.w900,
+              color: AppTheme.grey900,
+              fontSize: 22,
+              letterSpacing: -1,
+            ),
           ),
+          const SizedBox(height: 2),
           Text(
-            title,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.grey600,
-                  fontWeight: FontWeight.w500,
-                ),
+            title.toUpperCase(),
+            style: GoogleFonts.inter(
+              color: AppTheme.grey400,
+              fontWeight: FontWeight.w800,
+              fontSize: 9,
+              letterSpacing: 1,
+            ),
           ),
         ],
       ),
@@ -257,30 +286,31 @@ class RecyclerDashboardTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Recent Transactions',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
+              'NETWORK LOGS',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w900,
+                fontSize: 11,
+                color: AppTheme.grey400,
+                letterSpacing: 1.5,
+              ),
             ),
             TextButton(
               onPressed: () {},
-              child: const Text('View All'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.primaryEmerald,
+                textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 11),
+              ),
+              child: const Text('VIEW ALL'),
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacingS),
+        const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.grey300.withValues(alpha: 0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: AppTheme.smoothShadow,
+            border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
           ),
           child: Column(
             children: [
@@ -317,21 +347,22 @@ class RecyclerDashboardTab extends StatelessWidget {
 
   Widget _transactionTile(BuildContext context, String title, String subtitle, String time, {required bool isIncoming}) {
     return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isIncoming ? AppTheme.info.withValues(alpha: 0.1) : AppTheme.success.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
+          color: isIncoming ? AppTheme.info.withValues(alpha: 0.08) : AppTheme.primaryEmerald.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
-          isIncoming ? Icons.arrow_downward : Icons.arrow_upward,
-          color: isIncoming ? AppTheme.info : AppTheme.success,
-          size: 20,
+          isIncoming ? Icons.south_west_rounded : Icons.north_east_rounded,
+          color: isIncoming ? AppTheme.info : AppTheme.primaryEmerald,
+          size: 18,
         ),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey600)),
-      trailing: Text(time, style: const TextStyle(fontSize: 12, color: AppTheme.grey500)),
+      title: Text(title, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 14, color: AppTheme.grey800)),
+      subtitle: Text(subtitle, style: GoogleFonts.inter(fontSize: 12, color: AppTheme.grey400, fontWeight: FontWeight.w500)),
+      trailing: Text(time.toUpperCase(), style: GoogleFonts.plusJakartaSans(fontSize: 10, color: AppTheme.grey400, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
     );
   }
 
@@ -340,18 +371,20 @@ class RecyclerDashboardTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
-              ),
+          'QUICK START',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w900,
+            fontSize: 11,
+            color: AppTheme.grey400,
+            letterSpacing: 1.5,
+          ),
         ),
-        const SizedBox(height: AppTheme.spacingM),
+        const SizedBox(height: 20),
         Row(
           children: [
             Expanded(child: _actionCard(context, 'Add Material', Icons.add_rounded, AppTheme.info, () => onNavigate(1))),
-            const SizedBox(width: AppTheme.spacingM),
-            Expanded(child: _actionCard(context, 'Get Certificate', Icons.verified_rounded, AppTheme.primaryGreen, () => onNavigate(2))),
+            const SizedBox(width: 20),
+            Expanded(child: _actionCard(context, 'Get Certificate', Icons.workspace_premium_rounded, AppTheme.primaryEmerald, () => onNavigate(2))),
           ],
         ),
       ],
@@ -361,24 +394,33 @@ class RecyclerDashboardTab extends StatelessWidget {
   Widget _actionCard(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(24),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 32),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+          boxShadow: AppTheme.smoothShadow,
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 28),
+            ),
+            const SizedBox(height: 16),
             Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
+              label.toUpperCase(),
+              style: GoogleFonts.plusJakartaSans(
+                color: AppTheme.grey800,
+                fontWeight: FontWeight.w900,
+                fontSize: 10,
+                letterSpacing: 1,
               ),
             ),
           ],

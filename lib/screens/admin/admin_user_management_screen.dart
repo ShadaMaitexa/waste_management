@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 import '../../services/admin_service.dart';
 import '../../models/user.dart';
@@ -31,11 +32,13 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
         final rawUsers = adminService.allUsers;
 
         return Scaffold(
-          backgroundColor: AppTheme.grey50,
+          backgroundColor: AppTheme.bgSurface,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(140),
+            preferredSize: const Size.fromHeight(160),
             child: Container(
+              padding: const EdgeInsets.only(top: 20),
               decoration: const BoxDecoration(
+                color: AppTheme.bgDark,
                 gradient: AppTheme.slateGradient,
               ),
               child: Column(
@@ -44,44 +47,61 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     scrolledUnderElevation: 0,
-                    title: const Text(
-                      'User Registry',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 24,
-                        color: Colors.white,
-                        letterSpacing: -0.8,
+                    title: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        'User Registry',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 26,
+                          color: Colors.white,
+                          letterSpacing: -1,
+                        ),
                       ),
                     ),
                     foregroundColor: Colors.white,
                     actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: FilledButton.icon(
+                      Container(
+                        margin: const EdgeInsets.only(right: 16, top: 8),
+                        child: ElevatedButton.icon(
                           onPressed: _showAddWorkerDialog,
-                          icon: const Icon(Icons.add_rounded, size: 20, color: Colors.white),
-                          label: const Text('NEW WORKER', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-                          style: FilledButton.styleFrom(
+                          icon: const Icon(Icons.add_rounded, size: 18),
+                          label: Text(
+                            'NEW WORKER', 
+                            style: GoogleFonts.plusJakartaSans(
+                              fontWeight: FontWeight.w900, 
+                              letterSpacing: 1,
+                              fontSize: 11,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.primaryEmerald,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           ),
                         ),
                       ),
                     ],
                   ),
+                  const Spacer(),
                   TabBar(
                     controller: _tabController,
                     isScrollable: true,
                     tabAlignment: TabAlignment.start,
                     indicatorColor: AppTheme.primaryEmerald,
                     indicatorWeight: 4,
+                    indicatorSize: TabBarIndicatorSize.label,
                     labelColor: Colors.white,
-                    unselectedLabelColor: Colors.white.withValues(alpha: 0.5),
-                    labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 0.8),
+                    unselectedLabelColor: Colors.white.withValues(alpha: 0.4),
+                    labelStyle: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w900, 
+                      fontSize: 12, 
+                      letterSpacing: 1.5,
+                    ),
                     dividerColor: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     tabs: const [
                       Tab(text: 'RESIDENTS'),
                       Tab(text: 'WORKERS'),
@@ -89,6 +109,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                       Tab(text: 'ADMINS'),
                     ],
                   ),
+                  const SizedBox(height: 8),
                 ],
               ),
             ),
@@ -116,38 +137,53 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
 
   Widget _buildControlBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(bottom: BorderSide(color: AppTheme.grey100)),
+        border: Border(bottom: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5))),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: TextField(
-              onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
-              decoration: InputDecoration(
-                hintText: 'Search by UID, name, or metadata...',
-                hintStyle: const TextStyle(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w500),
-                prefixIcon: const Icon(Icons.search_rounded, size: 22, color: AppTheme.grey400),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                fillColor: AppTheme.grey50,
-                filled: true,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+          TextField(
+            onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+            style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14),
+            decoration: InputDecoration(
+              hintText: 'Search by UID, name, or metadata...',
+              hintStyle: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 14, fontWeight: FontWeight.w500),
+              prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppTheme.grey400),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              fillColor: AppTheme.grey50,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16), 
+                borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16), 
+                borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
               ),
             ),
           ),
-          const SizedBox(width: 16),
-          _buildFilterChip('Active Nodes', true),
-          const SizedBox(width: 10),
-          _buildFilterChip('Pending Approval', false),
+          const SizedBox(height: 16),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildFilterChip('Active Nodes', true),
+                const SizedBox(width: 12),
+                _buildFilterChip('Pending Approval', false),
+                const SizedBox(width: 12),
+                _buildFilterChip('Identity Verified', false),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -155,16 +191,17 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
 
   Widget _buildFilterChip(String label, bool isActive) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: isActive ? AppTheme.primaryEmerald.withValues(alpha: 0.05) : AppTheme.grey50,
+        color: isActive ? AppTheme.primaryEmerald.withValues(alpha: 0.05) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isActive ? AppTheme.primaryEmerald.withValues(alpha: 0.2) : AppTheme.grey200,
-          width: 1,
+          color: isActive ? AppTheme.primaryEmerald.withValues(alpha: 0.3) : AppTheme.grey200,
+          width: 1.5,
         ),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (isActive) 
             const Padding(
@@ -173,10 +210,11 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
             ),
           Text(
             label, 
-            style: TextStyle(
-              fontWeight: FontWeight.w700, 
-              fontSize: 12, 
-              color: isActive ? AppTheme.primaryEmerald : AppTheme.grey600,
+            style: GoogleFonts.plusJakartaSans(
+              fontWeight: FontWeight.w800, 
+              fontSize: 11, 
+              color: isActive ? AppTheme.primaryEmerald : AppTheme.grey500,
+              letterSpacing: 0.2,
             ),
           ),
         ],
@@ -198,9 +236,32 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.group_off_rounded, size: 64, color: AppTheme.grey200),
-            const SizedBox(height: 16),
-            const Text('No records match your criteria', style: TextStyle(color: AppTheme.grey500, fontWeight: FontWeight.w600)),
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: AppTheme.grey100.withValues(alpha: 0.5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.group_off_rounded, size: 64, color: AppTheme.grey300),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'No records match', 
+              style: GoogleFonts.plusJakartaSans(
+                color: AppTheme.grey900, 
+                fontWeight: FontWeight.w900,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Reset search filters to expand criteria.', 
+              style: GoogleFonts.inter(
+                color: AppTheme.grey400, 
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
           ],
         ),
       );
@@ -215,33 +276,38 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
 
   Widget _buildUserRow(User user) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
+        boxShadow: AppTheme.smoothShadow,
       ),
       child: Row(
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(18),
+              gradient: AppTheme.emeraldGradient,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Center(
               child: Text(
                 user.name[0].toUpperCase(), 
-                style: const TextStyle(color: AppTheme.primaryEmerald, fontWeight: FontWeight.w900, fontSize: 18),
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.white, 
+                  fontWeight: FontWeight.w900, 
+                  fontSize: 22,
+                ),
               ),
             ),
           ),
@@ -252,12 +318,21 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
               children: [
                 Text(
                   user.name, 
-                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: AppTheme.grey900, letterSpacing: -0.5),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w900, 
+                    fontSize: 17, 
+                    color: AppTheme.grey900, 
+                    letterSpacing: -0.5,
+                  ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 Text(
                   user.email, 
-                  style: const TextStyle(fontSize: 13, color: AppTheme.grey500, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.inter(
+                    fontSize: 13, 
+                    color: AppTheme.grey400, 
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -269,8 +344,13 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
               _buildStatusBadge(user.isActive),
               const SizedBox(height: 8),
               Text(
-                (user.wardNumber != null ? 'Ward ${user.wardNumber}' : 'UNASSIGNED').toUpperCase(),
-                style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: AppTheme.grey300, letterSpacing: 0.5),
+                (user.wardNumber != null ? 'WARD ${user.wardNumber}' : 'UNASSIGNED'),
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 9, 
+                  fontWeight: FontWeight.w900, 
+                  color: AppTheme.grey300, 
+                  letterSpacing: 1,
+                ),
               ),
             ],
           ),
@@ -286,14 +366,15 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
   }
 
   Widget _buildStatusBadge(bool isActive) {
+    final color = isActive ? AppTheme.primaryEmerald : AppTheme.error;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isActive ? AppTheme.success.withValues(alpha: 0.08) : AppTheme.error.withValues(alpha: 0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: isActive ? AppTheme.success.withValues(alpha: 0.2) : AppTheme.error.withValues(alpha: 0.2),
-          width: 1,
+          color: color.withValues(alpha: 0.2),
+          width: 1.5,
         ),
       ),
       child: Row(
@@ -303,18 +384,18 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: isActive ? AppTheme.success : AppTheme.error,
+              color: color,
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 8),
           Text(
             isActive ? 'ACTIVE' : 'SUSPENDED',
-            style: TextStyle(
-              color: isActive ? AppTheme.success : AppTheme.error, 
-              fontSize: 10, 
+            style: GoogleFonts.plusJakartaSans(
+              color: color, 
+              fontSize: 9, 
               fontWeight: FontWeight.w900, 
-              letterSpacing: 0.5,
+              letterSpacing: 1,
             ),
           ),
         ],
@@ -343,9 +424,23 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
             const SizedBox(height: 32),
             Text(
               user.name.toUpperCase(),
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 1),
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 9, 
+                fontWeight: FontWeight.w900, 
+                color: AppTheme.grey400, 
+                letterSpacing: 2,
+              ),
             ),
-            const Text('Administrative Actions', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: -0.5)),
+            const SizedBox(height: 4),
+            Text(
+              'Administrative Actions', 
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w900, 
+                fontSize: 24, 
+                letterSpacing: -1,
+                color: AppTheme.grey900,
+              ),
+            ),
             const SizedBox(height: 32),
             _buildActionTile(
               context,
@@ -396,19 +491,40 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppTheme.grey50,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppTheme.grey100),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         leading: Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(14)),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1), 
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Icon(icon, color: color, size: 24),
         ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, color: AppTheme.grey900, fontSize: 15)),
-        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppTheme.grey500)),
+        title: Text(
+          title, 
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w900, 
+            color: AppTheme.grey900, 
+            fontSize: 15,
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            subtitle, 
+            style: GoogleFonts.inter(
+              fontSize: 12, 
+              fontWeight: FontWeight.w500, 
+              color: AppTheme.grey500,
+            ),
+          ),
+        ),
         onTap: onTap,
+        trailing: Icon(Icons.chevron_right_rounded, color: AppTheme.grey300, size: 20),
       ),
     );
   }
@@ -438,8 +554,24 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
               ),
             ),
             const SizedBox(height: 32),
-            const Text('Onboard New Worker', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: -0.5)),
-            const Text('Provision a new field identity for Haritha Karma Sena.', style: TextStyle(color: AppTheme.grey400, fontSize: 13)),
+            Text(
+              'Onboard New Worker', 
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w900, 
+                fontSize: 24, 
+                letterSpacing: -1,
+                color: AppTheme.grey900,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Provision a new field identity for Haritha Karma Sena.', 
+              style: GoogleFonts.inter(
+                color: AppTheme.grey500, 
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(height: 32),
             _buildDialogField('FULL LEGAL NAME', nameController, Icons.person_rounded),
             const SizedBox(height: 20),
@@ -464,10 +596,14 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text('Worker onboarded successfully'),
-                          backgroundColor: AppTheme.primaryEmerald,
+                          content: Text(
+                            'Worker onboarded successfully',
+                            style: GoogleFonts.inter(fontWeight: FontWeight.w700),
+                          ),
+                          backgroundColor: AppTheme.bgDark,
                           behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          margin: const EdgeInsets.all(24),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         )
                       );
                     }
@@ -475,10 +611,20 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryEmerald,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 22),
+                  elevation: 8,
+                  shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 ),
-                child: const Text('PROVISION IDENTITY', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                child: Text(
+                  'PROVISION IDENTITY', 
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w900, 
+                    letterSpacing: 1.5,
+                    fontSize: 13,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 32),
@@ -492,17 +638,36 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 0.5)),
-        const SizedBox(height: 8),
+        Text(
+          label, 
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 9, 
+            fontWeight: FontWeight.w900, 
+            color: AppTheme.grey400, 
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 10),
         TextField(
           controller: controller,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15, color: AppTheme.grey900),
           decoration: InputDecoration(
             prefixIcon: Icon(icon, size: 20, color: AppTheme.grey400),
             filled: true,
             fillColor: AppTheme.grey50,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16), 
+              borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16), 
+              borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16), 
+              borderSide: const BorderSide(color: AppTheme.primaryEmerald, width: 1.5),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           ),
         ),
       ],

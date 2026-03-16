@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../../services/admin_service.dart';
 import '../../models/complaint.dart';
 import '../../theme/app_theme.dart';
-import 'package:intl/intl.dart';
 
 class AdminComplaintsScreen extends StatefulWidget {
   const AdminComplaintsScreen({super.key});
@@ -28,47 +29,58 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
         final complaints = adminService.complaints;
 
         return Scaffold(
-          backgroundColor: AppTheme.grey50,
+          backgroundColor: AppTheme.bgSurface,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(80),
+            preferredSize: const Size.fromHeight(100),
             child: Container(
-              padding: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 20),
               decoration: const BoxDecoration(
+                color: AppTheme.bgDark,
                 gradient: AppTheme.slateGradient,
               ),
               child: AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 scrolledUnderElevation: 0,
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Incident Resolution',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 22,
-                        color: Colors.white,
-                        letterSpacing: -0.8,
+                title: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Incident Resolution',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 24,
+                          color: Colors.white,
+                          letterSpacing: -1,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Citizen grievance and system health monitoring',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 2),
+                      Text(
+                        'Citizen grievance and system health monitoring',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 foregroundColor: Colors.white,
                 actions: [
-                  IconButton(
-                    icon: const Icon(Icons.tune_rounded, color: Colors.white70),
-                    onPressed: () {},
+                  Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 20),
+                      onPressed: () {},
+                    ),
                   ),
-                  const SizedBox(width: 8),
                 ],
               ),
             ),
@@ -97,10 +109,33 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.verified_user_rounded, size: 64, color: AppTheme.success.withValues(alpha: 0.2)),
-          const SizedBox(height: 16),
-          const Text('All systems clear. No active incidents.', 
-            style: TextStyle(color: AppTheme.grey500, fontWeight: FontWeight.w700)),
+          Container(
+            padding: const EdgeInsets.all(40),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.verified_user_rounded, size: 80, color: AppTheme.primaryEmerald.withValues(alpha: 0.2)),
+          ),
+          const SizedBox(height: 32),
+          Text(
+            'All systems clear', 
+            style: GoogleFonts.plusJakartaSans(
+              color: AppTheme.grey900, 
+              fontWeight: FontWeight.w900,
+              fontSize: 22,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'No active incidents or grievances reported.', 
+            style: GoogleFonts.inter(
+              color: AppTheme.grey400, 
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+          ),
         ],
       ),
     );
@@ -114,14 +149,8 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: statusColor.withValues(alpha: 0.05),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
-        border: Border.all(color: statusColor.withValues(alpha: 0.15), width: 1.5),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
@@ -132,27 +161,37 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
         child: ExpansionTile(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
           collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-          tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           childrenPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           leading: Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(18),
+              color: statusColor.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(_getStatusIcon(complaint.status), color: statusColor, size: 24),
           ),
           title: Text(
             complaint.title,
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: AppTheme.grey900, letterSpacing: -0.5),
+            style: GoogleFonts.plusJakartaSans(
+              fontWeight: FontWeight.w900, 
+              fontSize: 17, 
+              color: AppTheme.grey900, 
+              letterSpacing: -0.5,
+            ),
           ),
           subtitle: Padding(
-            padding: const EdgeInsets.only(top: 6),
+            padding: const EdgeInsets.only(top: 8),
             child: Row(
               children: [
                 Text(
                   'CASE #${complaint.id.hashCode.toString().toUpperCase().take(6)}', 
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 1),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 9, 
+                    fontWeight: FontWeight.w900, 
+                    color: AppTheme.grey400, 
+                    letterSpacing: 1.5,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 AppTheme.statusTag(complaint.status.toString().split('.').last, statusColor),
@@ -167,17 +206,26 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
               margin: const EdgeInsets.only(bottom: 24),
             ),
             _buildDetailRow('DESCRIPTION', complaint.description),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Row(
               children: [
                 Expanded(child: _buildDetailRow('REPORTED AT', DateFormat('MMM d, yyyy • HH:mm').format(complaint.createdAt))),
+                const SizedBox(width: 16),
                 Expanded(child: _buildDetailRow('WARD ASSIGNMENT', complaint.wardNumber ?? 'PENDING')),
               ],
             ),
             if (complaint.imageUrl != null) ...[
-              const SizedBox(height: 24),
-              const Text('EVIDENCE PHOTOGRAPHY', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 0.5)),
-              const SizedBox(height: 12),
+              const SizedBox(height: 32),
+              Text(
+                'EVIDENCE PHOTOGRAPHY', 
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 9, 
+                  fontWeight: FontWeight.w900, 
+                  color: AppTheme.grey400, 
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
@@ -200,12 +248,19 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                   child: OutlinedButton(
                     onPressed: () => _showActionDialog(complaint),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      side: const BorderSide(color: AppTheme.grey200, width: 1.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      padding: const EdgeInsets.symmetric(vertical: 22),
+                      side: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.8), width: 1.5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                       foregroundColor: AppTheme.grey900,
                     ),
-                    child: const Text('UPDATE STATUS', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, fontSize: 12)),
+                    child: Text(
+                      'UPDATE STATUS', 
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w900, 
+                        letterSpacing: 1, 
+                        fontSize: 11,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -213,14 +268,22 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                   child: ElevatedButton.icon(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.grey900,
+                      backgroundColor: AppTheme.bgDark,
                       foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      elevation: 4,
+                      shadowColor: AppTheme.bgDark.withValues(alpha: 0.3),
+                      padding: const EdgeInsets.symmetric(vertical: 22),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     ),
                     icon: const Icon(Icons.support_agent_rounded, size: 18),
-                    label: const Text('ENGAGE AGENT', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, fontSize: 12)),
+                    label: Text(
+                      'ENGAGE AGENT', 
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w900, 
+                        letterSpacing: 1, 
+                        fontSize: 11,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -235,9 +298,25 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400)),
-        const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.grey700)),
+        Text(
+          label.toUpperCase(), 
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 9, 
+            fontWeight: FontWeight.w900, 
+            color: AppTheme.grey400, 
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          value, 
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.w600, 
+            fontSize: 14, 
+            color: AppTheme.grey700,
+            height: 1.5,
+          ),
+        ),
       ],
     );
   }
@@ -284,51 +363,101 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              const Text('Resolve Incident', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: -0.5)),
-              const Text('Determine the final state of this case and provide closure notes.', style: TextStyle(color: AppTheme.grey400, fontSize: 14)),
+              Text(
+                'Resolve Incident', 
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w900, 
+                  fontSize: 24, 
+                  letterSpacing: -1,
+                  color: AppTheme.grey900,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Determine the final state of this case and provide closure notes.', 
+                style: GoogleFonts.inter(
+                  color: AppTheme.grey500, 
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               const SizedBox(height: 32),
-              const Text('SELECT RESOLUTION STATUS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 0.5)),
-              const SizedBox(height: 12),
+              Text(
+                'SELECT RESOLUTION STATUS', 
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 9, 
+                  fontWeight: FontWeight.w900, 
+                  color: AppTheme.grey400, 
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 16),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: ComplaintStatus.values.map((status) {
                     final isSelected = selectedStatus == status.name;
                     return Padding(
-                      padding: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.only(right: 12),
                       child: ChoiceChip(
                         label: Text(status.name.toUpperCase()),
                         selected: isSelected,
                         onSelected: (_) => setModalState(() => selectedStatus = status.name),
                         backgroundColor: AppTheme.grey50,
-                        selectedColor: _getStatusColor(status),
-                        labelStyle: TextStyle(
+                        selectedColor: _getStatusColor(status).withValues(alpha: 0.1),
+                        labelStyle: GoogleFonts.plusJakartaSans(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
-                          color: isSelected ? Colors.white : AppTheme.grey400,
+                          color: isSelected ? _getStatusColor(status) : AppTheme.grey400,
+                          letterSpacing: 1.2,
                         ),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16), 
+                          side: BorderSide(
+                            color: isSelected ? _getStatusColor(status) : Colors.transparent,
+                            width: 1.5,
+                          ),
+                        ),
                         showCheckmark: false,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       ),
                     );
                   }).toList(),
                 ),
               ),
               const SizedBox(height: 32),
-              const Text('RESOLUTION CLOSURE NOTE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 0.5)),
-              const SizedBox(height: 12),
+              Text(
+                'RESOLUTION CLOSURE NOTE', 
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 9, 
+                  fontWeight: FontWeight.w900, 
+                  color: AppTheme.grey400, 
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 16),
               TextField(
                 controller: responseController,
                 maxLines: 4,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.grey900),
+                style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.grey900),
                 decoration: InputDecoration(
                   hintText: 'Document the actions taken to resolve this case...',
-                  hintStyle: const TextStyle(color: AppTheme.grey300),
+                  hintStyle: GoogleFonts.inter(color: AppTheme.grey300),
                   filled: true,
                   fillColor: AppTheme.grey50,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
-                  contentPadding: const EdgeInsets.all(20),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24), 
+                    borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24), 
+                    borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24), 
+                    borderSide: const BorderSide(color: AppTheme.primaryEmerald, width: 1.5),
+                  ),
+                  contentPadding: const EdgeInsets.all(24),
                 ),
               ),
               const SizedBox(height: 40),
@@ -346,10 +475,14 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                       if (success) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: const Text('Case resolution updated successfully'),
-                            backgroundColor: AppTheme.primaryEmerald,
+                            content: Text(
+                              'Case resolution updated successfully',
+                              style: GoogleFonts.inter(fontWeight: FontWeight.w700),
+                            ),
+                            backgroundColor: AppTheme.bgDark,
                             behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            margin: const EdgeInsets.all(24),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           )
                         );
                       }
@@ -357,10 +490,20 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryEmerald,
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 22),
+                    elevation: 8,
+                    shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   ),
-                  child: const Text('CONFIRM RESOLUTION', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                  child: Text(
+                    'CONFIRM RESOLUTION', 
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w900, 
+                      letterSpacing: 1,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 32),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../services/admin_service.dart';
 import '../../models/pickup.dart';
 import '../../models/user.dart';
@@ -31,47 +32,58 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
         final pickups = adminService.pickups;
 
         return Scaffold(
-          backgroundColor: AppTheme.grey50,
+          backgroundColor: AppTheme.bgSurface,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(80),
+            preferredSize: const Size.fromHeight(100),
             child: Container(
-              padding: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 20),
               decoration: const BoxDecoration(
+                color: AppTheme.bgDark,
                 gradient: AppTheme.slateGradient,
               ),
               child: AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 scrolledUnderElevation: 0,
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Dispatch Control',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 22,
-                        color: Colors.white,
-                        letterSpacing: -0.8,
+                title: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Dispatch Control',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 24,
+                          color: Colors.white,
+                          letterSpacing: -1,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Logistics and field assignment management',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 2),
+                      Text(
+                        'Logistics and field assignment management',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 foregroundColor: Colors.white,
                 actions: [
-                  IconButton(
-                    icon: const Icon(Icons.history_rounded, color: Colors.white70),
-                    onPressed: () {},
+                  Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.history_rounded, color: Colors.white, size: 20),
+                      onPressed: () {},
+                    ),
                   ),
-                  const SizedBox(width: 8),
                 ],
               ),
             ),
@@ -101,19 +113,32 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(40),
             decoration: BoxDecoration(
-              color: AppTheme.grey100,
+              color: AppTheme.grey100.withValues(alpha: 0.5),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.local_shipping_rounded, size: 64, color: AppTheme.grey300),
+            child: Icon(Icons.local_shipping_rounded, size: 80, color: AppTheme.grey300),
           ),
-          const SizedBox(height: 24),
-          const Text('All Dispatched', 
-            style: TextStyle(color: AppTheme.grey900, fontWeight: FontWeight.w900, fontSize: 20)),
-          const SizedBox(height: 8),
-          const Text('No pending collection units requiring assignment.', 
-            style: TextStyle(color: AppTheme.grey400, fontSize: 14)),
+          const SizedBox(height: 32),
+          Text(
+            'All Dispatched', 
+            style: GoogleFonts.plusJakartaSans(
+              color: AppTheme.grey900, 
+              fontWeight: FontWeight.w900, 
+              fontSize: 22,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'No pending collection units requiring assignment.', 
+            style: GoogleFonts.inter(
+              color: AppTheme.grey400, 
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -137,14 +162,8 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: statusColor.withValues(alpha: 0.05),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
-        border: Border.all(color: statusColor.withValues(alpha: 0.15), width: 1.5),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
@@ -154,10 +173,10 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(18),
+                    color: statusColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Icon(Icons.inventory_2_rounded, color: statusColor, size: 24),
                 ),
@@ -166,21 +185,37 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        (pickup.specialInstructions ?? "STANDARD COLLECTION").toUpperCase(),
-                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: AppTheme.grey900, letterSpacing: 0.5),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              (pickup.specialInstructions ?? "STANDARD COLLECTION").toUpperCase(),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w900, 
+                                fontSize: 11, 
+                                color: AppTheme.grey900, 
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                          AppTheme.statusTag(pickup.status.name, statusColor),
+                        ],
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 10),
                       Text(
                         pickup.address,
-                        style: const TextStyle(fontSize: 14, color: AppTheme.grey500, fontWeight: FontWeight.w500, height: 1.4),
+                        style: GoogleFonts.inter(
+                          fontSize: 14, 
+                          color: AppTheme.grey500, 
+                          fontWeight: FontWeight.w500, 
+                          height: 1.5,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                AppTheme.statusTag(pickup.status.name, statusColor),
               ],
             ),
           ),
@@ -208,14 +243,17 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.15)),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(color: AppTheme.primaryEmerald, shape: BoxShape.circle),
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              gradient: AppTheme.emeraldGradient,
+                              shape: BoxShape.circle,
+                            ),
                             child: const Icon(Icons.check_rounded, color: Colors.white, size: 14),
                           ),
                           const SizedBox(width: 16),
@@ -223,17 +261,36 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('ASSIGNED DISPATCHER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey500, letterSpacing: 1.0)),
+                                Text(
+                                  'ASSIGNED DISPATCHER', 
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 8, 
+                                    fontWeight: FontWeight.w900, 
+                                    color: AppTheme.grey400, 
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
                                 const SizedBox(height: 2),
-                                Text(assignedWorkerName, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppTheme.grey900), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                Text(
+                                  assignedWorkerName, 
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: FontWeight.w800, 
+                                    fontSize: 15, 
+                                    color: AppTheme.grey900,
+                                  ), 
+                                  maxLines: 1, 
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.edit_rounded, size: 20, color: AppTheme.primaryEmerald),
+                            icon: const Icon(Icons.edit_rounded, size: 18, color: AppTheme.primaryEmerald),
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              elevation: 2,
+                              shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.2),
                             ),
                             onPressed: () => _showAssignWorkerDialog(pickup, workers),
                           ),
@@ -246,13 +303,22 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () => _showAssignWorkerDialog(pickup, workers),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.grey900,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        backgroundColor: AppTheme.bgDark,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 22),
+                        elevation: 4,
+                        shadowColor: AppTheme.bgDark.withValues(alpha: 0.3),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                       ),
-                      icon: const Icon(Icons.person_add_rounded, size: 20, color: Colors.white),
-                      label: const Text('ASSIGN FIELD DISPATCHER', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, color: Colors.white, fontSize: 13)),
+                      icon: const Icon(Icons.person_add_rounded, size: 20),
+                      label: Text(
+                        'ASSIGN FIELD DISPATCHER', 
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900, 
+                          letterSpacing: 1, 
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ),
               ],
@@ -266,9 +332,16 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
   Widget _buildInfoBit(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 15, color: AppTheme.grey400),
+        Icon(icon, size: 14, color: AppTheme.grey400),
         const SizedBox(width: 8),
-        Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.grey700)),
+        Text(
+          text, 
+          style: GoogleFonts.inter(
+            fontSize: 13, 
+            fontWeight: FontWeight.w700, 
+            color: AppTheme.grey700,
+          ),
+        ),
       ],
     );
   }
@@ -302,9 +375,25 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                 decoration: BoxDecoration(color: AppTheme.grey200, borderRadius: BorderRadius.circular(10)),
               ),
             ),
-            const SizedBox(height: 24),
-            const Text('Asset Deployment', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: -0.5)),
-            const Text('Assign an active field resource to this collection unit.', style: TextStyle(color: AppTheme.grey500, fontSize: 14)),
+            const SizedBox(height: 32),
+            Text(
+              'Asset Deployment', 
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w900, 
+                fontSize: 24, 
+                letterSpacing: -1,
+                color: AppTheme.grey900,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Assign an active field resource to this collection unit.', 
+              style: GoogleFonts.inter(
+                color: AppTheme.grey500, 
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(height: 32),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
@@ -322,22 +411,71 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                       border: Border.all(color: AppTheme.grey100),
                     ),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       leading: Container(
-                        width: 48,
-                        height: 48,
+                        width: 52,
+                        height: 52,
                         decoration: BoxDecoration(
                           gradient: AppTheme.emeraldGradient,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
                         child: Center(
-                          child: Text(worker.name[0], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18)),
+                          child: Text(
+                            worker.name[0], 
+                            style: GoogleFonts.plusJakartaSans(
+                              color: Colors.white, 
+                              fontWeight: FontWeight.w900, 
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
                       ),
-                      title: Text(worker.name, style: const TextStyle(fontWeight: FontWeight.w800, color: AppTheme.grey900)),
+                      title: Text(
+                        worker.name, 
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900, 
+                          color: AppTheme.grey900,
+                          fontSize: 16,
+                        ),
+                      ),
                       subtitle: Padding(
                         padding: const EdgeInsets.only(top: 4),
-                        child: Text('Ward ${worker.wardNumber ?? "N/A"} • Fleet Active', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryEmerald)),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Ward ${worker.wardNumber ?? "N/A"}', 
+                              style: GoogleFonts.inter(
+                                fontSize: 12, 
+                                fontWeight: FontWeight.w600, 
+                                color: AppTheme.grey400,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'ACTIVE',
+                                style: GoogleFonts.inter(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppTheme.primaryEmerald,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       trailing: const Icon(Icons.chevron_right_rounded, color: AppTheme.grey300),
                       onTap: () async {
@@ -346,10 +484,14 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                         if (context.mounted && success) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text('Field resource deployed successfully'),
-                              backgroundColor: AppTheme.primaryEmerald,
+                              content: Text(
+                                'Field resource deployed successfully',
+                                style: GoogleFonts.inter(fontWeight: FontWeight.w700),
+                              ),
+                              backgroundColor: AppTheme.bgDark,
                               behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              margin: const EdgeInsets.all(24),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             )
                           );
                         }

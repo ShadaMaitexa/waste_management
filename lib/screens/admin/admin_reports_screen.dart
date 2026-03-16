@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../services/admin_service.dart';
 import '../../theme/app_theme.dart';
 import 'package:intl/intl.dart';
@@ -37,31 +38,35 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
+        preferredSize: const Size.fromHeight(100),
         child: Container(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 20),
           decoration: const BoxDecoration(
+            color: AppTheme.bgDark,
             gradient: AppTheme.slateGradient,
           ),
           child: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             scrolledUnderElevation: 0,
-            title: const Text(
-              'Strategic Intelligence',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 22,
-                color: Colors.white,
-                letterSpacing: -0.8,
+            title: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                'Strategic Intelligence',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 24,
+                  color: Colors.white,
+                  letterSpacing: -1,
+                ),
               ),
             ),
             foregroundColor: Colors.white,
             actions: [
               IconButton(
-                icon: const Icon(Icons.share_rounded, color: Colors.white70),
+                icon: const Icon(Icons.ios_share_rounded, color: Colors.white, size: 22),
                 onPressed: () {},
               ),
               const SizedBox(width: 8),
@@ -93,11 +98,11 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
             ),
       floatingActionButton: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
-              blurRadius: 15,
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.4),
+              blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
@@ -107,8 +112,17 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
           backgroundColor: AppTheme.primaryEmerald,
           elevation: 0,
           highlightElevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           icon: const Icon(Icons.insights_rounded, color: Colors.white),
-          label: const Text('GENERATE REPORT', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1)),
+          label: Text(
+            'GENERATE REPORT', 
+            style: GoogleFonts.plusJakartaSans(
+              color: Colors.white, 
+              fontWeight: FontWeight.w900, 
+              letterSpacing: 1.5,
+              fontSize: 13,
+            ),
+          ),
         ),
       ),
     );
@@ -119,12 +133,13 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     final growth = _revenueStats['revenue_growth'] ?? '+18.2%';
 
     return Container(
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
+        color: AppTheme.bgDark,
         gradient: AppTheme.slateGradient,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.intenseShadow,
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: AppTheme.smoothShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,45 +147,62 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'SYSTEM REVENUE (KMC)',
-                style: TextStyle(color: Colors.white60, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 1.5),
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.white.withValues(alpha: 0.6), 
+                  fontWeight: FontWeight.w900, 
+                  fontSize: 10, 
+                  letterSpacing: 2,
+                ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
                 ),
                 child: Text(
                   growth,
-                  style: const TextStyle(color: AppTheme.primaryEmerald, fontWeight: FontWeight.w900, fontSize: 11),
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppTheme.primaryEmerald, 
+                    fontWeight: FontWeight.w900, 
+                    fontSize: 10,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             '₹$total',
-            style: const TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               color: Colors.white,
-              fontSize: 36,
+              fontSize: 40,
               fontWeight: FontWeight.w900,
-              letterSpacing: -1.5,
+              letterSpacing: -2,
             ),
           ),
-          const SizedBox(height: 24),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _revenueSubStat('Fees Collected', '₹${_revenueStats['fees_collected'] ?? '2,140'}'),
-                const SizedBox(width: 24),
-                _revenueSubStat('Pending Dues', '₹${_revenueStats['pending_dues'] ?? '430'}'),
-                const SizedBox(width: 24),
-                _revenueSubStat('Growth Index', growth),
-              ],
+          const SizedBox(height: 32),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+            ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _revenueSubStat('Fees Collected', '₹${_revenueStats['fees_collected'] ?? '2,140'}'),
+                  const SizedBox(width: 32),
+                  _revenueSubStat('Pending Dues', '₹${_revenueStats['pending_dues'] ?? '430'}'),
+                  const SizedBox(width: 32),
+                  _revenueSubStat('Growth Index', growth),
+                ],
+              ),
             ),
           ),
         ],
@@ -182,9 +214,24 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label.toUpperCase(), style: const TextStyle(color: Colors.white38, fontSize: 9, fontWeight: FontWeight.w900)),
+        Text(
+          label.toUpperCase(), 
+          style: GoogleFonts.plusJakartaSans(
+            color: Colors.white.withValues(alpha: 0.4), 
+            fontSize: 9, 
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1,
+          ),
+        ),
         const SizedBox(height: 6),
-        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15)),
+        Text(
+          value, 
+          style: GoogleFonts.plusJakartaSans(
+            color: Colors.white, 
+            fontWeight: FontWeight.w900, 
+            fontSize: 16,
+          ),
+        ),
       ],
     );
   }
@@ -209,22 +256,22 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
               onSelected: (_) => setState(() => _selectedType = type),
               backgroundColor: Colors.white,
               selectedColor: AppTheme.primaryEmerald,
-              labelStyle: TextStyle(
+              labelStyle: GoogleFonts.plusJakartaSans(
                 color: isSelected ? Colors.white : AppTheme.grey500,
                 fontWeight: FontWeight.w900,
-                fontSize: 11,
-                letterSpacing: 0.5,
+                fontSize: 10,
+                letterSpacing: 1,
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(16),
                 side: BorderSide(
-                  color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200,
+                  color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200.withValues(alpha: 0.5),
                   width: 1.5,
                 ),
               ),
               showCheckmark: false,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              elevation: isSelected ? 4 : 0,
+              elevation: isSelected ? 8 : 0,
               shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
             ),
           );
@@ -240,18 +287,12 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     final isFinancial = index % 2 != 0;
     
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
+        boxShadow: AppTheme.smoothShadow,
       ),
       child: Material(
         color: Colors.transparent,
@@ -283,7 +324,12 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                     children: [
                       Text(
                         title, 
-                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.3),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900, 
+                          fontSize: 16, 
+                          color: AppTheme.grey900, 
+                          letterSpacing: -0.5,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Wrap(
@@ -293,14 +339,22 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                           const SizedBox(width: 6),
                           Text(
                             date, 
-                            style: const TextStyle(color: AppTheme.grey400, fontSize: 12, fontWeight: FontWeight.w600),
+                            style: GoogleFonts.inter(
+                              color: AppTheme.grey400, 
+                              fontSize: 12, 
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(width: 12),
-                          Container(width: 4, height: 4, decoration: const BoxDecoration(color: AppTheme.grey200, shape: BoxShape.circle)),
+                          Container(width: 4, height: 4, decoration: BoxDecoration(color: AppTheme.grey200, shape: BoxShape.circle)),
                           const SizedBox(width: 12),
                           Text(
                             '2.4 MB', 
-                            style: TextStyle(color: AppTheme.grey300, fontSize: 11, fontWeight: FontWeight.w700),
+                            style: GoogleFonts.inter(
+                              color: AppTheme.grey300, 
+                              fontSize: 11, 
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ],
                       ),
@@ -308,12 +362,12 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: AppTheme.grey50,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(Icons.download_for_offline_rounded, color: AppTheme.grey400, size: 22),
+                  child: Icon(Icons.download_for_offline_rounded, color: AppTheme.grey400, size: 24),
                 ),
               ],
             ),

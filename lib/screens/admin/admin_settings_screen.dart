@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 import 'manage_pickup_slots_screen.dart';
 
@@ -17,28 +18,37 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
+        preferredSize: const Size.fromHeight(100),
         child: Container(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 20),
           decoration: const BoxDecoration(
+            color: AppTheme.bgDark,
             gradient: AppTheme.slateGradient,
           ),
           child: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             scrolledUnderElevation: 0,
-            title: const Text(
-              'System Configuration',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 22,
-                color: Colors.white,
-                letterSpacing: -0.8,
+            title: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                'System Configuration',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 24,
+                  color: Colors.white,
+                  letterSpacing: -1,
+                ),
               ),
             ),
+            centerTitle: true,
             foregroundColor: Colors.white,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+              onPressed: () => Navigator.pop(context),
+            ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.help_outline_rounded, color: Colors.white70),
@@ -127,23 +137,34 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
       ),
       child: Row(
         children: [
           Container(
-            width: 72,
-            height: 72,
+            width: 76,
+            height: 76,
             decoration: BoxDecoration(
               gradient: AppTheme.emeraldGradient,
               borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
             alignment: Alignment.center,
-            child: const Text(
+            child: Text(
               'HQ',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: Colors.white),
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 26, 
+                fontWeight: FontWeight.w900, 
+                color: Colors.white,
+              ),
             ),
           ),
           const SizedBox(width: 24),
@@ -151,18 +172,22 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Command Admin',
-                  style: TextStyle(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: AppTheme.grey900,
-                    letterSpacing: -0.8,
+                    letterSpacing: -1,
                   ),
                 ),
                 Text(
                   'hq.operations@kozhikode.gov.in',
-                  style: TextStyle(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.inter(
+                    color: AppTheme.grey500, 
+                    fontSize: 13, 
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -185,28 +210,23 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 12),
+          padding: const EdgeInsets.only(left: 12, bottom: 16),
           child: Text(
             title.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey500,
-              letterSpacing: 1.2,
+              letterSpacing: 2,
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: AppTheme.smoothShadow,
+            border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
           ),
           child: Column(
             children: children.asMap().entries.map((entry) {
@@ -228,18 +248,27 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
 
   Widget _buildSwitchTile(String title, String subtitle, bool value, ValueChanged<bool> onChanged) {
     return SwitchListTile(
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.2)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey400, fontWeight: FontWeight.w500)),
+      title: Text(
+        title, 
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w900, 
+          fontSize: 16, 
+          color: AppTheme.grey900, 
+          letterSpacing: -0.5,
+        ),
+      ),
+      subtitle: Text(
+        subtitle, 
+        style: GoogleFonts.inter(
+          fontSize: 12, 
+          color: AppTheme.grey400, 
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       value: value,
       onChanged: onChanged,
-      activeTrackColor: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+      activeTrackColor: AppTheme.primaryEmerald.withValues(alpha: 0.15),
       thumbColor: WidgetStateProperty.all(AppTheme.primaryEmerald),
-      trackColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return AppTheme.primaryEmerald.withValues(alpha: 0.15);
-        }
-        return AppTheme.grey200;
-      }),
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     );
   }
@@ -248,17 +277,32 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
     return ListTile(
       onTap: onTap,
       leading: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppTheme.grey50,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(icon, size: 20, color: AppTheme.grey500),
+        child: Icon(icon, size: 22, color: AppTheme.primaryEmerald.withValues(alpha: 0.6)),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.2)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey400, fontWeight: FontWeight.w500)),
-      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.grey300),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      title: Text(
+        title, 
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w900, 
+          fontSize: 16, 
+          color: AppTheme.grey900, 
+          letterSpacing: -0.5,
+        ),
+      ),
+      subtitle: Text(
+        subtitle, 
+        style: GoogleFonts.inter(
+          fontSize: 12, 
+          color: AppTheme.grey400, 
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      trailing: Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey300),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
     );
   }
 
@@ -272,15 +316,19 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           backgroundColor: AppTheme.error.withValues(alpha: 0.05),
           foregroundColor: AppTheme.error,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 22),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: AppTheme.error.withValues(alpha: 0.1)),
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: AppTheme.error.withValues(alpha: 0.15), width: 1.5),
           ),
         ),
-        child: const Text(
+        child: Text(
           'TERMINATE SESSION',
-          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14, letterSpacing: 1),
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w900, 
+            fontSize: 14, 
+            letterSpacing: 2,
+          ),
         ),
       ),
     );

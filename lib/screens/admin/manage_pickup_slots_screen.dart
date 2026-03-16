@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../models/pickup_slot.dart';
 import '../../services/pickup_service.dart';
 import '../../theme/app_theme.dart';
@@ -48,12 +49,28 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Define Pickup Slot',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppTheme.grey900, letterSpacing: -0.5),
+              Center(
+                child: Container(
+                  width: 48,
+                  height: 5,
+                  decoration: BoxDecoration(color: AppTheme.grey200, borderRadius: BorderRadius.circular(10)),
+                ),
               ),
-              const Text('Set operational capacity for this time window.', 
-                style: TextStyle(color: AppTheme.grey400, fontSize: 14)),
+              const SizedBox(height: 32),
+              Text(
+                'Define Pickup Slot',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 24, 
+                  fontWeight: FontWeight.w900, 
+                  color: AppTheme.grey900, 
+                  letterSpacing: -1,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Set operational capacity for this time window.', 
+                style: GoogleFonts.inter(color: AppTheme.grey500, fontSize: 14, fontWeight: FontWeight.w500),
+              ),
               const SizedBox(height: 32),
               
               _buildTimeSelector('START TIME', startTime, (picked) => setModalState(() => startTime = picked)),
@@ -61,26 +78,54 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               _buildTimeSelector('END TIME', endTime, (picked) => setModalState(() => endTime = picked)),
               
               const SizedBox(height: 32),
-              const Text('UNIT CAPACITY', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 1)),
+              Text(
+                'UNIT CAPACITY', 
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 9, 
+                  fontWeight: FontWeight.w900, 
+                  color: AppTheme.grey400, 
+                  letterSpacing: 2,
+                ),
+              ),
               const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: AppTheme.grey50,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppTheme.grey200),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove_rounded, color: AppTheme.grey700),
-                      onPressed: capacity > 1 ? () => setModalState(() => capacity--) : null,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.grey200),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.remove_rounded, color: AppTheme.grey700),
+                        onPressed: capacity > 1 ? () => setModalState(() => capacity--) : null,
+                      ),
                     ),
-                    Text('$capacity Households', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.grey900)),
-                    IconButton(
-                      icon: const Icon(Icons.add_rounded, color: AppTheme.primaryEmerald),
-                      onPressed: () => setModalState(() => capacity++),
+                    Text(
+                      '$capacity Households', 
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16, 
+                        fontWeight: FontWeight.w900, 
+                        color: AppTheme.grey900,
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.add_rounded, color: AppTheme.primaryEmerald),
+                        onPressed: () => setModalState(() => capacity++),
+                      ),
                     ),
                   ],
                 ),
@@ -101,7 +146,21 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                     Provider.of<PickupService>(context, listen: false).createPickupSlot(newSlot);
                     Navigator.pop(context);
                   },
-                  child: const Text('INITIALIZE SLOT'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryEmerald,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 22),
+                    elevation: 10,
+                    shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                  ),
+                  child: Text(
+                    'INITIALIZE SLOT',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -115,26 +174,41 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 1)),
-        const SizedBox(height: 8),
+        Text(
+          label, 
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 9, 
+            fontWeight: FontWeight.w900, 
+            color: AppTheme.grey400, 
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 10),
         InkWell(
           onTap: () async {
             final picked = await showTimePicker(context: context, initialTime: time);
             if (picked != null) onPicked(picked);
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppTheme.grey200),
+              color: AppTheme.grey50,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(time.format(context), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AppTheme.grey800)),
-                const Icon(Icons.access_time_filled_rounded, color: AppTheme.grey400, size: 20),
+                Text(
+                  time.format(context), 
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w800, 
+                    fontSize: 16, 
+                    color: AppTheme.grey900,
+                  ),
+                ),
+                Icon(Icons.access_time_filled_rounded, color: AppTheme.primaryEmerald.withValues(alpha: 0.5), size: 22),
               ],
             ),
           ),
@@ -146,35 +220,35 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
+        preferredSize: const Size.fromHeight(80),
         child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
+          padding: const EdgeInsets.only(top: 10),
+          decoration: const BoxDecoration(
+            color: AppTheme.bgDark,
+            gradient: AppTheme.slateGradient,
           ),
           child: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            title: const Text(
+            title: Text(
               'Operational Scheduling',
-              style: TextStyle(fontWeight: FontWeight.w900, color: AppTheme.grey900, fontSize: 20),
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w900, 
+                color: Colors.white, 
+                fontSize: 22,
+                letterSpacing: -1,
+              ),
             ),
             centerTitle: true,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey700, size: 20),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.info_outline_rounded, color: AppTheme.grey400),
+                icon: Icon(Icons.analytics_outlined, color: Colors.white.withValues(alpha: 0.6)),
                 onPressed: () {},
               ),
             ],
@@ -191,11 +265,11 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
       ),
       floatingActionButton: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
-              blurRadius: 15,
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.4),
+              blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
@@ -205,8 +279,17 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
           backgroundColor: AppTheme.primaryEmerald,
           elevation: 0,
           highlightElevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           icon: const Icon(Icons.add_task_rounded, color: Colors.white),
-          label: const Text('New Slot', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+          label: Text(
+            'NEW SLOT', 
+            style: GoogleFonts.plusJakartaSans(
+              color: Colors.white, 
+              fontWeight: FontWeight.w900, 
+              letterSpacing: 1.5,
+              fontSize: 13,
+            ),
+          ),
         ),
       ),
     );
@@ -265,20 +348,21 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                       children: [
                         Text(
                           DateFormat('EEE').format(date).toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 10,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 9,
                             fontWeight: FontWeight.w900,
-                            color: isSelected ? Colors.white.withValues(alpha: 0.85) : AppTheme.grey400,
-                            letterSpacing: 1,
+                            color: isSelected ? Colors.white.withValues(alpha: 0.8) : AppTheme.grey400,
+                            letterSpacing: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           DateFormat('d').format(date),
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
                             color: isSelected ? Colors.white : AppTheme.grey900,
+                            letterSpacing: -1,
                           ),
                         ),
                       ],
@@ -306,17 +390,28 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(40),
                   decoration: BoxDecoration(
-                    color: AppTheme.grey100,
+                    color: AppTheme.grey100.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.calendar_today_rounded, size: 48, color: AppTheme.grey300),
+                  child: Icon(Icons.calendar_today_rounded, size: 64, color: AppTheme.grey300),
                 ),
-                const SizedBox(height: 24),
-                const Text('Schedule is empty', style: TextStyle(color: AppTheme.grey900, fontWeight: FontWeight.w800, fontSize: 18)),
+                const SizedBox(height: 32),
+                Text(
+                  'Schedule is empty', 
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppTheme.grey900, 
+                    fontWeight: FontWeight.w900, 
+                    fontSize: 20,
+                    letterSpacing: -0.5,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                const Text('No operational slots defined for this date.', style: TextStyle(color: AppTheme.grey400, fontSize: 14)),
+                Text(
+                  'No operational slots defined for this date.', 
+                  style: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 14, fontWeight: FontWeight.w500),
+                ),
               ],
             ),
           );
@@ -331,21 +426,15 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
             final utilPercent = slot.bookedCount / slot.capacity;
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 20),
+              margin: const EdgeInsets.only(bottom: 24),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-                border: Border.all(color: AppTheme.grey100, width: 1),
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: AppTheme.smoothShadow,
+                border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(32),
                 child: IntrinsicHeight(
                   child: Row(
                     children: [
@@ -376,15 +465,42 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                                   children: [
                                     Text(
                                       slot.formatTime(context),
-                                      style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: AppTheme.grey900, letterSpacing: -0.5),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontWeight: FontWeight.w900, 
+                                        fontSize: 18, 
+                                        color: AppTheme.grey900, 
+                                        letterSpacing: -0.5,
+                                      ),
                                     ),
                                     const SizedBox(height: 6),
                                     Row(
                                       children: [
-                                        Text('LOAD FACTOR: ', style: TextStyle(color: AppTheme.grey400, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-                                        Text('${(utilPercent * 100).toInt()}%', style: TextStyle(color: utilPercent > 0.8 ? AppTheme.error : AppTheme.primaryEmerald, fontSize: 10, fontWeight: FontWeight.w900)),
+                                        Text(
+                                          'LOAD FACTOR: ', 
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: AppTheme.grey400, 
+                                            fontSize: 9, 
+                                            fontWeight: FontWeight.w900, 
+                                            letterSpacing: 1.5,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${(utilPercent * 100).toInt()}%', 
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: utilPercent > 0.8 ? AppTheme.error : AppTheme.primaryEmerald, 
+                                            fontSize: 9, 
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
                                         const Spacer(),
-                                        Text('${slot.bookedCount}/${slot.capacity} Units', style: const TextStyle(color: AppTheme.grey600, fontSize: 11, fontWeight: FontWeight.w700)),
+                                        Text(
+                                          '${slot.bookedCount}/${slot.capacity} UN', 
+                                          style: GoogleFonts.inter(
+                                            color: AppTheme.grey700, 
+                                            fontSize: 11, 
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 12),
