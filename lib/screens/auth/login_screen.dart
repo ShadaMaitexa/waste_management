@@ -138,6 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           _buildForgotPassword(),
                           const SizedBox(height: 48),
                           _buildSignUpPrompt(),
+                          const SizedBox(height: 16),
+                          _buildAdminLoginLink(),
                         ],
                       ),
                     ),
@@ -215,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
-            hintText: 'Email Address',
+            hintText: 'Email or Username',
             hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16),
             prefixIcon: const Icon(Icons.email_outlined, color: Colors.white, size: 20),
             filled: true,
@@ -235,8 +237,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Email is required';
-            if (!value.contains('@')) return 'Enter a valid email';
+            if (value == null || value.isEmpty) return 'Email or username is required';
+            // Removed strict @ validation so users can log in with usernames like 'admin'
             return null;
           },
         ),
@@ -360,6 +362,21 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAdminLoginLink() {
+    return TextButton.icon(
+      onPressed: () => Navigator.pushNamed(context, '/admin-login'),
+      icon: const Icon(Icons.shield_rounded, color: Colors.white54, size: 16),
+      label: const Text(
+        'Admin Access',
+        style: TextStyle(
+          color: Colors.white54,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1,
+        ),
+      ),
     );
   }
 
