@@ -100,42 +100,71 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         children: [
           // Elevated Gradient Background
-          Container(color: AppTheme.bgSurface),
+          Container(
+            decoration: const BoxDecoration(
+              color: AppTheme.bgSurface,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppTheme.bgSurface, Color(0xFFE8F5E9)],
+              ),
+            ),
+          ),
           // Subtle Eco Patterns
           Positioned(
-            right: -100,
-            top: -50,
-            child: Icon(
-              Icons.eco_rounded,
-              size: 400,
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.03),
+            right: -120,
+            top: -60,
+            child: Container(
+              width: 400,
+              height: 400,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.eco_rounded,
+                size: 280,
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+              ),
+            ),
+          ),
+          Positioned(
+            left: -100,
+            bottom: -50,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                color: AppTheme.accentIndigo.withValues(alpha: 0.03),
+                shape: BoxShape.circle,
+              ),
             ),
           ),
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 450),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildLogo(),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 56),
                     _buildWelcomeText(),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 56),
                     Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           _buildLoginForm(),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 40),
                           _buildLoginButton(),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 28),
                           _buildForgotPassword(),
-                          const SizedBox(height: 48),
+                          const SizedBox(height: 64),
                           _buildSignUpPrompt(),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 24),
                           _buildAdminLoginLink(),
                         ],
                       ),
@@ -156,16 +185,30 @@ class _LoginScreenState extends State<LoginScreen> {
       height: 140,
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
+        color: Colors.white,
         shape: BoxShape.circle,
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: Colors.white, width: 4),
       ),
       child: Center(
-        child: Icon(
-          Icons.recycling_rounded,
-          size: 64,
-          color: AppTheme.primaryEmerald,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: AppTheme.emeraldGradient,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.recycling_rounded,
+            size: 40,
+            color: Colors.white,
+          ),
         ),
       ),
     );
@@ -250,26 +293,37 @@ class _LoginScreenState extends State<LoginScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.bgDark,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          elevation: 12,
+          shadowColor: AppTheme.bgDark.withValues(alpha: 0.4),
+          padding: EdgeInsets.zero,
         ),
-        child: _isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : Text(
-                'INITIALIZE SESSION',
-                style: GoogleFonts.plusJakartaSans(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 2,
-                  fontSize: 13,
-                ),
-              ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: AppTheme.slateGradient,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Container(
+            alignment: Alignment.center,
+            child: _isLoading
+                ? const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    'INITIALIZE SESSION',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      fontSize: 14,
+                    ),
+                  ),
+          ),
+        ),
       ),
     );
   }

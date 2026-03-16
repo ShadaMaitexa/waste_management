@@ -105,13 +105,18 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
       appBar: AppBar(
         title: Text(
           'Schedule Dispatch',
-          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 18),
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white, letterSpacing: -0.5),
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppTheme.bgDark,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.slateGradient,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -169,30 +174,37 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     return Row(
       children: [
         Container(
-          width: 32,
-          height: 32,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
-            color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
+            gradient: AppTheme.emeraldGradient,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           alignment: Alignment.center,
           child: Text(
             step,
-            style: GoogleFonts.inter(
-              color: AppTheme.primaryEmerald,
+            style: GoogleFonts.plusJakartaSans(
+              color: Colors.white,
               fontWeight: FontWeight.w900,
-              fontSize: 12,
+              fontSize: 14,
             ),
           ),
         ),
-        const SizedBox(width: 14),
+        const SizedBox(width: 16),
         Text(
           title,
-          style: GoogleFonts.inter(
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.grey400,
-            letterSpacing: 1.2,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.grey900,
+            letterSpacing: 1.5,
           ),
         ),
       ],
@@ -216,14 +228,17 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         return GestureDetector(
           onTap: () => _toggleWasteType(type),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            padding: const EdgeInsets.all(20),
+            duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.bgDark : AppTheme.bgCanvas,
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: isSelected ? AppTheme.smoothShadow : AppTheme.cardShadow,
+              color: isSelected ? AppTheme.bgDark : Colors.white,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: isSelected 
+                ? [BoxShadow(color: AppTheme.bgDark.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))]
+                : AppTheme.smoothShadow,
               border: Border.all(
-                color: isSelected ? AppTheme.bgDark : AppTheme.grey100,
+                color: isSelected ? AppTheme.bgDark : AppTheme.grey200.withValues(alpha: 0.5),
+                width: 1.5,
               ),
             ),
             child: Column(
@@ -234,27 +249,27 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: isSelected ? Colors.white.withValues(alpha: 0.1) : AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: Icon(
                         _getWasteIcon(type),
                         color: isSelected ? Colors.white : AppTheme.primaryEmerald,
-                        size: 20,
+                        size: 24,
                       ),
                     ),
                     if (isSelected)
-                      const Icon(Icons.check_circle_rounded, color: AppTheme.primaryEmerald, size: 20),
+                      const Icon(Icons.check_circle_rounded, color: AppTheme.primaryEmerald, size: 24),
                   ],
                 ),
                 Text(
                   _getWasteTypeTitle(type).toUpperCase(),
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: isSelected ? Colors.white : AppTheme.grey800,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    color: isSelected ? Colors.white : AppTheme.grey900,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -349,27 +364,37 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.bgDark,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          elevation: 8,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          elevation: 12,
           shadowColor: AppTheme.bgDark.withValues(alpha: 0.4),
+          padding: EdgeInsets.zero,
         ),
-        child: _isLoading
-            ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'INITIALIZE DISPATCH',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
-                      fontSize: 14,
-                    ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: AppTheme.slateGradient,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Container(
+            alignment: Alignment.center,
+            child: _isLoading
+                ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'INITIALIZE DISPATCH',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Icon(Icons.bolt_rounded, size: 22, color: AppTheme.primaryEmerald),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  const Icon(Icons.bolt_rounded, size: 20, color: AppTheme.primaryEmerald),
-                ],
-              ),
+          ),
+        ),
       ),
     );
   }

@@ -11,19 +11,24 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
         title: Text(
-          'USER PROFILE',
+          'Profile Infrastructure',
           style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.w800, 
-            fontSize: 12,
-            letterSpacing: 2,
-            color: AppTheme.grey400,
+            fontWeight: FontWeight.w900, 
+            fontSize: 18,
+            color: Colors.white,
+            letterSpacing: -0.5,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
         elevation: 0,
+        backgroundColor: AppTheme.bgDark,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.slateGradient,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -50,69 +55,72 @@ class ProfileScreen extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1.5),
+                border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 2),
               ),
               child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
+                  boxShadow: AppTheme.smoothShadow,
                 ),
                 child: CircleAvatar(
-                  radius: 64,
+                  radius: 72,
                   backgroundColor: AppTheme.bgSurface,
-                  child: Icon(Icons.person_rounded, size: 48, color: AppTheme.grey300),
+                  child: Icon(Icons.person_rounded, size: 56, color: AppTheme.grey300),
                 ),
               ),
             ),
             Positioned(
-              right: 8,
-              bottom: 8,
+              right: 12,
+              bottom: 12,
               child: Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.bgDark,
+                  gradient: AppTheme.slateGradient,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 3),
-                  boxShadow: AppTheme.cardShadow,
+                  border: Border.all(color: Colors.white, width: 4),
+                  boxShadow: AppTheme.intenseShadow,
                 ),
-                child: const Icon(Icons.edit_rounded, color: Colors.white, size: 16),
+                child: const Icon(Icons.edit_rounded, color: Colors.white, size: 18),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 32),
         Text(
           'John Doe',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
+            fontSize: 36,
+            fontWeight: FontWeight.w900,
             color: AppTheme.grey900,
-            letterSpacing: -1,
+            letterSpacing: -1.5,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
-            color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: AppTheme.smoothShadow,
+            border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
-              const SizedBox(width: 8),
+              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 16),
+              const SizedBox(width: 10),
               Text(
                 'CERTIFIED AMBASSADOR',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   color: AppTheme.primaryEmerald,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                   fontSize: 10,
-                  letterSpacing: 1,
+                  letterSpacing: 2,
                 ),
               ),
             ],
@@ -137,21 +145,21 @@ class ProfileScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader('ACCOUNT INFRASTRUCTURE'),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         _buildSettingsCard([
-          _SettingItem(Icons.person_outline_rounded, 'Authentication Profiles', () {}),
-          _SettingItem(Icons.location_on_outlined, 'Service Geometry', () {}),
-          _SettingItem(Icons.security_outlined, 'Privacy & Security', () {}),
+          _SettingItem(Icons.person_outline_rounded, 'Authentication Profiles', Icons.person_rounded, () {}),
+          _SettingItem(Icons.location_on_outlined, 'Service Geometry', Icons.map_rounded, () {}),
+          _SettingItem(Icons.security_outlined, 'Privacy & Security', Icons.security_rounded, () {}),
         ]),
-        const SizedBox(height: 32),
+        const SizedBox(height: 48),
         _buildSectionHeader('SYSTEM PREFERENCES'),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         _buildSettingsCard([
-          _SettingItem(Icons.notifications_none_rounded, 'Alert Preferences', () {}),
-          _SettingItem(Icons.language_rounded, 'Operational Language', () {}),
-          _SettingItem(Icons.help_outline_rounded, 'Support Protocol', () {}),
+          _SettingItem(Icons.notifications_none_rounded, 'Alert Preferences', Icons.notifications_rounded, () {}),
+          _SettingItem(Icons.language_rounded, 'Operational Language', Icons.translate_rounded, () {}),
+          _SettingItem(Icons.help_outline_rounded, 'Support Protocol', Icons.support_agent_rounded, () {}),
         ]),
-        const SizedBox(height: 32),
+        const SizedBox(height: 56),
         SizedBox(
           width: double.infinity,
           height: 64,
@@ -160,20 +168,34 @@ class ProfileScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.bgDark,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              elevation: 4,
-              shadowColor: AppTheme.bgDark.withValues(alpha: 0.3),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              elevation: 12,
+              shadowColor: AppTheme.bgDark.withValues(alpha: 0.4),
+              padding: EdgeInsets.zero,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'TERMINATE SESSION',
-                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: AppTheme.slateGradient,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Container(
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'TERMINATE SESSION',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Icon(Icons.power_settings_new_rounded, size: 20, color: Colors.white),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                const Icon(Icons.power_settings_new_rounded, size: 18, color: AppTheme.error),
-              ],
+              ),
             ),
           ),
         ),
@@ -186,11 +208,11 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4, bottom: 8),
       child: Text(
         title,
-        style: GoogleFonts.inter(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: 11,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w900,
           color: AppTheme.grey400,
-          letterSpacing: 1.2,
+          letterSpacing: 2,
         ),
       ),
     );
@@ -198,42 +220,42 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildStatItem(String value, String label, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
+              fontSize: 36,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -1.5,
+              letterSpacing: -2,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               color: AppTheme.grey400,
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.5,
             ),
           ),
         ],
@@ -246,10 +268,10 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildSettingsCard(List<_SettingItem> items) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: items.asMap().entries.map((entry) {
@@ -261,33 +283,41 @@ class ProfileScreen extends StatelessWidget {
               InkWell(
                 onTap: item.onTap,
                 borderRadius: index == 0 
-                  ? const BorderRadius.vertical(top: Radius.circular(32))
+                  ? const BorderRadius.vertical(top: Radius.circular(36))
                   : index == items.length - 1
-                    ? const BorderRadius.vertical(bottom: Radius.circular(32))
+                    ? const BorderRadius.vertical(bottom: Radius.circular(36))
                     : null,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                   child: Row(
                     children: [
-                      Icon(item.icon, color: AppTheme.primaryEmerald, size: 22),
-                      const SizedBox(width: 16),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(item.activeIcon, color: AppTheme.primaryEmerald, size: 20),
+                      ),
+                      const SizedBox(width: 18),
                       Text(
                         item.title,
-                        style: GoogleFonts.inter(
-                          color: AppTheme.grey800,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppTheme.grey900,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          letterSpacing: -0.2,
                         ),
                       ),
                       const Spacer(),
-                      const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey300),
+                      const Icon(Icons.chevron_right_rounded, size: 24, color: AppTheme.grey300),
                     ],
                   ),
                 ),
               ),
               if (index != items.length - 1)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.only(left: 74, right: 24),
                   child: Divider(height: 1, color: AppTheme.grey100),
                 ),
             ],
@@ -301,7 +331,8 @@ class ProfileScreen extends StatelessWidget {
 class _SettingItem {
   final IconData icon;
   final String title;
+  final IconData activeIcon;
   final VoidCallback onTap;
 
-  _SettingItem(this.icon, this.title, this.onTap);
+  _SettingItem(this.icon, this.title, this.activeIcon, this.onTap);
 }

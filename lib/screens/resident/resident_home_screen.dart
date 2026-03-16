@@ -55,29 +55,33 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(bottom: 24, left: 24, right: 24, top: 8),
-        color: Colors.transparent,
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.bgDark.withValues(alpha: 0.15),
+              blurRadius: 40,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Container(
+          height: 76,
           decoration: BoxDecoration(
-            color: AppTheme.bgDark,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.bgDark.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
+            color: AppTheme.bgDark.withValues(alpha: 0.98),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(0, Icons.dashboard_rounded, 'Home'),
-                _buildNavItem(1, Icons.add_circle_rounded, 'Book'),
-                _buildNavItem(2, Icons.auto_awesome_rounded, 'Rewards'),
-                _buildNavItem(3, Icons.person_rounded, 'Profile'),
+                _buildNavItem(0, Icons.grid_view_rounded, 'DASH'),
+                _buildNavItem(1, Icons.add_circle_outline_rounded, 'BOOK'),
+                _buildNavItem(2, Icons.auto_awesome_rounded, 'EARN'),
+                _buildNavItem(3, Icons.account_circle_rounded, 'SELF'),
               ],
             ),
           ),
@@ -93,27 +97,28 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryEmerald : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.white : AppTheme.grey400,
-              size: 22,
+              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.4),
+              size: 20,
             ),
             if (isSelected) ...[
               const SizedBox(width: 8),
               Text(
                 label,
                 style: GoogleFonts.plusJakartaSans(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 12,
+                  color: AppTheme.primaryEmerald,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 11,
+                  letterSpacing: 1,
                 ),
               ),
             ],
@@ -185,120 +190,113 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildSliverAppBar(BuildContext context, String userName, String? wardNumber) {
     return SliverAppBar(
-      expandedHeight: 200.0,
+      expandedHeight: 220.0,
       floating: false,
       pinned: true,
-      backgroundColor: AppTheme.bgSurface,
+      backgroundColor: AppTheme.bgDark,
       elevation: 0,
       scrolledUnderElevation: 0,
       flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            Container(color: AppTheme.bgSurface),
-            Positioned(
-              right: -40,
-              top: -20,
-              child: Icon(
-                Icons.spa_rounded,
-                size: 240,
-                color: AppTheme.primaryEmerald.withValues(alpha: 0.03),
+        background: Container(
+          decoration: const BoxDecoration(
+            color: AppTheme.bgDark,
+            gradient: AppTheme.slateGradient,
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned(
+                right: -40,
+                top: -20,
+                child: Icon(
+                  Icons.eco_rounded,
+                  size: 240,
+                  color: Colors.white.withValues(alpha: 0.03),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.stars_rounded, color: AppTheme.primaryEmerald, size: 14),
+                          const SizedBox(width: 8),
+                          Text(
+                            'PREMIUM CITIZEN',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppTheme.primaryEmerald,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    const SizedBox(height: 20),
+                    Text(
+                      'Welcome back,',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: Colors.white.withValues(alpha: 0.4),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      userName,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.5,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
                       children: [
-                        const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
-                        const SizedBox(width: 6),
+                        Icon(Icons.location_on_rounded, color: AppTheme.primaryEmerald, size: 16),
+                        const SizedBox(width: 8),
                         Text(
-                          'PREMIUM AMBASSADOR',
+                          'Ward ${wardNumber ?? "15"} • Smart City District',
                           style: GoogleFonts.inter(
-                            color: AppTheme.primaryEmerald,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1,
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Hello, $userName.',
-                    style: GoogleFonts.inter(
-                      color: AppTheme.grey900,
-                      fontSize: 32,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_rounded, color: AppTheme.grey500, size: 16),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Ward ${wardNumber ?? "15"} • Kozhikode Area',
-                        style: GoogleFonts.inter(
-                          color: AppTheme.grey600,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [
-        Container(
-          height: 44,
-          width: 44,
-          margin: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.grey200),
-            boxShadow: AppTheme.smoothShadow,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, color: AppTheme.grey900, size: 22),
-            onPressed: () => Navigator.pushNamed(context, '/notifications'),
-          ),
+        IconButton(
+          icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 24),
+          onPressed: () => Navigator.pushNamed(context, '/notifications'),
         ),
-        Container(
-          height: 44,
-          width: 44,
-          margin: const EdgeInsets.only(right: 16, top: 4, bottom: 4),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.grey200),
-            boxShadow: AppTheme.smoothShadow,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.power_settings_new_rounded, color: AppTheme.grey900, size: 22),
-            onPressed: () {
-              Provider.of<AuthService>(context, listen: false).logout();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
+        IconButton(
+          icon: const Icon(Icons.power_settings_new_rounded, color: Colors.white, size: 24),
+          onPressed: () {
+            Provider.of<AuthService>(context, listen: false).logout();
+            Navigator.pushReplacementNamed(context, '/login');
+          },
         ),
+        const SizedBox(width: 8),
       ],
     );
   }
@@ -308,13 +306,13 @@ class _DashboardTab extends StatelessWidget {
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: AppTheme.bgCanvas,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: AppTheme.cardShadow,
-          border: Border.all(color: AppTheme.grey200),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: AppTheme.smoothShadow,
+          border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(32),
           child: Stack(
             children: [
               Positioned(
@@ -322,23 +320,23 @@ class _DashboardTab extends StatelessWidget {
                 top: -20,
                 child: Icon(
                   Icons.recycling_rounded,
-                  size: 140,
-                  color: AppTheme.grey100,
+                  size: 160,
+                  color: AppTheme.grey50,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(28),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
                         color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Icon(Icons.add_task_rounded, color: AppTheme.primaryEmerald, size: 28),
+                      child: const Icon(Icons.add_task_rounded, color: AppTheme.primaryEmerald, size: 32),
                     ),
-                    const SizedBox(width: AppTheme.spacingL),
+                    const SizedBox(width: 24),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,11 +344,11 @@ class _DashboardTab extends StatelessWidget {
                           Text(
                             'Ready to Recycle?',
                             style: GoogleFonts.plusJakartaSans(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 18,
-                                  color: AppTheme.grey900,
-                                  letterSpacing: -0.5,
-                                ),
+                              fontWeight: FontWeight.w900,
+                              fontSize: 18,
+                              color: AppTheme.grey900,
+                              letterSpacing: -0.5,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           Text(
@@ -360,9 +358,9 @@ class _DashboardTab extends StatelessWidget {
                         ],
                       ),
                     ),
-                    ElevatedButton(
+                    IconButton(
                       onPressed: () => onNavigate(1),
-                      child: const Text('Book'),
+                      icon: const Icon(Icons.chevron_right_rounded, color: AppTheme.primaryEmerald, size: 28),
                     ),
                   ],
                 ),
@@ -523,11 +521,11 @@ class _DashboardTab extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
-          color: AppTheme.bgCanvas,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(32),
-          boxShadow: AppTheme.cardShadow,
+          boxShadow: AppTheme.smoothShadow,
           border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
         ),
         child: Column(
@@ -539,12 +537,12 @@ class _DashboardTab extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.info.withValues(alpha: 0.1),
+                    color: AppTheme.accentIndigo.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(
-                    Icons.route_rounded,
-                    color: AppTheme.info,
+                    Icons.sensors_rounded,
+                    color: AppTheme.accentIndigo,
                     size: 24,
                   ),
                 ),
@@ -567,10 +565,10 @@ class _DashboardTab extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         'LIVE',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           color: AppTheme.error,
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w900,
                           letterSpacing: 1.0,
                         ),
                       ),
@@ -584,7 +582,7 @@ class _DashboardTab extends StatelessWidget {
               'Fleet Tracking',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w900,
                 color: AppTheme.grey900,
                 letterSpacing: -0.5,
               ),
@@ -597,13 +595,13 @@ class _DashboardTab extends StatelessWidget {
                   style: GoogleFonts.inter(
                     color: AppTheme.grey500,
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(width: 4),
                 const Icon(
                   Icons.arrow_forward_rounded,
-                  color: AppTheme.info,
+                  color: AppTheme.accentIndigo,
                   size: 16,
                 ),
               ],
@@ -616,11 +614,11 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _statCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
+        boxShadow: AppTheme.smoothShadow,
         border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
@@ -637,19 +635,19 @@ class _DashboardTab extends StatelessWidget {
           const SizedBox(height: 28),
           Text(
             value,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 32,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -1.2,
+              letterSpacing: -1.5,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             title.toUpperCase(),
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              color: AppTheme.grey500,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
+              color: AppTheme.grey400,
               fontWeight: FontWeight.w800,
               letterSpacing: 1,
             ),
@@ -766,10 +764,10 @@ class _DashboardTab extends StatelessWidget {
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.bgCanvas,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: AppTheme.cardShadow,
-            border: Border.all(color: AppTheme.grey200),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: AppTheme.smoothShadow,
+            border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
           ),
           child: ListView.separated(
             shrinkWrap: true,

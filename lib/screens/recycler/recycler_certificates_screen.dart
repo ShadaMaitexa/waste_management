@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 
 class RecyclerCertificatesScreen extends StatefulWidget {
@@ -11,7 +12,7 @@ class RecyclerCertificatesScreen extends StatefulWidget {
 class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  String _selectedFilter = 'All';
+  String _selectedType = 'All';
   final List<String> _filters = ['All', 'Active', 'Expired', 'Pending'];
 
   final List<Map<String, dynamic>> _certificates = [];
@@ -32,38 +33,56 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
-      appBar: AppBar(
-        title: const Text(
-          'Certificate Vault',
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
-        ),
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          indicatorWeight: 3,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          tabs: const [
-            Tab(text: 'PROCESSING'),
-            Tab(text: 'MATERIALS'),
-            Tab(text: 'COMPLIANCE'),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_moderator_rounded),
-            onPressed: _showGenerateCertificateDialog,
+      backgroundColor: AppTheme.bgSurface,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(130),
+        child: Container(
+          padding: const EdgeInsets.only(top: 20),
+          decoration: const BoxDecoration(
+            color: AppTheme.bgDark,
+            gradient: AppTheme.slateGradient,
           ),
-          IconButton(
-            icon: const Icon(Icons.tune_rounded),
-            onPressed: _showFilterDialog,
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: Text(
+              'Certificate Vault',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w900, 
+                color: Colors.white, 
+                fontSize: 22,
+                letterSpacing: -1,
+              ),
+            ),
+            centerTitle: true,
+            bottom: TabBar(
+              controller: _tabController,
+              indicatorColor: AppTheme.primaryEmerald,
+              indicatorWeight: 4,
+              indicatorSize: TabBarIndicatorSize.label,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white.withValues(alpha: 0.5),
+              labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1),
+              tabs: const [
+                Tab(text: 'PROCESSING'),
+                Tab(text: 'MATERIALS'),
+                Tab(text: 'COMPLIANCE'),
+              ],
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 22),
+                onPressed: _showFilterDialog,
+              ),
+              const SizedBox(width: 8),
+            ],
           ),
-        ],
+        ),
       ),
       body: Column(
         children: [
@@ -83,23 +102,38 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.primaryGreen,
-        onPressed: _showGenerateCertificateDialog,
-        child: const Icon(Icons.add),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          backgroundColor: AppTheme.primaryEmerald,
+          elevation: 0,
+          highlightElevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          onPressed: _showGenerateCertificateDialog,
+          child: const Icon(Icons.add_moderator_rounded, color: Colors.white, size: 28),
+        ),
       ),
     );
   }
 
   Widget _buildSummarySection() {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.all(24),
       child: Row(
         children: [
-          _summaryCard('TOTAL', '24', Icons.card_membership_rounded, AppTheme.primaryGreen),
-          const SizedBox(width: AppTheme.spacingS),
+          _summaryCard('TOTAL', '24', Icons.card_membership_rounded, AppTheme.accentIndigo),
+          const SizedBox(width: 16),
           _summaryCard('ACTIVE', '18', Icons.verified_user_rounded, AppTheme.success),
-          const SizedBox(width: AppTheme.spacingS),
+          const SizedBox(width: 16),
           _summaryCard('EARNINGS', '₹1.2L', Icons.monetization_on_rounded, AppTheme.warning),
         ],
       ),
@@ -109,48 +143,42 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
   Widget _summaryCard(String title, String value, IconData icon, Color color) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-          border: Border.all(color: color.withValues(alpha: 0.05), width: 1),
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: AppTheme.smoothShadow,
+          border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
         ),
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(icon, color: color, size: 20),
+              child: Icon(icon, color: color, size: 22),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: color,
-                letterSpacing: -0.5,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: AppTheme.grey900,
+                letterSpacing: -1,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.grey500,
-                letterSpacing: 0.5,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 9, 
+                fontWeight: FontWeight.w900, 
+                color: AppTheme.grey400, 
+                letterSpacing: 1.5,
               ),
             ),
           ],
@@ -162,19 +190,35 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
   Widget _buildFilterChips() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: _filters.map((filter) {
+          final isSelected = _selectedType == filter;
           return Padding(
-            padding: const EdgeInsets.only(right: AppTheme.spacingS),
-            child: FilterChip(
-              label: Text(filter),
-              selected: _selectedFilter == filter,
-              selectedColor: AppTheme.primaryGreen.withValues(alpha: 0.2),
-              checkmarkColor: AppTheme.primaryGreen,
-              onSelected: (_) {
-                setState(() => _selectedFilter = filter);
-              },
+            padding: const EdgeInsets.only(right: 12),
+            child: ChoiceChip(
+              label: Text(filter.toUpperCase()),
+              selected: isSelected,
+              onSelected: (_) => setState(() => _selectedType = filter),
+              backgroundColor: Colors.white,
+              selectedColor: AppTheme.primaryEmerald,
+              labelStyle: GoogleFonts.plusJakartaSans(
+                color: isSelected ? Colors.white : AppTheme.grey500,
+                fontWeight: FontWeight.w900,
+                fontSize: 10,
+                letterSpacing: 1,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200.withValues(alpha: 0.5),
+                  width: 1.5,
+                ),
+              ),
+              showCheckmark: false,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              elevation: isSelected ? 8 : 0,
+              shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
             ),
           );
         }).toList(),
@@ -185,10 +229,10 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
   Widget _buildCertificateList(String type) {
     final filtered = _certificates.where((cert) {
       final matchesType = cert['type'] == type;
-      final matchesFilter = _selectedFilter == 'All' ||
-          (_selectedFilter == 'Active' && cert['status'] == 'Active') ||
-          (_selectedFilter == 'Expired' && cert['status'] == 'Expired') ||
-          (_selectedFilter == 'Pending' && cert['status'] == 'Pending');
+      final matchesFilter = _selectedType == 'All' ||
+          (_selectedType == 'Active' && cert['status'] == 'Active') ||
+          (_selectedType == 'Expired' && cert['status'] == 'Expired') ||
+          (_selectedType == 'Pending' && cert['status'] == 'Pending');
       return matchesType && matchesFilter;
     }).toList();
 
@@ -212,21 +256,16 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
             : AppTheme.warning;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+      margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
       ),
       child: InkWell(
         onTap: () => _viewCertificateDetails(cert),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(36),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -253,8 +292,8 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
                       children: [
                         Text(
                           cert['title'],
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w800,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w900,
                             fontSize: 16,
                             color: AppTheme.grey900,
                             letterSpacing: -0.5,
@@ -262,10 +301,10 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
                         ),
                         Text(
                           cert['certificateId'],
-                          style: TextStyle(
-                            color: AppTheme.grey500,
+                          style: GoogleFonts.inter(
+                            color: AppTheme.grey400,
                             fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
@@ -283,9 +322,9 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
                 child: Column(
                   children: [
                     _detailRow(Icons.eco_rounded, 'Material: ${cert['material']}'),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     _detailRow(Icons.scale_rounded, 'Quantity: ${cert['quantity']}'),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     _detailRow(Icons.event_available_rounded, 'Valid Until: ${cert['expiryDate']}'),
                   ],
                 ),
@@ -299,10 +338,11 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
                       icon: const Icon(Icons.download_rounded, size: 18),
                       label: const Text('DOWNLOAD'),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         foregroundColor: AppTheme.grey700,
-                        side: BorderSide(color: AppTheme.grey300),
+                        side: BorderSide(color: AppTheme.grey200, width: 1.5),
+                        textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13),
                       ),
                     ),
                   ),
@@ -313,11 +353,13 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
                       icon: const Icon(Icons.share_rounded, size: 18),
                       label: const Text('SHARE'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryGreen,
+                        backgroundColor: AppTheme.primaryEmerald,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 8,
+                        shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                        textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13),
                       ),
                     ),
                   ),
@@ -333,12 +375,16 @@ class _RecyclerCertificatesScreenState extends State<RecyclerCertificatesScreen>
   Widget _detailRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: AppTheme.grey600),
-        const SizedBox(width: AppTheme.spacingS),
+        Icon(icon, size: 16, color: AppTheme.grey400),
+        const SizedBox(width: 12),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(color: AppTheme.grey700),
+            style: GoogleFonts.inter(
+              color: AppTheme.grey600, 
+              fontWeight: FontWeight.w600, 
+              fontSize: 13,
+            ),
           ),
         ),
       ],

@@ -57,27 +57,36 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        height: 80,
-        margin: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
         decoration: BoxDecoration(
-          color: AppTheme.bgDark,
-          borderRadius: BorderRadius.circular(32),
+          color: Colors.transparent,
           boxShadow: [
             BoxShadow(
-              color: AppTheme.bgDark.withValues(alpha: 0.3),
-              blurRadius: 20,
+              color: AppTheme.bgDark.withValues(alpha: 0.15),
+              blurRadius: 40,
               offset: const Offset(0, 10),
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(0, Icons.grid_view_rounded, 'DESK'),
-            _buildNavItem(1, Icons.map_rounded, 'ROUTE'),
-            _buildNavItem(2, Icons.assignment_rounded, 'LOGS'),
-            _buildNavItem(3, Icons.account_circle_rounded, 'PROFILE'),
-          ],
+        child: Container(
+          height: 76,
+          decoration: BoxDecoration(
+            color: AppTheme.bgDark.withValues(alpha: 0.98),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(0, Icons.grid_view_rounded, 'DESK'),
+                _buildNavItem(1, Icons.map_rounded, 'ROUTE'),
+                _buildNavItem(2, Icons.assignment_rounded, 'LOGS'),
+                _buildNavItem(3, Icons.account_circle_rounded, 'SELF'),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -87,25 +96,36 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
     final isSelected = _selectedIndex == index;
     return GestureDetector(
       onTap: () => _onItemTapped(index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.3),
-            size: 24,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: GoogleFonts.plusJakartaSans(
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
               color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.3),
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1,
+              size: 20,
             ),
-          ),
-        ],
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.primaryEmerald,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 11,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -160,15 +180,15 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildSliverAppBar(BuildContext context, String name) {
     return SliverAppBar(
-      expandedHeight: 220.0,
+      expandedHeight: 240.0,
       pinned: true,
       elevation: 0,
-      backgroundColor: AppTheme.bgSurface,
+      backgroundColor: AppTheme.bgDark,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: const BoxDecoration(
             color: AppTheme.bgDark,
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
+            gradient: AppTheme.emeraldGradient,
           ),
           child: Stack(
             fit: StackFit.expand,
@@ -176,17 +196,14 @@ class _DashboardTab extends StatelessWidget {
               Positioned(
                 right: -40,
                 top: -40,
-                child: Container(
-                  width: 240,
-                  height: 240,
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
-                    shape: BoxShape.circle,
-                  ),
+                child: Icon(
+                  Icons.hub_rounded,
+                  size: 280,
+                  color: Colors.white.withValues(alpha: 0.05),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(32, 0, 32, 40),
+                padding: const EdgeInsets.fromLTRB(32, 0, 32, 48),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,8 +211,9 @@ class _DashboardTab extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -204,40 +222,40 @@ class _DashboardTab extends StatelessWidget {
                             width: 6,
                             height: 6,
                             decoration: const BoxDecoration(
-                              color: AppTheme.primaryEmerald,
+                              color: Colors.white,
                               shape: BoxShape.circle,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'OPERATIVE ONLINE',
-                            style: GoogleFonts.inter(
-                              color: AppTheme.primaryEmerald,
+                            'OPERATIVE ACTIVE',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: Colors.white,
                               fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     Text(
                       name,
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white,
-                        fontSize: 40,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -1.5,
+                        fontSize: 44,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -2,
                         height: 1,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
-                      'HKS Field Specialist • Unit 204',
+                      'HKS Logistics Specialist • Unit 204',
                       style: GoogleFonts.inter(
-                        color: Colors.white.withValues(alpha: 0.4),
-                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.6),
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -251,7 +269,7 @@ class _DashboardTab extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: () {},
-          icon: const Icon(Icons.settings_input_composite_rounded, color: Colors.white, size: 20),
+          icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 24),
         ),
         const SizedBox(width: 8),
       ],
@@ -284,12 +302,12 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildStatItem(String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,18 +325,18 @@ class _DashboardTab extends StatelessWidget {
             value,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 32,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
               letterSpacing: -1.5,
             ),
           ),
           Text(
             title.toUpperCase(),
-            style: GoogleFonts.inter(
-              fontSize: 9,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
               color: AppTheme.grey400,
               fontWeight: FontWeight.w800,
-              letterSpacing: 1,
+              letterSpacing: 1.5,
             ),
           ),
         ],
@@ -427,17 +445,27 @@ class _DashboardTab extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryEmerald,
+                    backgroundColor: AppTheme.bgDark,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     elevation: 0,
+                    padding: EdgeInsets.zero,
                   ),
-                  child: Text(
-                    'MARK EXTRACTION COMPLETE',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.5,
-                      fontSize: 13,
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.slateGradient,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'MARK EXTRACTION COMPLETE',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                          fontSize: 13,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -508,10 +536,10 @@ class _DashboardTab extends StatelessWidget {
   Widget _actionCard(String label, IconData icon, Color color) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -527,10 +555,10 @@ class _DashboardTab extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w800,
-              color: AppTheme.grey800,
+              color: AppTheme.grey900,
               letterSpacing: 0.5,
             ),
           ),

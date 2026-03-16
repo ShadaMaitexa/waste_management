@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 
 class RecyclerProfileScreen extends StatelessWidget {
@@ -7,66 +8,75 @@ class RecyclerProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 280.0,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.primaryGreen,
+            backgroundColor: AppTheme.bgDark,
             elevation: 0,
+            stretch: true,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
+                  color: AppTheme.bgDark,
+                  gradient: AppTheme.slateGradient,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 40),
                     Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.3), width: 3),
                       ),
-                      child: const CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        child: Text(
-                          'ER',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryGreen,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                        child: CircleAvatar(
+                          radius: 54,
+                          backgroundColor: AppTheme.bgSurface,
+                          child: Text(
+                            'ER',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 34,
+                              fontWeight: FontWeight.w900,
+                              color: AppTheme.primaryEmerald,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
+                    Text(
                       'EcoRecycle Solutions',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
                         color: Colors.white,
+                        letterSpacing: -1,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Verified Partner • ID: RP-2501',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white.withValues(alpha: 0.9), 
+                          fontWeight: FontWeight.w900, 
+                          fontSize: 10, 
+                          letterSpacing: 1.5,
+                        ),
                       ),
                     ),
                   ],
@@ -110,25 +120,20 @@ class RecyclerProfileScreen extends StatelessWidget {
 
   Widget _buildBusinessStats() {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusM),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
       ),
       child: Row(
         children: [
-          _buildStatItem('Total Processed', '480T', Colors.blue),
+          _buildStatItem('Total Processed', '480T', AppTheme.accentIndigo),
           _divider(),
-          _buildStatItem('Revenue', '₹45L', Colors.green),
+          _buildStatItem('Revenue', '₹45L', AppTheme.primaryEmerald),
           _divider(),
-          _buildStatItem('Rating', '4.8', Colors.orange),
+          _buildStatItem('Rating', '4.8', AppTheme.warning),
         ],
       ),
     );
@@ -140,18 +145,21 @@ class RecyclerProfileScreen extends StatelessWidget {
         children: [
           Text(
             value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
               color: color,
+              letterSpacing: -1,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppTheme.grey600,
+            label.toUpperCase(),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
+              color: AppTheme.grey400,
+              letterSpacing: 1,
             ),
             textAlign: TextAlign.center,
           ),
@@ -173,27 +181,23 @@ class RecyclerProfileScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          padding: const EdgeInsets.only(left: 12, bottom: 16),
           child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.grey900,
+            title.toUpperCase(),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: AppTheme.grey500,
+              letterSpacing: 2,
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.radiusM),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: AppTheme.smoothShadow,
+            border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
           ),
           child: Column(
             children: children.asMap().entries.map((entry) {
@@ -216,15 +220,30 @@ class RecyclerProfileScreen extends StatelessWidget {
   Widget _buildInfoTile(IconData icon, String title, String subtitle) {
     return ListTile(
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppTheme.grey50,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(icon, color: AppTheme.grey600, size: 20),
+        child: Icon(icon, color: AppTheme.grey400, size: 22),
       ),
-      title: Text(title, style: const TextStyle(fontSize: 14, color: AppTheme.grey600)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppTheme.grey900)),
+      title: Text(
+        title, 
+        style: GoogleFonts.inter(
+          fontSize: 12, 
+          color: AppTheme.grey400, 
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      subtitle: Text(
+        subtitle, 
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 16, 
+          fontWeight: FontWeight.w900, 
+          color: AppTheme.grey900, 
+          letterSpacing: -0.5,
+        ),
+      ),
     );
   }
 
@@ -232,16 +251,31 @@ class RecyclerProfileScreen extends StatelessWidget {
     return ListTile(
       onTap: () {},
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
+          color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(icon, color: AppTheme.primaryGreen, size: 20),
+        child: Icon(icon, color: AppTheme.primaryEmerald, size: 22),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppTheme.grey600)),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.grey400),
+      title: Text(
+        title, 
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w900, 
+          color: AppTheme.grey900, 
+          fontSize: 16, 
+          letterSpacing: -0.5,
+        ),
+      ),
+      subtitle: Text(
+        subtitle, 
+        style: GoogleFonts.inter(
+          fontSize: 12, 
+          color: AppTheme.grey400, 
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      trailing: const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey300),
     );
   }
 
@@ -251,14 +285,22 @@ class RecyclerProfileScreen extends StatelessWidget {
         // Implement logout logic here or trigger a dialog
       },
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppTheme.error.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.logout, color: AppTheme.error, size: 20),
+        child: const Icon(Icons.logout_rounded, color: AppTheme.error, size: 22),
       ),
-      title: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w600, color: AppTheme.error)),
+      title: Text(
+        'Terminate Session', 
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w900, 
+          color: AppTheme.error, 
+          fontSize: 16, 
+          letterSpacing: -0.5,
+        ),
+      ),
     );
   }
 }

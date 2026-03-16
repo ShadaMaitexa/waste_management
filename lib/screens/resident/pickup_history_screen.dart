@@ -20,24 +20,29 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
       backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
         title: Text(
-          'COLLECTION LOG',
+          'Collection Log',
           style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.w800, 
-            fontSize: 12,
-            letterSpacing: 2,
-            color: AppTheme.grey400,
+            fontWeight: FontWeight.w900, 
+            fontSize: 18,
+            color: Colors.white,
+            letterSpacing: -0.5,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
         elevation: 0,
+        backgroundColor: AppTheme.bgDark,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.slateGradient,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.download_rounded, size: 22),
+            icon: const Icon(Icons.download_rounded, size: 22, color: Colors.white),
             onPressed: () {},
           ),
           const SizedBox(width: 8),
@@ -58,20 +63,20 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
   Widget _buildActivityOverview() {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'NETWORK PERFORMANCE',
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
                 color: AppTheme.grey400,
-                letterSpacing: 1.2,
+                letterSpacing: 2,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Row(
               children: [
                 Expanded(
@@ -95,7 +100,7 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
       delegate: _FilterHeaderDelegate(
         child: Container(
           color: AppTheme.bgSurface,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
@@ -103,37 +108,38 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
               children: _filters.map((filter) {
                 final isSelected = _selectedFilter == filter;
                 return Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedFilter = filter),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppTheme.bgDark : AppTheme.bgCanvas,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: isSelected ? AppTheme.bgDark : AppTheme.grey100,
-                          ),
-                          boxShadow: isSelected ? [
-                            BoxShadow(
-                              color: AppTheme.bgDark.withValues(alpha: 0.2),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            )
-                          ] : null,
+                  padding: const EdgeInsets.only(right: 12),
+                  child: GestureDetector(
+                    onTap: () => setState(() => _selectedFilter = filter),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppTheme.bgDark : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isSelected ? AppTheme.bgDark : AppTheme.grey200.withValues(alpha: 0.5),
+                          width: 1.5,
                         ),
-                        child: Text(
-                          filter.toUpperCase(),
-                          style: GoogleFonts.plusJakartaSans(
-                            color: isSelected ? Colors.white : AppTheme.grey500,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
-                          ),
+                        boxShadow: isSelected ? [
+                          BoxShadow(
+                            color: AppTheme.bgDark.withValues(alpha: 0.3),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          )
+                        ] : AppTheme.smoothShadow,
+                      ),
+                      child: Text(
+                        filter.toUpperCase(),
+                        style: GoogleFonts.plusJakartaSans(
+                          color: isSelected ? Colors.white : AppTheme.grey500,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
                         ),
                       ),
                     ),
+                  ),
                 );
               }).toList(),
             ),
@@ -157,41 +163,41 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
 
   Widget _buildSummaryTile(String title, String value, Color color, IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
+              fontSize: 36,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -1.5,
+              letterSpacing: -2,
             ),
           ),
           Text(
             title.toUpperCase(),
-            style: GoogleFonts.inter(
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
               color: AppTheme.grey400,
-              letterSpacing: 1,
+              letterSpacing: 1.5,
             ),
           ),
         ],
@@ -222,13 +228,13 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,14 +242,14 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(Icons.receipt_long_rounded, color: statusColor, size: 20),
+                child: Icon(Icons.receipt_long_rounded, color: statusColor, size: 24),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,17 +257,18 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
                     Text(
                       pickup['id'],
                       style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
                         color: AppTheme.grey900,
+                        letterSpacing: -0.2,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Text(
                       DateFormat('EEE, MMM d — h:mm a').format(pickup['date']),
                       style: GoogleFonts.inter(
                         color: AppTheme.grey400,
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -269,58 +276,62 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: statusColor.withValues(alpha: 0.1)),
                 ),
                 child: Text(
-                  statusLabel,
-                  style: GoogleFonts.inter(
+                  statusLabel.toUpperCase(),
+                  style: GoogleFonts.plusJakartaSans(
                     color: statusColor,
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 14, color: AppTheme.grey300),
-              const SizedBox(width: 8),
+              Icon(Icons.location_on_rounded, size: 16, color: statusColor.withValues(alpha: 0.5)),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   pickup['address'],
                   style: GoogleFonts.inter(
                     color: AppTheme.grey600,
-                    fontSize: 13,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 28),
           Row(
             children: [
               Wrap(
-                spacing: 6,
+                spacing: 8,
+                runSpacing: 8,
                 children: (pickup['wasteTypes'] as List<String>).map((type) {
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppTheme.bgSurface,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: AppTheme.grey100),
                     ),
                     child: Text(
-                      type,
-                      style: GoogleFonts.inter(
+                      type.toUpperCase(),
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 10,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w900,
                         color: AppTheme.grey700,
+                        letterSpacing: 1,
                       ),
                     ),
                   );
@@ -330,7 +341,7 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
               if (pickup['status'] == 'completed')
                 IconButton(
                   onPressed: () {},
-                  icon: const Icon(Icons.more_horiz_rounded, color: AppTheme.grey400),
+                  icon: const Icon(Icons.more_horiz_rounded, color: AppTheme.grey300),
                   visualDensity: VisualDensity.compact,
                 ),
             ],

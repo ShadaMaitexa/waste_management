@@ -111,32 +111,49 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(color: AppTheme.bgSurface),
+          Container(
+            decoration: const BoxDecoration(
+              color: AppTheme.bgSurface,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppTheme.bgSurface, Color(0xFFF1F8F6)],
+              ),
+            ),
+          ),
           Positioned(
-            left: -80,
-            bottom: -50,
-            child: Icon(
-              Icons.eco_rounded,
-              size: 350,
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.03),
+            left: -100,
+            bottom: -60,
+            child: Container(
+              width: 400,
+              height: 400,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.spa_rounded,
+                size: 280,
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+              ),
             ),
           ),
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 64),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 500),
                 child: Column(
                   children: [
                     _buildHeader(),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 56),
                     Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           _buildFormFields(),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 48),
                           _buildRegisterButton(),
                           const SizedBox(height: 32),
                           _buildLoginLink(),
@@ -154,9 +171,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             left: 20,
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.bgCanvas,
+                color: Colors.white,
                 shape: BoxShape.circle,
                 boxShadow: AppTheme.smoothShadow,
+                border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
               ),
               child: IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 18),
@@ -173,17 +191,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Column(
       children: [
         Container(
+          width: 120,
+          height: 120,
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: AppTheme.bgCanvas,
+            color: Colors.white,
             shape: BoxShape.circle,
-            boxShadow: AppTheme.cardShadow,
-            border: Border.all(color: AppTheme.grey100),
+            boxShadow: AppTheme.smoothShadow,
+            border: Border.all(color: Colors.white, width: 4),
           ),
-          child: const Icon(
-            Icons.person_add_alt_1_rounded,
-            size: 48,
-            color: AppTheme.primaryEmerald,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: AppTheme.emeraldGradient,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.person_add_alt_1_rounded,
+              size: 32,
+              color: Colors.white,
+            ),
           ),
         ),
         const SizedBox(height: 32),
@@ -356,26 +390,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.bgDark,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          elevation: 12,
+          shadowColor: AppTheme.bgDark.withValues(alpha: 0.4),
+          padding: EdgeInsets.zero,
         ),
-        child: _isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : Text(
-                'INITIALIZE ACCOUNT',
-                style: GoogleFonts.plusJakartaSans(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 2,
-                  fontSize: 13,
-                ),
-              ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: AppTheme.slateGradient,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Container(
+            alignment: Alignment.center,
+            child: _isLoading
+                ? const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    'INITIALIZE ACCOUNT',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      fontSize: 14,
+                    ),
+                  ),
+          ),
+        ),
       ),
     );
   }

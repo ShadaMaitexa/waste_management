@@ -62,17 +62,23 @@ class _RecyclerHomeScreenState extends State<RecyclerHomeScreen> {
       right: 24,
       bottom: 32,
       child: Container(
-        height: 72,
+        height: 76,
         decoration: BoxDecoration(
-          color: AppTheme.bgDark.withValues(alpha: 0.95),
-          borderRadius: BorderRadius.circular(24),
+          color: AppTheme.bgDark.withValues(alpha: 0.98),
+          borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Colors.black.withValues(alpha: 0.4),
               blurRadius: 40,
               offset: const Offset(0, 20),
             ),
+            BoxShadow(
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
           ],
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -93,10 +99,10 @@ class _RecyclerHomeScreenState extends State<RecyclerHomeScreen> {
       onTap: () => _onItemTapped(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
         ),
         child: Row(
           children: [

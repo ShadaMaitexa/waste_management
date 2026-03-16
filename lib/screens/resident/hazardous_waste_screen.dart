@@ -79,24 +79,24 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
       backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
         title: Text(
-          'SPECIALIZED WASTE',
-          style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.w800, 
-            fontSize: 12,
-            letterSpacing: 2,
-            color: AppTheme.grey400,
-          ),
+          'Specialized Waste',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white, letterSpacing: -0.5),
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
         elevation: 0,
+        backgroundColor: AppTheme.bgDark,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.slateGradient,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.help_outline_rounded, size: 20),
+            icon: const Icon(Icons.help_outline_rounded, size: 20, color: Colors.white),
             onPressed: () {},
           ),
           const SizedBox(width: 8),
@@ -175,8 +175,8 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
 
   Widget _buildSidebar() {
-    return Container(
-      width: 96,
+    return SizedBox(
+      width: 100,
       child: ListView.builder(
         padding: const EdgeInsets.only(left: 24, right: 12),
         itemCount: _tabs.length,
@@ -188,16 +188,19 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
           return GestureDetector(
             onTap: () => setState(() => _selectedTabIndex = index),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(vertical: 24),
               decoration: BoxDecoration(
-                color: isSelected ? color.withValues(alpha: 0.1) : AppTheme.bgCanvas,
-                borderRadius: BorderRadius.circular(20),
+                color: isSelected ? color.withValues(alpha: 0.1) : Colors.white,
+                borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: isSelected ? color.withValues(alpha: 0.3) : AppTheme.grey100,
+                  color: isSelected ? color.withValues(alpha: 0.4) : AppTheme.grey200.withValues(alpha: 0.5),
                   width: 1.5,
                 ),
+                boxShadow: isSelected 
+                  ? [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))] 
+                  : AppTheme.smoothShadow,
               ),
               child: Column(
                 children: [
@@ -209,11 +212,11 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                   const SizedBox(height: 12),
                   Text(
                     tab['title'].split('\n')[1].toUpperCase(),
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       color: isSelected ? color : AppTheme.grey400,
                       fontWeight: FontWeight.w900,
-                      fontSize: 9,
-                      letterSpacing: 0.5,
+                      fontSize: 10,
+                      letterSpacing: 1,
                     ),
                   ),
                 ],
@@ -227,14 +230,13 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
   Widget _buildItemsGrid() {
     final items = _categoryItems[_selectedTabIndex] ?? [];
-
     return Expanded(
       child: GridView.builder(
         padding: const EdgeInsets.only(right: 24, bottom: 24),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
           childAspectRatio: 0.85,
         ),
         itemCount: items.length,
@@ -246,47 +248,44 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
           return GestureDetector(
             onTap: () => _toggleItem(item['name']),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300),
               decoration: BoxDecoration(
-                color: isSelected ? AppTheme.bgCanvas : AppTheme.bgCanvas.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(24),
+                color: isSelected ? AppTheme.bgDark : Colors.white,
+                borderRadius: BorderRadius.circular(32),
                 border: Border.all(
-                  color: isSelected ? tabColor.withValues(alpha: 0.4) : AppTheme.grey100,
+                  color: isSelected ? AppTheme.bgDark : AppTheme.grey200.withValues(alpha: 0.5),
                   width: 1.5,
                 ),
-                boxShadow: isSelected ? AppTheme.smoothShadow : null,
+                boxShadow: isSelected 
+                  ? [BoxShadow(color: AppTheme.bgDark.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))]
+                  : AppTheme.smoothShadow,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: isSelected ? tabColor.withValues(alpha: 0.1) : AppTheme.bgSurface,
+                      color: isSelected ? Colors.white.withValues(alpha: 0.1) : tabColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
                       item['icon'],
-                      color: isSelected ? tabColor : AppTheme.grey400,
-                      size: 28,
+                      color: isSelected ? Colors.white : tabColor,
+                      size: 32,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     item['name'].toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      color: isSelected ? AppTheme.grey900 : AppTheme.grey500,
-                      fontWeight: FontWeight.w800,
+                    style: GoogleFonts.plusJakartaSans(
+                      color: isSelected ? Colors.white : AppTheme.grey900,
+                      fontWeight: FontWeight.w900,
                       fontSize: 10,
                       letterSpacing: 0.2,
                     ),
                   ),
-                  if (isSelected)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Icon(Icons.check_circle_rounded, color: tabColor, size: 16),
-                    ),
                 ],
               ),
             ),
@@ -300,15 +299,15 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
     if (_selectedItems.isEmpty) return const SizedBox(height: 32);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 48),
+      padding: const EdgeInsets.fromLTRB(24, 28, 24, 48),
       decoration: BoxDecoration(
         color: AppTheme.bgDark,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
         boxShadow: [
           BoxShadow(
             color: AppTheme.bgDark.withValues(alpha: 0.4),
             offset: const Offset(0, -10),
-            blurRadius: 30,
+            blurRadius: 40,
           ),
         ],
       ),
@@ -323,9 +322,9 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                 children: [
                   Text(
                     '${_selectedItems.length} SELECTIONS',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       color: Colors.white.withValues(alpha: 0.5),
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w900,
                       fontSize: 10,
                       letterSpacing: 1.5,
                     ),
@@ -335,30 +334,40 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
                     '₹${_selectedItems.length * 45} DIVIDEND',
                     style: GoogleFonts.plusJakartaSans(
                       color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18,
-                      letterSpacing: -0.5,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 22,
+                      letterSpacing: -1,
                     ),
                   ),
                 ],
               ),
               SizedBox(
-                height: 56,
-                width: 140,
+                height: 60,
+                width: 150,
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context, _selectedItems),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryEmerald,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     elevation: 0,
+                    padding: EdgeInsets.zero,
                   ),
-                  child: Text(
-                    'VALIDATE',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
-                      fontSize: 12,
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.emeraldGradient,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'VALIDATE',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          fontSize: 13,
+                        ),
+                      ),
                     ),
                   ),
                 ),

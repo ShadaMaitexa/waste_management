@@ -92,13 +92,14 @@ class _SplashScreenState extends State<SplashScreen>
         children: [
           // Dynamic Gradient Background
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
+              color: AppTheme.bgDark,
               gradient: RadialGradient(
                 center: Alignment.center,
-                radius: 1.2,
+                radius: 1.5,
                 colors: [
-                  AppTheme.primaryEmerald.withValues(alpha: 0.05),
-                  Colors.transparent,
+                  Color(0xFF1B5E20), // Deep Emerald
+                  AppTheme.bgDark,
                 ],
               ),
             ),
@@ -110,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen>
             child: Icon(
               Icons.blur_on_rounded,
               size: 500,
-              color: Colors.white.withValues(alpha: 0.02),
+              color: Colors.white.withValues(alpha: 0.03),
             ),
           ),
           Center(
