@@ -160,13 +160,18 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _revenueSubStat('Fees Collected', '₹${_revenueStats['fees_collected'] ?? '2,140'}'),
-              _revenueSubStat('Pending Dues', '₹${_revenueStats['pending_dues'] ?? '430'}'),
-              _revenueSubStat('Growth Index', growth),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _revenueSubStat('Fees Collected', '₹${_revenueStats['fees_collected'] ?? '2,140'}'),
+                const SizedBox(width: 24),
+                _revenueSubStat('Pending Dues', '₹${_revenueStats['pending_dues'] ?? '430'}'),
+                const SizedBox(width: 24),
+                _revenueSubStat('Growth Index', growth),
+              ],
+            ),
           ),
         ],
       ),
@@ -273,7 +278,8 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                         style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.3),
                       ),
                       const SizedBox(height: 6),
-                      Row(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Icon(Icons.calendar_today_rounded, size: 12, color: AppTheme.grey400),
                           const SizedBox(width: 6),

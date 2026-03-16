@@ -45,30 +45,44 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildWelcomeSection(),
-                        const SizedBox(height: 32),
-                        _buildSectionHeader('System Overview', 'Real-time performance metrics'),
-                        const SizedBox(height: 16),
-                        adminService.isLoading
-                            ? _buildLoadingMetrics()
-                            : _buildKeyMetrics(stats),
-                        const SizedBox(height: 32),
-                        _buildSectionHeader('Management Console', 'Core operational controls'),
-                        const SizedBox(height: 16),
-                        _buildManagementHub(),
-                        const SizedBox(height: 32),
-                        Row(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(child: _buildWardPerformance(stats)),
-                            const SizedBox(width: 20),
-                            Expanded(child: _buildRecentAlerts(adminService)),
+                            _buildWelcomeSection(constraints),
+                            const SizedBox(height: 32),
+                            _buildSectionHeader('System Overview', 'Real-time performance metrics'),
+                            const SizedBox(height: 16),
+                            adminService.isLoading
+                                ? _buildLoadingMetrics(constraints)
+                                : _buildKeyMetrics(stats, constraints),
+                            const SizedBox(height: 32),
+                            _buildSectionHeader('Management Console', 'Core operational controls'),
+                            const SizedBox(height: 16),
+                            _buildManagementHub(constraints),
+                            const SizedBox(height: 32),
+                            if (constraints.maxWidth < 800)
+                              Column(
+                                children: [
+                                  _buildWardPerformance(stats),
+                                  const SizedBox(height: 20),
+                                  _buildRecentAlerts(adminService),
+                                ],
+                              )
+                            else
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(child: _buildWardPerformance(stats)),
+                                  const SizedBox(width: 20),
+                                  Expanded(child: _buildRecentAlerts(adminService)),
+                                ],
+                              ),
+                            const SizedBox(height: 100),
                           ],
-                        ),
-                        const SizedBox(height: 100),
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -168,7 +182,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildWelcomeSection() {
+  Widget _buildWelcomeSection(BoxConstraints constraints) {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
@@ -223,15 +237,18 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildQuickStat('CORE UPTIME', '99.98%'),
-                    Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.1)),
-                    _buildQuickStat('AVG LATENCY', '18ms'),
-                    Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.1)),
-                    _buildQuickStat('DATA NODES', 'Healthy'),
-                  ],
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildQuickStat('CORE UPTIME', '99.98%'),
+                      Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.1), margin: const EdgeInsets.symmetric(horizontal: 16)),
+                      _buildQuickStat('AVG LATENCY', '18ms'),
+                      Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.1), margin: const EdgeInsets.symmetric(horizontal: 16)),
+                      _buildQuickStat('DATA NODES', 'Healthy'),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -281,37 +298,51 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildLoadingMetrics() {
+  Widget _buildLoadingMetrics(BoxConstraints constraints) {
+    bool isSmall = constraints.maxWidth < 450;
     return Shimmer.fromColors(
       baseColor: AppTheme.grey100,
       highlightColor: AppTheme.grey50,
-      child: GridView.count(
+      child: GridView.builder(
         shrinkWrap: true,
-        crossAxisCount: 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        childAspectRatio: 2.2,
-        children: List.generate(4, (index) => Container(
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: isSmall ? 1 : 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          mainAxisExtent: 140, // fixed height for proper content layout
+        ),
+        itemCount: 4,
+        itemBuilder: (context, index) => Container(
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
-        )),
+        ),
       ),
     );
   }
 
-  Widget _buildKeyMetrics(Map<String, dynamic> stats) {
-    return GridView.count(
+  Widget _buildKeyMetrics(Map<String, dynamic> stats, BoxConstraints constraints) {
+    bool isSmall = constraints.maxWidth < 450;
+    final metrics = [
+      {'label': 'Total Revenue', 'value': '₹${stats['total_revenue'] ?? '5.2L'}', 'growth': '+14%', 'icon': Icons.account_balance_wallet_rounded, 'color': AppTheme.success},
+      {'label': 'Active Pickups', 'value': '${stats['total_pickups'] ?? '1,842'}', 'growth': '+8%', 'icon': Icons.token_rounded, 'color': AppTheme.primaryEmerald},
+      {'label': 'Deployed Force', 'value': '${stats['active_routes'] ?? '32'}', 'growth': '+3', 'icon': Icons.engineering_rounded, 'color': AppTheme.info},
+      {'label': 'Pending Alerts', 'value': '${stats['complaints_count'] ?? '08'}', 'growth': '-12%', 'icon': Icons.emergency_share_rounded, 'color': AppTheme.error},
+    ];
+
+    return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 20,
-      mainAxisSpacing: 20,
-      childAspectRatio: 2.0,
-      children: [
-        _buildMetricCard('Total Revenue', '₹${stats['total_revenue'] ?? '5.2L'}', '+14%', Icons.account_balance_wallet_rounded, AppTheme.success),
-        _buildMetricCard('Active Pickups', '${stats['total_pickups'] ?? '1,842'}', '+8%', Icons.token_rounded, AppTheme.primaryEmerald),
-        _buildMetricCard('Deployed Force', '${stats['active_routes'] ?? '32'}', '+3', Icons.engineering_rounded, AppTheme.info),
-        _buildMetricCard('Pending Alerts', '${stats['complaints_count'] ?? '08'}', '-12%', Icons.emergency_share_rounded, AppTheme.error),
-      ],
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: isSmall ? 1 : 2,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+        mainAxisExtent: 150, // ensures cards have sufficient vertical space
+      ),
+      itemCount: metrics.length,
+      itemBuilder: (context, index) {
+        final m = metrics[index];
+        return _buildMetricCard(m['label'] as String, m['value'] as String, m['growth'] as String, m['icon'] as IconData, m['color'] as Color);
+      },
     );
   }
 
@@ -326,12 +357,13 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
                 child: Icon(icon, color: color, size: 20),
               ),
@@ -345,28 +377,39 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               ),
             ],
           ),
-          const Spacer(),
-          Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -1)),
-          Text(label.toUpperCase(), style: const TextStyle(fontSize: 9, color: AppTheme.grey400, fontWeight: FontWeight.w900, letterSpacing: 0.8)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -1)),
+              Text(label.toUpperCase(), style: const TextStyle(fontSize: 9, color: AppTheme.grey400, fontWeight: FontWeight.w900, letterSpacing: 0.8)),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildManagementHub() {
-    return GridView.count(
+  Widget _buildManagementHub(BoxConstraints constraints) {
+    bool isSmall = constraints.maxWidth < 450;
+    
+    return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 20,
-      mainAxisSpacing: 20,
-      childAspectRatio: 1.4,
-      children: [
-        _buildHubCard('Incident Center', 'Manage grievances', Icons.report_problem_rounded, AppTheme.error, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen()))),
-        _buildHubCard('Service Queue', 'Dispatch operations', Icons.auto_graph_rounded, AppTheme.accentIndigo, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen()))),
-        _buildHubCard('Field Force', 'User & Worker registry', Icons.supervised_user_circle_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen()))),
-        _buildHubCard('Scheduling', 'Slot & route engine', Icons.timer_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen()))),
-      ],
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: isSmall ? 1 : 2,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+        mainAxisExtent: 156, // Fixed height to prevent overflow
+      ),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        switch (index) {
+          case 0: return _buildHubCard('Incident Center', 'Manage grievances', Icons.report_problem_rounded, AppTheme.error, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen())));
+          case 1: return _buildHubCard('Service Queue', 'Dispatch operations', Icons.auto_graph_rounded, AppTheme.accentIndigo, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen())));
+          case 2: return _buildHubCard('Field Force', 'User & Worker registry', Icons.supervised_user_circle_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen())));
+          case 3: default: return _buildHubCard('Scheduling', 'Slot & route engine', Icons.timer_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen())));
+        }
+      },
     );
   }
 

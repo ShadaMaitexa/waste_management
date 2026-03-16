@@ -56,7 +56,7 @@ class AuthService extends ChangeNotifier {
         Uri.parse(ApiConstants.login),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'email': email,
+          'email': email.trim(),
           'password': password,
         }),
       );
