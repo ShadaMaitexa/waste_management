@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
 class WorkerProfileScreen extends StatefulWidget {
@@ -21,18 +24,30 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: AppTheme.grey900,
-        elevation: 0,
+        title: Text(
+          'IDENTITY & ACCESS',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w800, 
+            fontSize: 12,
+            letterSpacing: 2,
+            color: AppTheme.grey400,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
             icon: Icon(
-              _isEditing ? Icons.check : Icons.edit_outlined,
-              color: AppTheme.primaryGreen,
+              _isEditing ? Icons.check_circle_rounded : Icons.tune_rounded,
+              color: AppTheme.primaryEmerald,
+              size: 20,
             ),
             onPressed: () {
               setState(() {
@@ -40,22 +55,83 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
               });
             },
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
-            const SizedBox(height: AppTheme.spacingM),
+            const SizedBox(height: 32),
             _buildProfileHeader(),
-            const SizedBox(height: AppTheme.spacingL),
-            _buildStatsRow(),
-            const SizedBox(height: AppTheme.spacingL),
-            _buildSectionTitle('Personal Information'),
-            _buildInfoCard(),
-            const SizedBox(height: AppTheme.spacingL),
-            _buildSectionTitle('Settings & Support'),
-            _buildSettingsList(),
-            const SizedBox(height: AppTheme.spacingXL),
+            const SizedBox(height: 40),
+            _buildPerformanceGrid(),
+            const SizedBox(height: 48),
+            _buildSectionHeader('CORE CREDENTIALS'),
+            const SizedBox(height: 16),
+            _buildCredentialCard(),
+            const SizedBox(height: 32),
+            _buildSectionHeader('SYSTEM PREFERENCES'),
+            const SizedBox(height: 16),
+            _buildSettingsModule(),
+            const SizedBox(height: 40),
+            _buildLogoutButton(),
+            const SizedBox(height: 60),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 4),
+        child: Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            color: AppTheme.grey400,
+            letterSpacing: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 64,
+      child: ElevatedButton(
+        onPressed: () {
+          Provider.of<AuthService>(context, listen: false).logout();
+          Navigator.of(context).pushReplacementNamed('/login');
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppTheme.bgDark,
+          foregroundColor: const Color(0xFFF43F5E),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 0,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.power_settings_new_rounded, size: 18),
+            const SizedBox(width: 12),
+            Text(
+              'TERMINATE SESSION',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.5,
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
       ),
@@ -66,196 +142,82 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
     return Column(
       children: [
         Stack(
+          alignment: Alignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primaryGreen, width: 2),
+                border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1.5),
               ),
-              child: const CircleAvatar(
-                radius: 50,
-                backgroundColor: AppTheme.grey200,
-                child: Icon(Icons.person, size: 60, color: AppTheme.grey400),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.bgCanvas,
+                ),
+                child: const CircleAvatar(
+                  radius: 56,
+                  backgroundColor: AppTheme.grey100,
+                  child: Icon(Icons.person_rounded, size: 64, color: AppTheme.grey300),
+                ),
               ),
             ),
             Positioned(
-              bottom: 0,
-              right: 0,
+              bottom: 8,
+              right: 8,
               child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: AppTheme.primaryGreen,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.bgDark,
                   shape: BoxShape.circle,
+                  border: Border.all(color: AppTheme.bgSurface, width: 3),
+                  boxShadow: AppTheme.cardShadow,
                 ),
-                child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                child: const Icon(Icons.camera_enhance_rounded, color: Colors.white, size: 14),
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacingM),
+        const SizedBox(height: 32),
         Text(
           _workerName,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 32,
+            fontWeight: FontWeight.w800,
             color: AppTheme.grey900,
+            letterSpacing: -1,
           ),
         ),
         const SizedBox(height: 4),
         Text(
-          'Waste Collector • $_ward',
-          style: const TextStyle(
-            color: AppTheme.grey600,
-            fontSize: 16,
+          'Logistics Specialist • $_ward',
+          style: GoogleFonts.inter(
+            color: AppTheme.grey400,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 24),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+            color: AppTheme.bgDark,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: AppTheme.smoothShadow,
           ),
-          child: Text(
-            'ID: $_employeeId',
-            style: const TextStyle(
-              color: AppTheme.primaryGreen,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatsRow() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-      child: Row(
-        children: [
-          Expanded(child: _buildStatItem('4.8', 'Rating', Icons.star, Colors.amber)),
-          const SizedBox(width: AppTheme.spacingM),
-          Expanded(child: _buildStatItem('2,450', 'Points', Icons.diamond, Colors.blue)),
-          const SizedBox(width: AppTheme.spacingM),
-          Expanded(child: _buildStatItem('120', 'Days', Icons.calendar_today, Colors.purple)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String value, String label, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.grey900,
-            ),
-          ),
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppTheme.grey600,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingL, vertical: AppTheme.spacingS),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.grey900,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoCard() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-      padding: const EdgeInsets.all(AppTheme.spacingM),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _buildInfoRow(Icons.phone, 'Phone', _phoneNumber),
-          const Divider(height: 24),
-          _buildInfoRow(Icons.email, 'Email', _email),
-          const Divider(height: 24),
-          _buildInfoRow(Icons.location_on, 'Address', 'Kozhikode, Kerala'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppTheme.grey100,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, size: 20, color: AppTheme.grey600),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
+              const SizedBox(width: 10),
               Text(
-                label,
-                style: const TextStyle(
-                  color: AppTheme.grey600,
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                  color: AppTheme.grey900,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                'UNIT ID: ${_employeeId.toUpperCase()}',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 10,
+                  letterSpacing: 1.5,
                 ),
               ),
             ],
@@ -265,43 +227,175 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
     );
   }
 
-  Widget _buildSettingsList() {
+  Widget _buildPerformanceGrid() {
+    return Row(
+      children: [
+        Expanded(child: _perfCard('4.8', 'Rating', Icons.auto_awesome_rounded, Colors.amber)),
+        const SizedBox(width: 16),
+        Expanded(child: _perfCard('2,450', 'XP', Icons.electric_bolt_rounded, const Color(0xFF6366F1))),
+        const SizedBox(width: 16),
+        Expanded(child: _perfCard('120', 'Days', Icons.verified_user_rounded, AppTheme.primaryEmerald)),
+      ],
+    );
+  }
+
+  Widget _perfCard(String value, String label, IconData icon, Color color) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+      padding: const EdgeInsets.symmetric(vertical: 28),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
       ),
       child: Column(
         children: [
-          _buildSettingItem(Icons.lock_outline, 'Change Password'),
-          _buildSettingItem(Icons.notifications_outlined, 'Notifications'),
-          _buildSettingItem(Icons.language, 'Language'),
-          _buildSettingItem(Icons.help_outline, 'Help & Support'),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            value,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey900,
+              letterSpacing: -1,
+            ),
+          ),
+          Text(
+            label.toUpperCase(),
+            style: GoogleFonts.inter(
+              color: AppTheme.grey400,
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.5,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingItem(IconData icon, String title) {
-    return ListTile(
-      leading: Icon(icon, color: AppTheme.grey700),
-      title: Text(
-        title,
-        style: const TextStyle(
-          color: AppTheme.grey900,
-          fontWeight: FontWeight.w500,
-        ),
+  Widget _buildCredentialCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.grey400),
-      onTap: () {},
+      child: Column(
+        children: [
+          _credentialRow(Icons.phone_iphone_rounded, 'CONTACT', _phoneNumber),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Divider(height: 1, color: AppTheme.grey100),
+          ),
+          _credentialRow(Icons.alternate_email_rounded, 'SECURE EMAIL', _email),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Divider(height: 1, color: AppTheme.grey100),
+          ),
+          _credentialRow(Icons.fmd_good_rounded, 'ASSIGNED HUB', 'Kozhikode Operational Center'),
+        ],
+      ),
+    );
+  }
+
+  Widget _credentialRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppTheme.bgSurface,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppTheme.grey100),
+          ),
+          child: Icon(icon, size: 18, color: AppTheme.grey400),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  color: AppTheme.grey400,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.grey900,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSettingsModule() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: Column(
+        children: [
+          _settingTile(Icons.shield_moon_rounded, 'Cryptographic Security'),
+          _settingTile(Icons.notifications_active_rounded, 'Deployment Alerts'),
+          _settingTile(Icons.translate_rounded, 'Interface Language'),
+          _settingTile(Icons.support_agent_rounded, 'Command Support', isLast: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _settingTile(IconData icon, String title, {bool isLast = false}) {
+    return Container(
+      decoration: isLast ? null : const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppTheme.grey100, width: 1)),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: AppTheme.bgSurface,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: AppTheme.grey600, size: 18),
+        ),
+        title: Text(
+          title,
+          style: GoogleFonts.plusJakartaSans(
+            color: AppTheme.grey900,
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey300),
+        onTap: () {},
+      ),
     );
   }
 }

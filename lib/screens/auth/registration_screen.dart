@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
@@ -110,23 +111,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: AppTheme.primaryGradient,
-            ),
-          ),
+          Container(color: AppTheme.bgSurface),
           Positioned(
             left: -80,
             bottom: -50,
             child: Icon(
               Icons.eco_rounded,
               size: 350,
-              color: Colors.white.withValues(alpha: 0.05),
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.03),
             ),
           ),
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 64),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 500),
                 child: Column(
@@ -155,9 +152,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           Positioned(
             top: 50,
             left: 20,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppTheme.bgCanvas,
+                shape: BoxShape.circle,
+                boxShadow: AppTheme.smoothShadow,
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 18),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
           ),
         ],
@@ -169,36 +173,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: AppTheme.bgCanvas,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.5),
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey100),
           ),
           child: const Icon(
             Icons.person_add_alt_1_rounded,
             size: 48,
-            color: Colors.white,
+            color: AppTheme.primaryEmerald,
           ),
         ),
-        const SizedBox(height: 24),
-        const Text(
-          'Create Account',
-          style: TextStyle(
-            color: Colors.white,
+        const SizedBox(height: 32),
+        Text(
+          'Join the Movement',
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.w900,
+            color: AppTheme.grey900,
             letterSpacing: -1,
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          'JOIN THE GREEN REVOLUTION',
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
+          'CREATE YOUR DIGITAL IDENTITY',
+          style: GoogleFonts.inter(
+            color: AppTheme.grey400,
             fontSize: 10,
             fontWeight: FontWeight.w800,
-            letterSpacing: 2,
+            letterSpacing: 2.5,
           ),
         ),
       ],
@@ -288,33 +293,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Widget _buildUserTypeSelector() {
     return DropdownButtonFormField<UserType>(
-      initialValue: _selectedUserType,
-      dropdownColor: AppTheme.primaryGreen,
-      borderRadius: BorderRadius.circular(24),
-      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-      iconEnabledColor: Colors.white,
-      decoration: InputDecoration(
-        hintText: 'Select Role',
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-        prefixIcon: const Icon(Icons.badge_outlined, color: Colors.white, size: 20),
-        filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.15),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
-        ),
+      value: _selectedUserType,
+      dropdownColor: AppTheme.bgCanvas,
+      borderRadius: BorderRadius.circular(20),
+      style: GoogleFonts.inter(color: AppTheme.grey900, fontSize: 15, fontWeight: FontWeight.w700),
+      iconEnabledColor: AppTheme.grey400,
+      decoration: const InputDecoration(
+        hintText: 'Functional Role',
+        prefixIcon: Icon(Icons.badge_rounded, size: 20),
       ),
       items: UserType.values.map<DropdownMenuItem<UserType>>((UserType type) {
         return DropdownMenuItem<UserType>(
           value: type,
           child: Text(
-            _getUserTypeTitle(type),
-            style: const TextStyle(color: Colors.white),
+            _getUserTypeTitle(type).toUpperCase(),
+            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 0.5),
           ),
         );
       }).toList(),
@@ -325,7 +318,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           });
         }
       },
-      validator: (value) => value == null ? 'Please select a role' : null,
+      validator: (value) => value == null ? 'Deployment role required' : null,
     );
   }
 
@@ -344,60 +337,44 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       keyboardType: keyboardType,
       obscureText: obscureText,
       maxLines: maxLines,
-      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: AppTheme.grey900, fontSize: 15),
       decoration: InputDecoration(
         hintText: label,
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16),
-        prefixIcon: Icon(icon, color: Colors.white, size: 20),
+        prefixIcon: Icon(icon, size: 20),
         suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.15),
-        contentPadding: const EdgeInsets.all(20),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: Colors.white, width: 2),
-        ),
       ),
       validator: validator,
     );
   }
 
   Widget _buildRegisterButton() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 64,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
       child: ElevatedButton(
         onPressed: _isLoading ? null : _register,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          foregroundColor: AppTheme.primaryGreen,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: AppTheme.bgDark,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 0,
         ),
         child: _isLoading
-            ? const CircularProgressIndicator(color: AppTheme.primaryGreen)
-            : const Text(
-                'CREATE ACCOUNT',
-                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.5),
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : Text(
+                'INITIALIZE ACCOUNT',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
+                  fontSize: 13,
+                ),
               ),
       ),
     );
@@ -408,20 +385,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        const Text(
+        Text(
           'Already have an account? ',
-          style: TextStyle(color: Colors.white70),
+          style: GoogleFonts.inter(color: AppTheme.grey500, fontWeight: FontWeight.w500, fontSize: 13),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context),
           style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingS),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            foregroundColor: AppTheme.primaryEmerald,
           ),
-          child: const Text(
-            'Sign In',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
+          child: Text(
+            'Authenticate',
+            style: GoogleFonts.plusJakartaSans(
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
             ),
           ),
         ),

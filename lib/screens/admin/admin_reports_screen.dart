@@ -240,18 +240,26 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     final isFinancial = index % 2 != 0;
     
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppTheme.grey100, width: 1),
-        boxShadow: AppTheme.cardShadow,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () {},
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(32),
+          splashColor: (isFinancial ? AppTheme.accentIndigo : AppTheme.primaryEmerald).withValues(alpha: 0.05),
+          highlightColor: (isFinancial ? AppTheme.accentIndigo : AppTheme.primaryEmerald).withValues(alpha: 0.02),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Row(

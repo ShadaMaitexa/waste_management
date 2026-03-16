@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/auth_service.dart';
 import '../theme/app_theme.dart';
 
@@ -86,24 +87,47 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
-        child: Center(
-          child: AnimatedBuilder(
-            animation: _animationController,
-            builder: (context, child) {
-              return FadeTransition(
-                opacity: _fadeAnimation,
-                child: ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: _buildContent(),
-                ),
-              );
-            },
+      backgroundColor: AppTheme.bgDark,
+      body: Stack(
+        children: [
+          // Dynamic Gradient Background
+          Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 1.2,
+                colors: [
+                  AppTheme.primaryEmerald.withValues(alpha: 0.05),
+                  Colors.transparent,
+                ],
+              ),
+            ),
           ),
-        ),
+          // Subtle Tech Patterns
+          Positioned(
+            right: -150,
+            top: -100,
+            child: Icon(
+              Icons.blur_on_rounded,
+              size: 500,
+              color: Colors.white.withValues(alpha: 0.02),
+            ),
+          ),
+          Center(
+            child: AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: _buildContent(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -112,64 +136,85 @@ class _SplashScreenState extends State<SplashScreen>
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Logo Container
+        // Premium Glass Logo Container
         Container(
-          width: 120,
-          height: 120,
+          width: 140,
+          height: 140,
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.radiusXL),
+            color: Colors.white.withValues(alpha: 0.03),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                blurRadius: 60,
+                spreadRadius: 2,
               ),
             ],
           ),
-          child: const Icon(
-            Icons.recycling,
-            size: 60,
-            color: AppTheme.primaryGreen,
+          child: const Center(
+            child: Icon(
+              Icons.recycling_rounded,
+              size: 64,
+              color: AppTheme.primaryEmerald,
+            ),
           ),
         ),
-        const SizedBox(height: AppTheme.spacingL),
+        const SizedBox(height: 48),
         // App Title
         Text(
           'GreenLoop',
-          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
-        ),
-        const SizedBox(height: AppTheme.spacingS),
-        // Subtitle
-        Text(
-          'Smart Waste Management',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: Colors.white70,
-                fontWeight: FontWeight.w300,
-              ),
-        ),
-        const SizedBox(height: AppTheme.spacingXL),
-        // Loading Indicator
-        SizedBox(
-          width: 40,
-          height: 40,
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            strokeWidth: 3,
+          style: GoogleFonts.plusJakartaSans(
+            color: Colors.white,
+            fontSize: 48,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -2,
           ),
         ),
-        const SizedBox(height: AppTheme.spacingL),
-        // Tagline
+        const SizedBox(height: 8),
+        // Ecosystem Label
         Text(
-          'Building a Sustainable Kozhikode',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.white70,
-                fontStyle: FontStyle.italic,
+          'SMART LOGISTICS ECOSYSTEM',
+          style: GoogleFonts.plusJakartaSans(
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.7),
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 4,
+          ),
+        ),
+        const SizedBox(height: 80),
+        // Minimalist Sequence Indicator
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 48,
+              height: 48,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white.withValues(alpha: 0.1)),
+                strokeWidth: 2,
               ),
+            ),
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryEmerald.withValues(alpha: 0.5)),
+                strokeWidth: 2,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 64),
+        // Vision Statement
+        Text(
+          'DEFINING SUSTAINABLE FUTURES',
+          style: GoogleFonts.inter(
+            color: Colors.white.withValues(alpha: 0.3),
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 2,
+          ),
         ),
       ],
     );

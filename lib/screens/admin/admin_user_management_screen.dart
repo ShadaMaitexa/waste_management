@@ -215,22 +215,28 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
 
   Widget _buildUserRow(User user) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.grey100),
-        boxShadow: AppTheme.cardShadow,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
               color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Center(
               child: Text(
@@ -246,12 +252,12 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
               children: [
                 Text(
                   user.name, 
-                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.grey900, letterSpacing: -0.3),
+                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: AppTheme.grey900, letterSpacing: -0.5),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   user.email, 
-                  style: const TextStyle(fontSize: 13, color: AppTheme.grey500, fontWeight: FontWeight.w500),
+                  style: const TextStyle(fontSize: 13, color: AppTheme.grey500, fontWeight: FontWeight.w600),
                 ),
               ],
             ),

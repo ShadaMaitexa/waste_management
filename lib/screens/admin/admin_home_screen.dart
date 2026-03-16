@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 import 'admin_dashboard_tab.dart';
 import 'admin_reports_screen.dart';
@@ -39,79 +40,169 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     );
 
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       body: isDesktop
           ? Row(
               children: [
                 // Desktop/Tablet Navigation Rail
-                NavigationRail(
-                  selectedIndex: _currentIndex,
-                  onDestinationSelected: (index) {
-                    setState(() => _currentIndex = index);
-                    _pageController.jumpToPage(index);
-                  },
-                  backgroundColor: Colors.white,
-                  elevation: 1,
-                  labelType: NavigationRailLabelType.none,
-                  leading: Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Icon(Icons.hub_rounded, color: AppTheme.primaryEmerald, size: 28),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                  trailing: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.settings_outlined, color: AppTheme.grey400),
-                          onPressed: () {},
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                  destinations: [
-                    _buildRailDestination(Icons.dashboard_rounded, Icons.dashboard_outlined, 'Dash'),
-                    _buildRailDestination(Icons.analytics_rounded, Icons.analytics_outlined, 'Reports'),
-                    _buildRailDestination(Icons.badge_rounded, Icons.badge_outlined, 'Users'),
-                  ],
-                  indicatorColor: AppTheme.primaryEmerald.withValues(alpha: 0.12),
-                  selectedIconTheme: const IconThemeData(color: AppTheme.primaryEmerald, size: 28),
-                  unselectedIconTheme: const IconThemeData(color: AppTheme.grey400, size: 26),
-                ),
+                _buildNavigationRail(),
                 // Content Area
-                Expanded(child: content),
+                Expanded(
+                  child: ClipRRect(
+                    child: content,
+                  ),
+                ),
               ],
             )
-          : content,
-      bottomNavigationBar: isDesktop
-          ? null
-          : BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() => _currentIndex = index);
-                _pageController.jumpToPage(index);
-              },
-              backgroundColor: Colors.white,
-              selectedItemColor: AppTheme.primaryEmerald,
-              unselectedItemColor: AppTheme.grey400,
-              showSelectedLabels: true,
-              showUnselectedLabels: false,
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), activeIcon: Icon(Icons.dashboard_rounded), label: 'Dash'),
-                BottomNavigationBarItem(icon: Icon(Icons.analytics_outlined), activeIcon: Icon(Icons.analytics_rounded), label: 'Reports'),
-                BottomNavigationBarItem(icon: Icon(Icons.badge_outlined), activeIcon: Icon(Icons.badge_rounded), label: 'Users'),
+          : Stack(
+              children: [
+                content,
+                _buildFloatingBottomBar(),
               ],
             ),
+    );
+  }
+
+  Widget _buildNavigationRail() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 40,
+            offset: const Offset(10, 0),
+          ),
+        ],
+      ),
+      child: NavigationRail(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) {
+          setState(() => _currentIndex = index);
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutQuart,
+          );
+        },
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        labelType: NavigationRailLabelType.none,
+        leading: Column(
+          children: [
+            const SizedBox(height: 32),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(Icons.hub_rounded, color: AppTheme.primaryEmerald, size: 28),
+            ),
+            const SizedBox(height: 48),
+          ],
+        ),
+        trailing: Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              _buildRailAction(Icons.settings_suggest_rounded, 'Settings'),
+              const SizedBox(height: 8),
+              _buildRailAction(Icons.help_center_rounded, 'Help'),
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+        destinations: [
+          _buildRailDestination(Icons.dashboard_rounded, Icons.dashboard_outlined, 'DASHBOARD'),
+          _buildRailDestination(Icons.analytics_rounded, Icons.analytics_outlined, 'REPORTS'),
+          _buildRailDestination(Icons.badge_rounded, Icons.badge_outlined, 'PERSONNEL'),
+        ],
+        indicatorColor: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+        selectedIconTheme: const IconThemeData(color: AppTheme.primaryEmerald, size: 26),
+        unselectedIconTheme: IconThemeData(color: AppTheme.grey400, size: 24),
+      ),
+    );
+  }
+
+  Widget _buildRailAction(IconData icon, String tooltip) {
+    return IconButton(
+      icon: Icon(icon, color: AppTheme.grey400, size: 22),
+      onPressed: () {},
+      tooltip: tooltip,
+    );
+  }
+
+  Widget _buildFloatingBottomBar() {
+    return Positioned(
+      left: 24,
+      right: 24,
+      bottom: 32,
+      child: Container(
+        height: 72,
+        decoration: BoxDecoration(
+          color: AppTheme.bgDark.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 40,
+              offset: const Offset(0, 20),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildNavItem(0, Icons.dashboard_rounded, 'Dash'),
+            _buildNavItem(1, Icons.analytics_rounded, 'Metrics'),
+            _buildNavItem(2, Icons.badge_rounded, 'Users'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = _currentIndex == index;
+    return GestureDetector(
+      onTap: () {
+        setState(() => _currentIndex = index);
+        _pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutQuart,
+        );
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.5),
+              size: 22,
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label.toUpperCase(),
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.primaryEmerald,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -119,7 +210,14 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     return NavigationRailDestination(
       icon: Icon(unselectedIcon),
       selectedIcon: Icon(icon),
-      label: Text(label),
+      label: Text(
+        label,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 1,
+        ),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 
 // Mock LatLng class for Flutter
@@ -99,31 +100,33 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
-        title: const Text(
-          'Smart Route Optimization',
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+        title: Text(
+          'Geospatial Logistics',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 18),
         ),
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.auto_awesome_rounded),
+            icon: const Icon(Icons.hub_rounded, size: 22, color: AppTheme.primaryEmerald),
             onPressed: _optimizeRoute,
           ),
+          const SizedBox(width: 8),
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
-          indicatorWeight: 3,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          indicatorColor: AppTheme.primaryEmerald,
+          indicatorWeight: 4,
+          indicatorSize: TabBarIndicatorSize.label,
+          labelColor: AppTheme.grey900,
+          unselectedLabelColor: AppTheme.grey400,
+          labelStyle: GoogleFonts.inter(fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 0.5),
           tabs: const [
-            Tab(icon: Icon(Icons.map_rounded), text: 'MAP'),
-            Tab(icon: Icon(Icons.list_alt_rounded), text: 'LIST'),
+            Tab(text: 'SATELLITE MAP'),
+            Tab(text: 'WAYPOINT LIST'),
           ],
         ),
       ),
@@ -141,31 +144,31 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   Widget _buildMapView() {
     return Stack(
       children: [
-        // Mock Map Container
         Container(
-          color: Colors.grey[200],
-          child: const Center(
+          color: AppTheme.bgSurface,
+          child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.map,
-                  size: 80,
-                  color: Colors.grey,
+                  Icons.explore_off_rounded,
+                  size: 64,
+                  color: AppTheme.grey200,
                 ),
-                SizedBox(height: AppTheme.spacingM),
+                const SizedBox(height: 24),
                 Text(
-                  'Interactive Map View',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                  'ENGINE OFFLINE',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.grey300,
+                    letterSpacing: 1,
                   ),
                 ),
-                SizedBox(height: AppTheme.spacingS),
+                const SizedBox(height: 8),
                 Text(
-                  'Google Maps integration would be displayed here',
-                  style: TextStyle(color: Colors.grey),
+                  'Map data requires satellite connection',
+                  style: GoogleFonts.inter(color: AppTheme.grey300, fontSize: 13),
                 ),
               ],
             ),
@@ -194,87 +197,85 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   Widget _buildMapControls() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        color: AppTheme.bgCanvas.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _buildWardSelector(),
-                ),
-                const SizedBox(width: AppTheme.spacingM),
-                Expanded(
-                  child: _buildOptimizeButton(),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildWardSelector(),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildMapAction(Icons.layers_rounded),
+                  const SizedBox(width: 8),
+                  _buildMapAction(Icons.my_location_rounded),
+                ],
+              ),
+              if (_isOptimizingRoute) ...[
+                const SizedBox(height: 20),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: const LinearProgressIndicator(
+                    minHeight: 4,
+                    backgroundColor: AppTheme.grey100,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryEmerald),
+                  ),
                 ),
               ],
-            ),
-            if (_isOptimizingRoute) ...[
-              const SizedBox(height: AppTheme.spacingM),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(2),
-                child: const LinearProgressIndicator(
-                  minHeight: 4,
-                  backgroundColor: AppTheme.grey100,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
-                ),
-              ),
             ],
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildMapAction(IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppTheme.bgSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: Icon(icon, color: AppTheme.grey600, size: 20),
     );
   }
 
   Widget _buildWardSelector() {
-    return DropdownButtonFormField<String>(
-      initialValue: _selectedWard,
-      decoration: InputDecoration(
-        labelText: 'Ward',
-        prefixIcon: const Icon(Icons.location_city, color: AppTheme.primaryGreen),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusM),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppTheme.bgSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedWard,
+          items: ['Ward 15', 'Ward 12', 'Ward 8', 'Ward 5']
+              .map((ward) => DropdownMenuItem(
+                value: ward, 
+                child: Text(ward, style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 13))))
+              .toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedWard = value!;
+            });
+          },
         ),
       ),
-      items: ['Ward 15', 'Ward 12', 'Ward 8', 'Ward 5']
-          .map((ward) => DropdownMenuItem(value: ward, child: Text(ward)))
-          .toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedWard = value!;
-        });
-      },
     );
   }
 
-  Widget _buildOptimizeButton() {
-    return ElevatedButton.icon(
-      onPressed: _isOptimizingRoute ? null : _optimizeRoute,
-      icon: _isOptimizingRoute
-          ? const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Icon(Icons.route, size: 16),
-      label: Text(_isOptimizingRoute ? 'Optimizing...' : 'Optimize Route'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 48),
-      ),
-    );
-  }
+
 
   Widget _buildRouteSummaryCard() {
     final completedCount = _routePoints.where((p) => p.completed).length;
@@ -283,67 +284,78 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: AppTheme.intenseShadow,
+        border: Border.all(color: AppTheme.grey100),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(Icons.route_rounded, color: AppTheme.primaryGreen, size: 20),
+                  child: const Icon(Icons.insights_rounded, color: AppTheme.primaryEmerald, size: 22),
                 ),
-                const SizedBox(width: 12),
-                const Text(
-                  'Route Summary',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.grey900,
-                  ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ROUTE INTELLIGENCE',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.grey400,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    Text(
+                      'Target Operational Window',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.grey900,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             Row(
               children: [
                 Expanded(
                   child: _summaryItem(
                     'PROGRESS',
                     '$completedCount/${_routePoints.length}',
-                    Icons.check_circle_rounded,
-                    AppTheme.success,
+                    Icons.verified_user_rounded,
+                    AppTheme.primaryEmerald,
                   ),
                 ),
+                Container(width: 1, height: 40, color: AppTheme.grey100),
                 Expanded(
                   child: _summaryItem(
-                    'DISTANCE',
+                    'EST. RADIUS',
                     totalDistance,
-                    Icons.straighten_rounded,
-                    AppTheme.info,
+                    Icons.navigation_rounded,
+                    const Color(0xFF6366F1),
                   ),
                 ),
+                Container(width: 1, height: 40, color: AppTheme.grey100),
                 Expanded(
                   child: _summaryItem(
-                    'EST. TIME',
+                    'DURATION',
                     estimatedTime,
-                    Icons.access_time_filled_rounded,
-                    AppTheme.warning,
+                    Icons.timer_rounded,
+                    const Color(0xFFF59E0B),
                   ),
                 ),
               ],
@@ -358,18 +370,23 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
     return Column(
       children: [
         Icon(icon, color: color, size: 20),
-        const SizedBox(height: AppTheme.spacingXS),
+        const SizedBox(height: 12),
         Text(
           value,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w800,
+            fontSize: 18,
+            color: AppTheme.grey900,
+            letterSpacing: -0.5,
           ),
         ),
         Text(
           title,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: AppTheme.grey600,
+          style: GoogleFonts.inter(
+            color: AppTheme.grey400,
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
           ),
         ),
       ],
@@ -378,12 +395,12 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
 
   Widget _buildRouteListView() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.spacingM),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildRouteHeader(),
-          const SizedBox(height: AppTheme.spacingM),
+          const SizedBox(height: 32),
           _buildRouteList(),
         ],
       ),
@@ -391,60 +408,45 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   }
 
   Widget _buildRouteHeader() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Today\'s Route',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingS),
-            Text(
-              _selectedWard,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppTheme.primaryGreen,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _headerInfoItem('Total Stops', '${_routePoints.length}'),
-                _headerInfoItem('Completed', '${_routePoints.where((p) => p.completed).length}'),
-                _headerInfoItem('Remaining', '${_routePoints.where((p) => !p.completed).length}'),
+                Text(
+                  'WAYPOINT PIPELINE',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.grey400,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                Text(
+                  '$_selectedWard Deployment',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.grey900,
+                    letterSpacing: -0.5,
+                  ),
+                ),
               ],
+            ),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(Icons.sync_rounded, color: AppTheme.primaryEmerald, size: 20),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _headerInfoItem(String label, String value) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.primaryGreen,
-            ),
-          ),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.grey600,
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -461,76 +463,96 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   }
 
   Widget _buildRoutePointCard(RoutePickupPoint point, int sequence) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _buildSequenceBadge(sequence, point.completed),
-                const SizedBox(width: AppTheme.spacingM),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        point.address,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _buildSequenceBadge(sequence, point.completed),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      point.address,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        color: AppTheme.grey900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.timer_outlined, size: 12, color: AppTheme.grey400),
+                        const SizedBox(width: 6),
+                        Text(
+                          point.estimatedTime,
+                          style: GoogleFonts.inter(
+                            color: AppTheme.grey500,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppTheme.spacingXS),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.access_time,
-                            size: 14,
-                            color: AppTheme.grey600,
+                        const SizedBox(width: 12),
+                        Container(width: 1, height: 10, color: AppTheme.grey100),
+                        const SizedBox(width: 12),
+                        Icon(Icons.layers_rounded, size: 12, color: point.priority == Priority.high ? const Color(0xFFEF4444).withValues(alpha: 0.5) : AppTheme.grey400),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${point.wasteTypes.length} Classes',
+                          style: GoogleFonts.inter(
+                            color: AppTheme.grey500,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
                           ),
-                          const SizedBox(width: AppTheme.spacingXS),
-                          Text(
-                            point.estimatedTime,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.grey600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                _buildPriorityBadge(point.priority),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            _buildWasteTypes(point.wasteTypes),
-            const SizedBox(height: AppTheme.spacingM),
-            _buildActionButtons(point),
-          ],
-        ),
+              ),
+              _buildPriorityBadge(point.priority),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildActionButtons(point),
+        ],
       ),
     );
   }
 
   Widget _buildSequenceBadge(int sequence, bool completed) {
     return Container(
-      width: 32,
-      height: 32,
+      width: 44,
+      height: 44,
       decoration: BoxDecoration(
-        color: completed ? AppTheme.success : AppTheme.primaryGreen,
-        shape: BoxShape.circle,
+        color: completed ? AppTheme.primaryEmerald.withValues(alpha: 0.1) : AppTheme.bgSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: completed ? AppTheme.primaryEmerald.withValues(alpha: 0.2) : AppTheme.grey100,
+          width: 2,
+        ),
       ),
       child: Center(
         child: completed
-            ? const Icon(Icons.check, color: Colors.white, size: 16)
+            ? const Icon(Icons.done_all_rounded, color: AppTheme.primaryEmerald, size: 20)
             : Text(
-                '$sequence',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                sequence.toString().padLeft(2, '0'),
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.grey900,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
                 ),
               ),
       ),
@@ -543,113 +565,106 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
     
     switch (priority) {
       case Priority.high:
-        color = AppTheme.error;
-        text = 'High';
+        color = const Color(0xFFEF4444);
+        text = 'PRIORITY';
         break;
       case Priority.medium:
-        color = AppTheme.warning;
-        text = 'Medium';
+        color = const Color(0xFFF59E0B);
+        text = 'REVENUE';
         break;
       case Priority.low:
-        color = AppTheme.info;
-        text = 'Low';
+        color = const Color(0xFF6366F1);
+        text = 'STANDARD';
         break;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingS,
-        vertical: AppTheme.spacingXS,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppTheme.radiusS),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         text,
-        style: TextStyle(
+        style: GoogleFonts.inter(
           color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
+          fontSize: 9,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.5,
         ),
       ),
     );
   }
 
-  Widget _buildWasteTypes(List<String> wasteTypes) {
-    return Wrap(
-      spacing: AppTheme.spacingS,
-      runSpacing: AppTheme.spacingS,
-      children: wasteTypes.map((type) {
-        return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingS,
-            vertical: AppTheme.spacingXS,
-          ),
-          decoration: BoxDecoration(
-            color: AppTheme.grey100,
-            borderRadius: BorderRadius.circular(AppTheme.radiusS),
-          ),
-          child: Text(
-            type,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.grey700,
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
   Widget _buildActionButtons(RoutePickupPoint point) {
     if (point.completed) {
-      return Row(
-        children: [
-          const Icon(Icons.check_circle, color: AppTheme.success, size: 16),
-          const SizedBox(width: AppTheme.spacingXS),
-          const Text(
-            'Completed',
-            style: TextStyle(
-              color: AppTheme.success,
-              fontWeight: FontWeight.w600,
-            ),
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1)),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 16),
+              const SizedBox(width: 8),
+              Text(
+                'COLLECTION VERIFIED',
+                style: GoogleFonts.inter(
+                  color: AppTheme.primaryEmerald,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 11,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       );
     }
 
     return Row(
       children: [
         Expanded(
-          child: ElevatedButton.icon(
+          child: ElevatedButton(
             onPressed: () => _startNavigation(point),
-            icon: const Icon(Icons.navigation, size: 16),
-            label: const Text('Navigate'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryGreen,
+              backgroundColor: AppTheme.bgDark,
               foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              elevation: 0,
             ),
+            child: Text('NAVIGATE', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 12, letterSpacing: 0.5)),
           ),
         ),
-        const SizedBox(width: AppTheme.spacingM),
+        const SizedBox(width: 12),
         Expanded(
-          child: ElevatedButton.icon(
+          child: ElevatedButton(
             onPressed: () => _markCompleted(point),
-            icon: const Icon(Icons.check, size: 16),
-            label: const Text('Complete'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.success,
+              backgroundColor: AppTheme.primaryEmerald,
               foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              elevation: 0,
             ),
+            child: Text('COMPLETE', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 12, letterSpacing: 0.5)),
           ),
         ),
-        const SizedBox(width: AppTheme.spacingM),
+        const SizedBox(width: 12),
         IconButton(
           onPressed: () => _showPointOptions(point),
-          icon: const Icon(Icons.more_vert),
+          icon: const Icon(Icons.more_vert_rounded, size: 20),
           style: IconButton.styleFrom(
-            backgroundColor: AppTheme.grey100,
+            backgroundColor: AppTheme.bgSurface,
+            padding: const EdgeInsets.all(12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            side: const BorderSide(color: AppTheme.grey100),
           ),
         ),
       ],
@@ -659,10 +674,14 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
   Widget _buildFAB() {
     return FloatingActionButton.extended(
       onPressed: () => _showRouteOptions(),
-      icon: const Icon(Icons.more_horiz),
-      label: const Text('Options'),
-      backgroundColor: AppTheme.primaryGreen,
-      foregroundColor: Colors.white,
+      icon: const Icon(Icons.settings_input_antenna_rounded, color: Colors.white, size: 20),
+      label: Text(
+        'OPERATIONS',
+        style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 12, letterSpacing: 1, color: Colors.white),
+      ),
+      backgroundColor: AppTheme.bgDark,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
   }
 

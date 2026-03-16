@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../theme/app_theme.dart';
 
@@ -22,32 +23,47 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
-        title: const Text('My Schedule'),
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
+        title: Text(
+          'LOGISTICS TIMELINE',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w800, 
+            fontSize: 12,
+            letterSpacing: 2,
+            color: AppTheme.grey400,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_today),
+            icon: const Icon(Icons.calendar_month_rounded, size: 20, color: AppTheme.primaryEmerald),
             onPressed: _selectDate,
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildCurrentWeekHeader(),
-            const SizedBox(height: AppTheme.spacingM),
+            const SizedBox(height: 32),
             _buildWeekCalendar(),
-            const SizedBox(height: AppTheme.spacingL),
+            const SizedBox(height: 40),
             _buildTodaysSchedule(),
-            const SizedBox(height: AppTheme.spacingL),
+            const SizedBox(height: 48),
             _buildWeeklyOverview(),
-            const SizedBox(height: AppTheme.spacingL),
+            const SizedBox(height: 40),
             _buildUpcomingShifts(),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -58,40 +74,61 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
     final weekStart = _getWeekStart(_selectedDate);
     final weekEnd = weekStart.add(const Duration(days: 6));
     
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Row(
-          children: [
-            Icon(Icons.calendar_view_week, color: AppTheme.primaryGreen, size: 32),
-            const SizedBox(width: AppTheme.spacingM),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Week of ${DateFormat('MMM d').format(weekStart)}',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(Icons.display_settings_rounded, color: AppTheme.primaryEmerald, size: 22),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'ACTIVE TIMEFRAME',
+                  style: GoogleFonts.inter(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.grey400,
+                    letterSpacing: 1,
                   ),
-                  Text(
-                    '${DateFormat('MMM d').format(weekStart)} - ${DateFormat('MMM d').format(weekEnd)}',
-                    style: TextStyle(color: AppTheme.grey600),
+                ),
+                Text(
+                  '${DateFormat('MMM d').format(weekStart)} — ${DateFormat('MMM d').format(weekEnd)}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                    color: AppTheme.grey900,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            IconButton(
-              icon: const Icon(Icons.chevron_left),
-              onPressed: _previousWeek,
-            ),
-            IconButton(
-              icon: const Icon(Icons.chevron_right),
-              onPressed: _nextWeek,
-            ),
-          ],
-        ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+            onPressed: _previousWeek,
+            style: IconButton.styleFrom(backgroundColor: AppTheme.bgSurface),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onPressed: _nextWeek,
+            style: IconButton.styleFrom(backgroundColor: AppTheme.bgSurface),
+          ),
+        ],
       ),
     );
   }
@@ -99,76 +136,69 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
   Widget _buildWeekCalendar() {
     final weekStart = _getWeekStart(_selectedDate);
     
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Weekly Schedule',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            'WEEKLY GRID',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey400,
+              letterSpacing: 1.2,
             ),
-            const SizedBox(height: AppTheme.spacingM),
-            Row(
-              children: List.generate(7, (index) {
-                final day = weekStart.add(Duration(days: index));
-                final isToday = _isSameDay(day, DateTime.now());
-                final isSelected = _isSameDay(day, _selectedDate);
-                
-                return Expanded(
-                  child: InkWell(
-                    onTap: () => setState(() => _selectedDate = day),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 2),
-                      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingS),
-                      decoration: BoxDecoration(
-                        color: isSelected 
-                            ? AppTheme.primaryGreen
-                            : isToday 
-                                ? AppTheme.secondaryGreen.withValues(alpha: 0.2)
-                                : null,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            DateFormat('EEE').format(day),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: isSelected 
-                                  ? Colors.white 
-                                  : isToday 
-                                      ? AppTheme.primaryGreen
-                                      : AppTheme.grey700,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${day.day}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: isSelected 
-                                  ? Colors.white 
-                                  : isToday 
-                                      ? AppTheme.primaryGreen
-                                      : AppTheme.grey900,
-                            ),
-                          ),
-                        ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(7, (index) {
+            final day = weekStart.add(Duration(days: index));
+            final isToday = _isSameDay(day, DateTime.now());
+            final isSelected = _isSameDay(day, _selectedDate);
+            
+            return GestureDetector(
+              onTap: () => setState(() => _selectedDate = day),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 44,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppTheme.bgDark : (isToday ? AppTheme.primaryEmerald.withValues(alpha: 0.1) : AppTheme.bgCanvas),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: isSelected ? AppTheme.smoothShadow : null,
+                  border: Border.all(
+                    color: isSelected ? AppTheme.bgDark : AppTheme.grey100,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      DateFormat('E').format(day)[0],
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: isSelected ? Colors.white.withValues(alpha: 0.5) : AppTheme.grey400,
                       ),
                     ),
-                  ),
-                );
-              }),
-            ),
-          ],
+                    const SizedBox(height: 4),
+                    Text(
+                      '${day.day}',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: isSelected ? Colors.white : (isToday ? AppTheme.primaryEmerald : AppTheme.grey800),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
         ),
-      ),
+      ],
     );
   }
 
@@ -180,34 +210,55 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Schedule for ${DateFormat('EEEE, MMM d').format(_selectedDate)}',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingM),
-        if (todaySchedule.isEmpty)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingL),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.schedule,
-                    color: AppTheme.grey400,
-                    size: 48,
-                  ),
-                  const SizedBox(height: AppTheme.spacingM),
-                  Text(
-                    'No shifts scheduled',
-                    style: TextStyle(
-                      color: AppTheme.grey600,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Text(
+                'COLLECTION LOG • ',
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.grey400,
+                  letterSpacing: 1.2,
+                ),
               ),
+            ),
+            Text(
+              DateFormat('EEEE, MMM d').format(_selectedDate).toUpperCase(),
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.primaryEmerald,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        if (todaySchedule.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(48),
+            decoration: BoxDecoration(
+              color: AppTheme.bgCanvas,
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: AppTheme.grey100),
+            ),
+            child: Column(
+              children: [
+                Icon(Icons.offline_pin_rounded, color: AppTheme.grey200, size: 48),
+                const SizedBox(height: 16),
+                Text(
+                  'NO ACTIVE SHIFTS',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppTheme.grey400,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
             ),
           )
         else
@@ -217,166 +268,195 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
   }
 
   Widget _buildShiftCard(Map<String, dynamic> shift) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: shift['type'] == 'Morning' 
-                        ? AppTheme.info.withValues(alpha: 0.1)
-                        : shift['type'] == 'Evening'
-                            ? AppTheme.warning.withValues(alpha: 0.1)
-                            : AppTheme.primaryGreen.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  ),
-                  child: Icon(
-                    shift['type'] == 'Morning' 
-                        ? Icons.wb_sunny
-                        : shift['type'] == 'Evening'
-                            ? Icons.nights_stay
-                            : Icons.schedule,
-                    color: shift['type'] == 'Morning' 
-                        ? AppTheme.info
-                        : shift['type'] == 'Evening'
-                            ? AppTheme.warning
-                            : AppTheme.primaryGreen,
-                    size: 20,
-                  ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                const SizedBox(width: AppTheme.spacingM),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${shift['start']} - ${shift['end']}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        shift['type'],
-                        style: TextStyle(
-                          color: AppTheme.grey600,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: Icon(
+                  shift['type'] == 'Morning' ? Icons.wb_twilight_rounded : Icons.nights_stay_rounded,
+                  color: AppTheme.primaryEmerald,
+                  size: 22,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingS,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: shift['status'] == 'Confirmed' 
-                        ? AppTheme.success.withValues(alpha: 0.1)
-                        : AppTheme.warning.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  ),
-                  child: Text(
-                    shift['status'],
-                    style: TextStyle(
-                      color: shift['status'] == 'Confirmed' 
-                          ? AppTheme.success 
-                          : AppTheme.warning,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${shift['start']} — ${shift['end']}',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 18,
+                        color: AppTheme.grey900,
+                      ),
                     ),
+                    Text(
+                      '${shift['type']} Operational Shift',
+                      style: GoogleFonts.inter(
+                        color: AppTheme.grey500,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: shift['status'] == 'Confirmed' ? AppTheme.primaryEmerald.withValues(alpha: 0.1) : const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  shift['status'].toString().toUpperCase(),
+                  style: GoogleFonts.inter(
+                    color: shift['status'] == 'Confirmed' ? AppTheme.primaryEmerald : const Color(0xFFF59E0B),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.8,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingM),
-            _detailRow(Icons.location_on, 'Ward ${shift['ward']}'),
-            const SizedBox(height: AppTheme.spacingXS),
-            _detailRow(Icons.people, '${shift['pickups']} pickups estimated'),
-            const SizedBox(height: AppTheme.spacingXS),
-            _detailRow(Icons.access_time, '${shift['duration']} hours'),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(child: _shiftMetric(Icons.hub_rounded, 'UNIT', 'Ward ${shift['ward']}')),
+              Expanded(child: _shiftMetric(Icons.playlist_add_check_rounded, 'TARGET', '${shift['pickups']} POINTS')),
+              Expanded(child: _shiftMetric(Icons.timelapse_rounded, 'WINDOW', '${shift['duration']}H')),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _detailRow(IconData icon, String text) {
-    return Row(
+  Widget _shiftMetric(IconData icon, String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: AppTheme.grey600),
-        const SizedBox(width: AppTheme.spacingS),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(color: AppTheme.grey700),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildWeeklyOverview() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
           children: [
+            Icon(icon, size: 12, color: AppTheme.grey400),
+            const SizedBox(width: 6),
             Text(
-              'This Week Overview',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 9,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.grey400,
               ),
             ),
-            const SizedBox(height: AppTheme.spacingM),
-            Row(
-              children: [
-                Expanded(
-                  child: _overviewStat('Total Hours', '40', Icons.access_time, AppTheme.info),
-                ),
-                const SizedBox(width: AppTheme.spacingM),
-                Expanded(
-                  child: _overviewStat('Working Days', '5', Icons.calendar_today, AppTheme.success),
-                ),
-                const SizedBox(width: AppTheme.spacingM),
-                Expanded(
-                  child: _overviewStat('Est. Pickups', '60', Icons.recycling, AppTheme.primaryGreen),
-                ),
-              ],
-            ),
           ],
         ),
-      ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: AppTheme.grey800,
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _overviewStat(String title, String value, IconData icon, Color color) {
+
+
+  Widget _buildWeeklyOverview() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: AppTheme.spacingS),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            'WEEKLY PERFORMANCE',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey400,
+              letterSpacing: 1.2,
+            ),
           ),
         ),
-        const SizedBox(height: AppTheme.spacingXS),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: AppTheme.grey600,
-          ),
-          textAlign: TextAlign.center,
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _overviewItem('Est. Hours', '40', Icons.timelapse_rounded, const Color(0xFF6366F1)),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _overviewItem('Ops Days', '5', Icons.calendar_today_rounded, AppTheme.primaryEmerald),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _overviewItem('Target', '60', Icons.radar_rounded, const Color(0xFFF59E0B)),
+            ),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _overviewItem(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey900,
+              letterSpacing: -0.5,
+            ),
+          ),
+          Text(
+            label.toUpperCase(),
+            style: GoogleFonts.inter(
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey400,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -388,35 +468,79 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Upcoming Shifts',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            'PIPELINE QUEUE',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey400,
+              letterSpacing: 1.2,
+            ),
           ),
         ),
-        const SizedBox(height: AppTheme.spacingM),
-        Card(
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.bgCanvas,
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey100),
+          ),
           child: ListView.separated(
             shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(vertical: 8),
             physics: const NeverScrollableScrollPhysics(),
             itemCount: upcomingShifts.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
+            separatorBuilder: (_, __) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Divider(height: 1, color: AppTheme.grey100),
+            ),
             itemBuilder: (_, index) {
               final shift = upcomingShifts[index];
               return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                  child: Icon(Icons.schedule, color: AppTheme.primaryGreen),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.bgSurface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppTheme.grey100),
+                  ),
+                  child: const Icon(Icons.sensor_door_rounded, color: AppTheme.grey400, size: 20),
                 ),
                 title: Text(
                   DateFormat('EEE, MMM d').format(shift['date']),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                    color: AppTheme.grey900,
+                  ),
                 ),
-                subtitle: Text('${shift['start']} - ${shift['end']} • Ward ${shift['ward']}'),
-                trailing: Text(
-                  shift['status'],
-                  style: TextStyle(
-                    color: shift['status'] == 'Confirmed' ? AppTheme.success : AppTheme.warning,
+                subtitle: Text(
+                  '${shift['start']} • Ward ${shift['ward']}',
+                  style: GoogleFonts.inter(
+                    color: AppTheme.grey500,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
+                  ),
+                ),
+                trailing: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.bgSurface,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.grey100),
+                  ),
+                  child: Text(
+                    shift['status'].toString().toUpperCase(),
+                    style: GoogleFonts.inter(
+                      color: AppTheme.grey400,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 9,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               );
@@ -437,7 +561,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: AppTheme.primaryGreen,
+              primary: AppTheme.primaryEmerald,
               onPrimary: Colors.white,
               surface: Colors.white,
               onSurface: Colors.black,

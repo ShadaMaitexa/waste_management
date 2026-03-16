@@ -2,45 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // --- Professional Emerald & Slate Palette ---
-  static const Color primaryEmerald = Color(0xFF10B981);
-  static const Color primaryGreen = Color(0xFF059669);
-  static const Color secondaryGreen = Color(0xFF065F46);
-  static const Color secondarySlate = Color(0xFF0F172A);
-  static const Color accentIndigo = Color(0xFF6366F1);
-  static const Color accentGreen = Color(0xFF34D399);
+  // --- Professional Eco-System Palette ---
+  static const Color primaryEmerald = Color(0xFF2ECC71); // Eco Green
+  static const Color primaryGreen = Color(0xFF27AE60);
+  static const Color secondaryGreen = Color(0xFF1E8449);
+  static const Color secondarySlate = Color(0xFF2C3E50);
+  static const Color accentIndigo = Color(0xFF5D6D7E);
+  static const Color accentGreen = Color(0xFF2ECC71);
 
-  // Waste Colors
-  static const Color dryWaste = Color(0xFF60A5FA);
-  static const Color wetWaste = Color(0xFFFACC15);
-  static const Color ewaste = Color(0xFFF87171);
-  
-  // Backgrounds
-  static const Color bgSurface = Color(0xFFF8FAFC);
+  // Backgrounds & Surfaces
+  static const Color bgSurface = Color(0xFFF7F9F9);
   static const Color bgCanvas = Color(0xFFFFFFFF);
-  static const Color bgDark = Color(0xFF0F172A);
+  static const Color bgDark = Color(0xFF1B2631);
   
-  // Greys (Slate palette)
-  static const Color grey50 = Color(0xFFF8FAFC);
-  static const Color grey100 = Color(0xFFF1F5F9);
-  static const Color grey200 = Color(0xFFE2E8F0);
-  static const Color grey300 = Color(0xFFCBD5E1);
-  static const Color grey400 = Color(0xFF94A3B8);
-  static const Color grey500 = Color(0xFF64748B);
-  static const Color grey600 = Color(0xFF475569);
-  static const Color grey700 = Color(0xFF334155);
-  static const Color grey800 = Color(0xFF1E293B);
-  static const Color grey900 = Color(0xFF0F172A);
+  // Neutral Swatches (Slate/Earth)
+  static const Color grey50 = Color(0xFFF8F9F9);
+  static const Color grey100 = Color(0xFFEFF1F1);
+  static const Color grey200 = Color(0xFFD5DBDB);
+  static const Color grey300 = Color(0xFFABB2B9);
+  static const Color grey400 = Color(0xFF808B96);
+  static const Color grey500 = Color(0xFF566573);
+  static const Color grey600 = Color(0xFF2E4053);
+  static const Color grey700 = Color(0xFF283747);
+  static const Color grey800 = Color(0xFF212F3C);
+  static const Color grey900 = Color(0xFF1B2631);
   
-  // Status
-  static const Color success = Color(0xFF10B981);
-  static const Color warning = Color(0xFFF59E0B);
-  static const Color error = Color(0xFFEF4444);
-  static const Color info = Color(0xFF3B82F6);
+  // Status & Actions
+  static const Color success = Color(0xFF28B463);
+  static const Color warning = Color(0xFFF39C12);
+  static const Color error = Color(0xFFE74C3C);
+  static const Color info = Color(0xFF3498DB);
   
-  // Professional Gradients
+  // Modern Linear Gradients
   static const LinearGradient emeraldGradient = LinearGradient(
-    colors: [Color(0xFF10B981), Color(0xFF059669)],
+    colors: [Color(0xFF2ECC71), Color(0xFF27AE60)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -48,54 +43,56 @@ class AppTheme {
   static const LinearGradient primaryGradient = emeraldGradient;
 
   static const LinearGradient slateGradient = LinearGradient(
-    colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+    colors: [Color(0xFF2C3E50), Color(0xFF1B2631)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient indigoGradient = LinearGradient(
-    colors: [Color(0xFF818CF8), Color(0xFF6366F1)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  // Modern Shadows
+  // Soft Premium Shadows
   static List<BoxShadow> get cardShadow => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.03),
-      blurRadius: 20,
-      offset: const Offset(0, 10),
+      color: Colors.black.withValues(alpha: 0.04),
+      blurRadius: 24,
+      offset: const Offset(0, 12),
     ),
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.01),
-      blurRadius: 4,
+      color: Colors.black.withValues(alpha: 0.02),
+      blurRadius: 6,
       offset: const Offset(0, 2),
     ),
   ];
 
   static List<BoxShadow> get intenseShadow => [
     BoxShadow(
-      color: primaryEmerald.withValues(alpha: 0.15),
-      blurRadius: 30,
-      offset: const Offset(0, 15),
+      color: primaryEmerald.withValues(alpha: 0.2),
+      blurRadius: 40,
+      offset: const Offset(0, 20),
     ),
   ];
 
-  // Professional Typography
+  static List<BoxShadow> get smoothShadow => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.03),
+      blurRadius: 15,
+      offset: const Offset(0, 5),
+    ),
+  ];
+
+  // Professional Typography (Inter / Plus Jakarta Sans)
   static TextTheme get textTheme => TextTheme(
-    displayLarge: GoogleFonts.plusJakartaSans(
-      fontSize: 32,
+    displayLarge: GoogleFonts.inter(
+      fontSize: 34,
       fontWeight: FontWeight.w800,
       color: grey900,
-      letterSpacing: -1,
+      letterSpacing: -1.2,
     ),
-    displayMedium: GoogleFonts.plusJakartaSans(
+    displayMedium: GoogleFonts.inter(
       fontSize: 28,
       fontWeight: FontWeight.w800,
       color: grey900,
-      letterSpacing: -0.5,
+      letterSpacing: -0.8,
     ),
-    displaySmall: GoogleFonts.plusJakartaSans(
+    displaySmall: GoogleFonts.inter(
       fontSize: 24,
       fontWeight: FontWeight.w700,
       color: grey900,
@@ -103,26 +100,27 @@ class AppTheme {
     ),
     headlineLarge: GoogleFonts.plusJakartaSans(
       fontSize: 22,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w800,
       color: grey900,
+      letterSpacing: -0.5,
     ),
     headlineMedium: GoogleFonts.plusJakartaSans(
       fontSize: 20,
-      fontWeight: FontWeight.w600,
-      color: grey900,
-    ),
-    titleLarge: GoogleFonts.plusJakartaSans(
-      fontSize: 16,
       fontWeight: FontWeight.w700,
       color: grey900,
     ),
-    bodyLarge: GoogleFonts.plusJakartaSans(
+    titleLarge: GoogleFonts.plusJakartaSans(
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+      color: grey900,
+    ),
+    bodyLarge: GoogleFonts.inter(
       fontSize: 16,
       fontWeight: FontWeight.w500,
       color: grey800,
-      height: 1.5,
+      height: 1.6,
     ),
-    bodyMedium: GoogleFonts.plusJakartaSans(
+    bodyMedium: GoogleFonts.inter(
       fontSize: 14,
       fontWeight: FontWeight.w500,
       color: grey600,
@@ -130,17 +128,16 @@ class AppTheme {
     ),
     labelLarge: GoogleFonts.plusJakartaSans(
       fontSize: 14,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w800,
       color: grey700,
+      letterSpacing: 0.5,
     ),
   );
 
-  // Light Theme Configuration
+  // Theme Configuration
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
-      primaryColor: primaryEmerald,
       scaffoldBackgroundColor: bgSurface,
       textTheme: textTheme,
       colorScheme: ColorScheme.fromSeed(
@@ -153,10 +150,9 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: false,
-        backgroundColor: bgCanvas,
+        backgroundColor: Colors.transparent,
         foregroundColor: grey900,
         surfaceTintColor: Colors.transparent,
-        shadowColor: Colors.black12,
         titleTextStyle: GoogleFonts.plusJakartaSans(
           fontSize: 18,
           fontWeight: FontWeight.w800,
@@ -165,9 +161,10 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         elevation: 0,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: grey200, width: 1),
+          borderRadius: BorderRadius.circular(28),
+          side: BorderSide(color: grey100, width: 1.5),
         ),
         color: bgCanvas,
       ),
@@ -176,41 +173,64 @@ class AppTheme {
           backgroundColor: primaryEmerald,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 15, letterSpacing: 0.5),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: grey800,
+          side: const BorderSide(color: grey200, width: 1.5),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15),
-        ).copyWith(
-          overlayColor: WidgetStateProperty.all(Colors.white.withValues(alpha: 0.1)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: bgCanvas,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: grey200, width: 1.5),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: grey100, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: grey200, width: 1.5),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: grey100, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(color: primaryEmerald, width: 2),
         ),
-        contentPadding: const EdgeInsets.all(20),
-        hintStyle: GoogleFonts.plusJakartaSans(color: grey400, fontSize: 14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        hintStyle: GoogleFonts.inter(color: grey400, fontSize: 14, fontWeight: FontWeight.w500),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: bgCanvas,
+        elevation: 0,
+        indicatorColor: primaryEmerald.withValues(alpha: 0.1),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w800, color: primaryEmerald);
+          }
+          return GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600, color: grey400);
+        }),
       ),
     );
   }
 
-  // Helper for Status Tags
+  static ThemeData get darkTheme => lightTheme.copyWith(
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: bgDark,
+  );
+
+  // Reusable Component Helpers
   static Widget statusTag(String label, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(10),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
       ),
       child: Text(
@@ -219,31 +239,22 @@ class AppTheme {
           color: color,
           fontSize: 10,
           fontWeight: FontWeight.w900,
-          letterSpacing: 0.5,
+          letterSpacing: 1,
         ),
       ),
     );
   }
 
   // Spacing
+  static const double spacingXS = 4.0;
   static const double spacingS = 8.0;
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
-  static const double spacingXXL = 48.0;
 
   // Radius
   static const double radiusS = 8.0;
   static const double radiusM = 16.0;
   static const double radiusL = 24.0;
   static const double radiusXL = 32.0;
-
-  // New Dark Theme
-  static ThemeData get darkTheme => lightTheme.copyWith(
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: bgDark,
-  );
-
-  // Spacing XS
-  static const double spacingXS = 4.0;
 }

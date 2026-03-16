@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
@@ -113,34 +114,18 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildLogo(),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 56),
                     _buildWelcomeText(),
-                    const SizedBox(height: 48),
-                    Container(
-                      padding: const EdgeInsets.all(32),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 40,
-                            offset: const Offset(0, 20),
-                          ),
+                    const SizedBox(height: 56),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildLoginForm(),
+                          const SizedBox(height: 48),
+                          _buildLoginButton(),
                         ],
-                        // Subtle backdrop blur effect for glassmorphism
-                      ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _buildLoginForm(),
-                            const SizedBox(height: 32),
-                            _buildLoginButton(),
-                          ],
-                        ),
                       ),
                     ),
                   ],
@@ -155,18 +140,27 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
   Widget _buildLogo() {
     return Container(
-      width: 100,
-      height: 100,
-      padding: const EdgeInsets.all(20),
+      width: 140,
+      height: 140,
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.3)),
+        color: AppTheme.bgDark.withValues(alpha: 0.5),
+        shape: BoxShape.circle,
+        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.2), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+            blurRadius: 40,
+            spreadRadius: 2,
+          ),
+        ],
       ),
-      child: const Icon(
-        Icons.security_rounded,
-        size: 50,
-        color: AppTheme.primaryEmerald,
+      child: const Center(
+        child: Icon(
+          Icons.shield_rounded,
+          size: 64,
+          color: AppTheme.primaryEmerald,
+        ),
       ),
     );
   }
@@ -174,23 +168,23 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
   Widget _buildWelcomeText() {
     return Column(
       children: [
-        const Text(
+        Text(
           'Command Center',
-          style: TextStyle(
+          style: GoogleFonts.plusJakartaSans(
             color: Colors.white,
-            fontSize: 32,
+            fontSize: 40,
             fontWeight: FontWeight.w900,
-            letterSpacing: -1,
+            letterSpacing: -1.5,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
-          'ADMINISTRATOR ACCESS ONLY',
-          style: TextStyle(
-            color: AppTheme.primaryEmerald.withValues(alpha: 0.8),
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 2,
+          'RESTRICTED ADMINISTRATIVE ACCESS',
+          style: GoogleFonts.inter(
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.7),
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 4,
           ),
         ),
       ],
@@ -203,59 +197,67 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         TextFormField(
           controller: _usernameController,
           keyboardType: TextInputType.text,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
-            hintText: 'Admin Username',
-            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16),
-            prefixIcon: const Icon(Icons.shield_outlined, color: Colors.white70, size: 20),
-            filled: true,
-            fillColor: Colors.black.withValues(alpha: 0.2),
-            contentPadding: const EdgeInsets.all(20),
+            hintText: 'Enforce Username',
+            hintStyle: GoogleFonts.inter(color: Colors.white.withValues(alpha: 0.2)),
+            prefixIcon: Icon(Icons.shield_rounded, color: AppTheme.primaryEmerald.withValues(alpha: 0.5), size: 20),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(color: AppTheme.primaryEmerald, width: 2),
             ),
+            filled: true,
+            fillColor: Colors.white.withValues(alpha: 0.05),
+            contentPadding: const EdgeInsets.all(24),
           ),
           validator: (value) {
-            if (value == null || value.trim().isEmpty) return 'Username is required';
+            if (value == null || value.trim().isEmpty) return 'Identity clearance required';
             return null;
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         TextFormField(
           controller: _passwordController,
           obscureText: _obscurePassword,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
-            hintText: 'Security Credential',
-            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 16),
-            prefixIcon: const Icon(Icons.key_rounded, color: Colors.white70, size: 20),
+            hintText: 'Security Sequence',
+            hintStyle: GoogleFonts.inter(color: Colors.white.withValues(alpha: 0.2)),
+            prefixIcon: Icon(Icons.key_rounded, color: AppTheme.primaryEmerald.withValues(alpha: 0.5), size: 20),
             suffixIcon: IconButton(
               icon: Icon(
-                _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                color: Colors.white54,
+                _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                color: Colors.white24,
                 size: 20,
               ),
               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
             ),
-            filled: true,
-            fillColor: Colors.black.withValues(alpha: 0.2),
-            contentPadding: const EdgeInsets.all(20),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(color: AppTheme.primaryEmerald, width: 2),
             ),
+            filled: true,
+            fillColor: Colors.white.withValues(alpha: 0.05),
+            contentPadding: const EdgeInsets.all(24),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Password is required';
+            if (value == null || value.isEmpty) return 'Authorization key required';
             return null;
           },
         ),
@@ -264,41 +266,31 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
   }
 
   Widget _buildLoginButton() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: AppTheme.primaryEmerald,
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
+      height: 64,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _login,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
+          backgroundColor: AppTheme.primaryEmerald,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 0,
+          shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.4),
         ),
         child: _isLoading
             ? const SizedBox(
-                height: 24,
-                width: 24,
+                height: 20,
+                width: 20,
                 child: CircularProgressIndicator(
-                  strokeWidth: 3,
+                  strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               )
-            : const Text(
-                'AUTHENTICATE',
-                style: TextStyle(
-                  fontSize: 15,
+            : Text(
+                'ENFORCE AUTHENTICATION',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
                 ),

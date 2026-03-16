@@ -9,277 +9,290 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bgSurface,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 340.0,
-            floating: false,
-            pinned: true,
-            backgroundColor: AppTheme.bgDark,
-            elevation: 0,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      gradient: AppTheme.slateGradient,
-                    ),
-                  ),
-                  Positioned(
-                    right: -40,
-                    top: -40,
-                    child: Icon(Icons.fingerprint_rounded, size: 320, color: Colors.white.withValues(alpha: 0.03)),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 50),
-                      Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
-                          boxShadow: [
-                            BoxShadow(color: AppTheme.bgDark.withValues(alpha: 0.5), blurRadius: 20, offset: const Offset(0, 8))
-                          ]
-                        ),
-                        child: CircleAvatar(
-                          radius: 56,
-                          backgroundColor: Colors.white,
-                          child: Text(
-                            'JD',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 36,
-                              fontWeight: FontWeight.w800,
-                              color: AppTheme.bgDark,
-                              letterSpacing: -1,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'John Doe',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.3), width: 1),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
-                            const SizedBox(width: 8),
-                            Text(
-                              'AMBASSADOR • LEVEL 4',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppTheme.primaryEmerald, 
-                                fontWeight: FontWeight.w800, 
-                                fontSize: 10,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+      appBar: AppBar(
+        title: Text(
+          'USER PROFILE',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w800, 
+            fontSize: 12,
+            letterSpacing: 2,
+            color: AppTheme.grey400,
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingL),
-              child: Column(
-                children: [
-                  _buildStatsRow(),
-                  const SizedBox(height: AppTheme.spacingXL),
-                  _buildSectionTitle('Network'),
-                  _buildSettingsCard(
-                    [
-                      _SettingItem(Icons.person_rounded, 'Authentication Data', () {}),
-                      _SettingItem(Icons.map_rounded, 'Service Location', () {}),
-                      _SettingItem(Icons.qr_code_2_rounded, 'Identity Token', () {}),
-                    ],
-                  ),
-                  const SizedBox(height: AppTheme.spacingL),
-                  _buildSectionTitle('Preferences'),
-                  _buildSettingsCard(
-                    [
-                      _SettingItem(Icons.notifications_active_rounded, 'Alert Settings', () {}),
-                      _SettingItem(Icons.language_rounded, 'Localization', () {}),
-                      _SettingItem(Icons.contrast_rounded, 'Visual Mode', () {}),
-                    ],
-                  ),
-                  const SizedBox(height: AppTheme.spacingL),
-                  _buildSectionTitle('System Status'),
-                  _buildSettingsCard(
-                    [
-                      _SettingItem(Icons.support_agent_rounded, 'Support Protocol', () {}),
-                      _SettingItem(Icons.security_rounded, 'Data Privacy', () {}),
-                      _SettingItem(
-                        Icons.exit_to_app_rounded,
-                        'End Session',
-                        () {},
-                        isDestructive: true,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 60),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          children: [
+            _buildProfileHeader(),
+            const SizedBox(height: 40),
+            _buildStatsSection(),
+            const SizedBox(height: 48),
+            _buildActionSection(),
+            const SizedBox(height: 48),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatsRow() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey200),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildStatItem('1,250', 'XP METRIC', Icons.military_tech_rounded, const Color(0xFFF59E0B)),
-          _verticalDivider(),
-          _buildStatItem('24', 'DISPATCHES', Icons.local_shipping_rounded, AppTheme.primaryEmerald),
-          _verticalDivider(),
-          _buildStatItem('12kg', 'CO2 INDEX', Icons.cloud_done_rounded, AppTheme.info),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String value, String label, IconData icon, Color color) {
+  Widget _buildProfileHeader() {
     return Column(
       children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 12),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1.5),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: CircleAvatar(
+                  radius: 64,
+                  backgroundColor: AppTheme.bgSurface,
+                  child: Icon(Icons.person_rounded, size: 48, color: AppTheme.grey300),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 8,
+              bottom: 8,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.bgDark,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 3),
+                  boxShadow: AppTheme.cardShadow,
+                ),
+                child: const Icon(Icons.edit_rounded, color: Colors.white, size: 16),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 28),
         Text(
-          value,
+          'John Doe',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 24,
+            fontSize: 32,
             fontWeight: FontWeight.w800,
             color: AppTheme.grey900,
             letterSpacing: -1,
           ),
         ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: GoogleFonts.plusJakartaSans(
-            color: AppTheme.grey500,
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
+              const SizedBox(width: 8),
+              Text(
+                'CERTIFIED AMBASSADOR',
+                style: GoogleFonts.inter(
+                  color: AppTheme.primaryEmerald,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 10,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _verticalDivider() {
-    return Container(
-      height: 48,
-      width: 1,
-      color: AppTheme.grey200,
+  Widget _buildStatsSection() {
+    return Row(
+      children: [
+        Expanded(child: _buildStatItem('1,250', 'XP METRIC', Icons.military_tech_rounded, const Color(0xFFF59E0B))),
+        const SizedBox(width: 16),
+        Expanded(child: _buildStatItem('24', 'PICKUPS', Icons.local_shipping_rounded, AppTheme.primaryEmerald)),
+      ],
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 12, left: 16, top: 8),
-        child: Text(
-          title.toUpperCase(),
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.grey400,
-            letterSpacing: 1.5,
+  Widget _buildActionSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('ACCOUNT INFRASTRUCTURE'),
+        const SizedBox(height: 16),
+        _buildSettingsCard([
+          _SettingItem(Icons.person_outline_rounded, 'Authentication Profiles', () {}),
+          _SettingItem(Icons.location_on_outlined, 'Service Geometry', () {}),
+          _SettingItem(Icons.security_outlined, 'Privacy & Security', () {}),
+        ]),
+        const SizedBox(height: 32),
+        _buildSectionHeader('SYSTEM PREFERENCES'),
+        const SizedBox(height: 16),
+        _buildSettingsCard([
+          _SettingItem(Icons.notifications_none_rounded, 'Alert Preferences', () {}),
+          _SettingItem(Icons.language_rounded, 'Operational Language', () {}),
+          _SettingItem(Icons.help_outline_rounded, 'Support Protocol', () {}),
+        ]),
+        const SizedBox(height: 32),
+        SizedBox(
+          width: double.infinity,
+          height: 64,
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.bgDark,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              elevation: 4,
+              shadowColor: AppTheme.bgDark.withValues(alpha: 0.3),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'TERMINATE SESSION',
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1),
+                ),
+                const SizedBox(width: 12),
+                const Icon(Icons.power_settings_new_rounded, size: 18, color: AppTheme.error),
+              ],
+            ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      child: Text(
+        title,
+        style: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: AppTheme.grey400,
+          letterSpacing: 1.2,
         ),
       ),
     );
   }
+
+  Widget _buildStatItem(String value, String label, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            value,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.grey900,
+              letterSpacing: -1.5,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              color: AppTheme.grey400,
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   Widget _buildSettingsCard(List<_SettingItem> items) {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey200),
+        border: Border.all(color: AppTheme.grey100),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: Column(
-          children: items.asMap().entries.map((entry) {
-            final index = entry.key;
-            final item = entry.value;
-            final color = item.isDestructive ? AppTheme.error : AppTheme.grey700;
-            
-            return Material(
-              color: Colors.transparent,
-              child: InkWell(
+      child: Column(
+        children: items.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          
+          return Column(
+            children: [
+              InkWell(
                 onTap: item.onTap,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: item.isDestructive ? AppTheme.error.withValues(alpha: 0.1) : AppTheme.bgSurface,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(item.icon, color: color, size: 20),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              item.title,
-                              style: GoogleFonts.plusJakartaSans(
-                                color: color,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                          const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey400),
-                        ],
+                borderRadius: index == 0 
+                  ? const BorderRadius.vertical(top: Radius.circular(32))
+                  : index == items.length - 1
+                    ? const BorderRadius.vertical(bottom: Radius.circular(32))
+                    : null,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  child: Row(
+                    children: [
+                      Icon(item.icon, color: AppTheme.primaryEmerald, size: 22),
+                      const SizedBox(width: 16),
+                      Text(
+                        item.title,
+                        style: GoogleFonts.inter(
+                          color: AppTheme.grey800,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
                       ),
-                    ),
-                    if (index != items.length - 1)
-                      Divider(height: 1, color: AppTheme.grey100, indent: 72, endIndent: 24),
-                  ],
+                      const Spacer(),
+                      const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey300),
+                    ],
+                  ),
                 ),
               ),
-            );
-          }).toList(),
-        ),
+              if (index != items.length - 1)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Divider(height: 1, color: AppTheme.grey100),
+                ),
+            ],
+          );
+        }).toList(),
       ),
     );
   }
@@ -289,7 +302,6 @@ class _SettingItem {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
-  final bool isDestructive;
 
-  _SettingItem(this.icon, this.title, this.onTap, {this.isDestructive = false});
+  _SettingItem(this.icon, this.title, this.onTap);
 }

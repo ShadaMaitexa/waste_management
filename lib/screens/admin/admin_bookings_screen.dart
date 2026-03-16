@@ -133,12 +133,18 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100, width: 1),
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: statusColor.withValues(alpha: 0.05),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+        border: Border.all(color: statusColor.withValues(alpha: 0.15), width: 1.5),
       ),
       child: Column(
         children: [
@@ -179,9 +185,9 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
-              color: AppTheme.grey50.withValues(alpha: 0.8),
+              color: AppTheme.grey50.withValues(alpha: 0.5),
               border: const Border(top: BorderSide(color: AppTheme.grey100)),
             ),
             child: Row(
@@ -193,7 +199,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Row(
               children: [
                 if (assignedWorkerName != null)
@@ -202,27 +208,33 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1)),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.15)),
                       ),
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(color: AppTheme.primaryEmerald, shape: BoxShape.circle),
-                            child: const Icon(Icons.check, color: Colors.white, size: 12),
+                            child: const Icon(Icons.check_rounded, color: Colors.white, size: 14),
                           ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('ASSIGNED DISPATCHER', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 0.5)),
-                              Text(assignedWorkerName, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppTheme.grey900)),
-                            ],
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('ASSIGNED DISPATCHER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.grey500, letterSpacing: 1.0)),
+                                const SizedBox(height: 2),
+                                Text(assignedWorkerName, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppTheme.grey900), maxLines: 1, overflow: TextOverflow.ellipsis),
+                              ],
+                            ),
                           ),
-                          const Spacer(),
                           IconButton(
-                            icon: const Icon(Icons.edit_outlined, size: 18, color: AppTheme.primaryEmerald),
+                            icon: const Icon(Icons.edit_rounded, size: 20, color: AppTheme.primaryEmerald),
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
                             onPressed: () => _showAssignWorkerDialog(pickup, workers),
                           ),
                         ],
@@ -235,11 +247,12 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                       onPressed: () => _showAssignWorkerDialog(pickup, workers),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.grey900,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
-                      icon: const Icon(Icons.person_add_rounded, size: 20),
-                      label: const Text('ASSIGN FIELD DISPATCHER', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                      icon: const Icon(Icons.person_add_rounded, size: 20, color: Colors.white),
+                      label: const Text('ASSIGN FIELD DISPATCHER', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, color: Colors.white, fontSize: 13)),
                     ),
                   ),
               ],

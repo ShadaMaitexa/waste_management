@@ -110,28 +110,35 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
     final statusColor = _getStatusColor(complaint.status);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100, width: 1),
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: statusColor.withValues(alpha: 0.05),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+        border: Border.all(color: statusColor.withValues(alpha: 0.15), width: 1.5),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
           dividerColor: Colors.transparent,
-          splashColor: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+          splashColor: statusColor.withValues(alpha: 0.05),
+          highlightColor: statusColor.withValues(alpha: 0.02),
         ),
         child: ExpansionTile(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+          collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           childrenPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           leading: Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: statusColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Icon(_getStatusIcon(complaint.status), color: statusColor, size: 24),
           ),
@@ -193,23 +200,27 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                   child: OutlinedButton(
                     onPressed: () => _showActionDialog(complaint),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: AppTheme.grey200),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      side: const BorderSide(color: AppTheme.grey200, width: 1.5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      foregroundColor: AppTheme.grey900,
                     ),
-                    child: const Text('UPDATE STATUS', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, fontSize: 13)),
+                    child: const Text('UPDATE STATUS', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, fontSize: 12)),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.grey900,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     ),
-                    child: const Text('ENGAGE AGENT', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, fontSize: 13)),
+                    icon: const Icon(Icons.support_agent_rounded, size: 18),
+                    label: const Text('ENGAGE AGENT', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, fontSize: 12)),
                   ),
                 ),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 
 class HazardousWasteScreen extends StatefulWidget {
@@ -74,177 +75,144 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Dark theme specific for this exact screen to match Akri completely
-    return Theme(
-      data: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF0F0F0F),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0F0F0F),
-          elevation: 0,
-          foregroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: AppTheme.bgSurface,
+      appBar: AppBar(
+        title: Text(
+          'SPECIALIZED WASTE',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w800, 
+            fontSize: 12,
+            letterSpacing: 2,
+            color: AppTheme.grey400,
+          ),
         ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline_rounded, size: 20),
+            onPressed: () {},
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: const Text(
-            'Sanitary & Bio-Waste',
-            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white, letterSpacing: -0.5),
-          ),
-          centerTitle: true,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: IconButton(
-                icon: const Icon(Icons.help_outline_rounded, color: Colors.white70),
-                onPressed: () => Navigator.pushNamed(context, '/help'),
-              ),
+      body: Column(
+        children: [
+          _buildInfoBanner(),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSidebar(),
+                _buildItemsGrid(),
+              ],
             ),
-          ],
-        ),
-        body: Column(
-          children: [
-            _buildTopBanner(),
-            const SizedBox(height: 24),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSideMenu(),
-                  _buildItemsList(),
-                ],
-              ),
-            ),
-            _buildBottomBar(),
-          ],
-        ),
+          ),
+          _buildActionFooter(),
+        ],
       ),
     );
   }
 
-  Widget _buildTopBanner() {
-    final tab = _tabs[_selectedTabIndex];
+  Widget _buildInfoBanner() {
     return Container(
-        margin: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-        height: 100,
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF1A1A1A),
-              tab['color'].withValues(alpha: 0.15),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      width: double.infinity,
+      margin: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.bgCanvas,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.security_rounded, color: AppTheme.primaryEmerald, size: 22),
           ),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: tab['color'].withValues(alpha: 0.2), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4), // Darker shadow for slate theme
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Biomedical Waste',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: -0.5),
-                  ),
-                  Text(
-                    'SAFE DISPOSAL PROTOCOL',
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
-                  ),
-                ],
-              ),
-            ),
-            const VerticalDivider(color: Colors.white24, width: 32),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.center,
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    const Text(
-                      '₹45',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 24),
-                    ),
-                    const SizedBox(width: AppTheme.spacingS),
-                    Text(
-                      '/KG',
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 10, fontWeight: FontWeight.w800),
-                    ),
-                  ],
-                ),
                 Text(
-                  '+GST EXTRA',
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 8, fontWeight: FontWeight.w700),
+                  'SAFETY PROTOCOL ACTIVE',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.grey400,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Adhere to designated disposal geometry.',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.grey800,
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildSideMenu() {
+
+
+  Widget _buildSidebar() {
     return Container(
-      width: 90,
-      margin: const EdgeInsets.only(left: 20, right: 12),
+      width: 96,
       child: ListView.builder(
+        padding: const EdgeInsets.only(left: 24, right: 12),
         itemCount: _tabs.length,
         itemBuilder: (context, index) {
           final tab = _tabs[index];
           final isSelected = _selectedTabIndex == index;
+          final color = tab['color'] as Color;
 
           return GestureDetector(
             onTap: () => setState(() => _selectedTabIndex = index),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 200),
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withValues(alpha: 0.1) : Colors.transparent,
+                color: isSelected ? color.withValues(alpha: 0.1) : AppTheme.bgCanvas,
                 borderRadius: BorderRadius.circular(20),
-                border: isSelected 
-                    ? Border.all(color: tab['color'].withValues(alpha: 0.5), width: 1.5)
-                    : Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1.5),
+                border: Border.all(
+                  color: isSelected ? color.withValues(alpha: 0.3) : AppTheme.grey100,
+                  width: 1.5,
+                ),
               ),
               child: Column(
                 children: [
                   Icon(
                     tab['icon'],
-                    color: isSelected ? tab['color'] : Colors.white24,
+                    color: isSelected ? color : AppTheme.grey300,
                     size: 24,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    tab['title'].split('\n')[0].toUpperCase(),
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white24,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 10,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                  const SizedBox(height: 12),
                   Text(
                     tab['title'].split('\n')[1].toUpperCase(),
-                    style: TextStyle(
-                      color: isSelected ? tab['color'] : Colors.white24,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 8,
+                    style: GoogleFonts.inter(
+                      color: isSelected ? color : AppTheme.grey400,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 9,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -257,137 +225,145 @@ class _HazardousWasteScreenState extends State<HazardousWasteScreen> {
     );
   }
 
-  Widget _buildItemsList() {
+  Widget _buildItemsGrid() {
     final items = _categoryItems[_selectedTabIndex] ?? [];
 
     return Expanded(
-      child: Container(
-        margin: const EdgeInsets.only(right: 20),
-        child: ListView.builder(
-          padding: EdgeInsets.zero,
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            final isSelected = _selectedItems.contains(item['name']);
-
-            return GestureDetector(
-              onTap: () => _toggleItem(item['name']),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF2C2C2E),
-                      const Color(0xFF1C1C1E),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  border: Border.all(
-                    color: isSelected ? AppTheme.primaryGreen.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingS),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                      ),
-                      child: Icon(item['icon'], color: Colors.white, size: 24),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        item['name'],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    if (isSelected)
-                      const Icon(Icons.check_circle_rounded, color: AppTheme.primaryGreen, size: 24)
-                    else
-                      Icon(Icons.add_circle_outline_rounded, color: Colors.white.withValues(alpha: 0.2), size: 24),
-                  ],
-                ),
-              ),
-            );
-          },
+      child: GridView.builder(
+        padding: const EdgeInsets.only(right: 24, bottom: 24),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          childAspectRatio: 0.85,
         ),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          final isSelected = _selectedItems.contains(item['name']);
+          final tabColor = _tabs[_selectedTabIndex]['color'] as Color;
+
+          return GestureDetector(
+            onTap: () => _toggleItem(item['name']),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color: isSelected ? AppTheme.bgCanvas : AppTheme.bgCanvas.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isSelected ? tabColor.withValues(alpha: 0.4) : AppTheme.grey100,
+                  width: 1.5,
+                ),
+                boxShadow: isSelected ? AppTheme.smoothShadow : null,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isSelected ? tabColor.withValues(alpha: 0.1) : AppTheme.bgSurface,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      item['icon'],
+                      color: isSelected ? tabColor : AppTheme.grey400,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    item['name'].toUpperCase(),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      color: isSelected ? AppTheme.grey900 : AppTheme.grey500,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 10,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  if (isSelected)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Icon(Icons.check_circle_rounded, color: tabColor, size: 16),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildBottomBar() {
-    if (_selectedItems.isEmpty) return const SizedBox.shrink();
+  Widget _buildActionFooter() {
+    if (_selectedItems.isEmpty) return const SizedBox(height: 32);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 48),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1E),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        color: AppTheme.bgDark,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: AppTheme.bgDark.withValues(alpha: 0.4),
             offset: const Offset(0, -10),
             blurRadius: 30,
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${_selectedItems.length} ITEMS SELECTED',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 0.5),
-                ),
-                Text(
-                  'READY FOR COLLECTION',
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10, fontWeight: FontWeight.w700),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            height: 56,
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen]),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primaryGreen.withValues(alpha: 0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: TextButton(
-              onPressed: () => Navigator.of(context).pop(_selectedItems),
-              child: const Text(
-                'CONFIRM',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${_selectedItems.length} SELECTIONS',
+                    style: GoogleFonts.inter(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 10,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '₹${_selectedItems.length * 45} DIVIDEND',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
               ),
-            ),
+              SizedBox(
+                height: 56,
+                width: 140,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context, _selectedItems),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryEmerald,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'VALIDATE',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
