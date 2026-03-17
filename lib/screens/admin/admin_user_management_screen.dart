@@ -579,8 +579,9 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                   final success = await context.read<AdminService>().createHksWorker({
                     'name': nameController.text,
                     'email': emailController.text,
-                    'phone': phoneController.text,
-                    'ward': wardController.text,
+                    'phone_number': phoneController.text,
+                    'ward_number': wardController.text,
+                    'role': 'worker',
                   });
                   if (context.mounted) {
                     Navigator.pop(context);

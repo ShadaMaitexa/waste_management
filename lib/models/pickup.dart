@@ -46,12 +46,15 @@ class Pickup {
   });
 
   factory Pickup.fromJson(Map<String, dynamic> json) {
-    
-    // Status parsing
+    // Status parsing: Django might return 'pending', 'in_progress', 'completed'
     final rawStatus = json['status']?.toString().toLowerCase() ?? 'pending';
     PickupStatus parsedStatus;
-    if (rawStatus == 'pending') {
+    
+    // Map Django status to Flutter enum
+    if (rawStatus == 'pending' || rawStatus == 'scheduled') {
       parsedStatus = PickupStatus.scheduled;
+    } else if (rawStatus == 'in_progress') {
+      parsedStatus = PickupStatus.inProgress;
     } else {
       parsedStatus = PickupStatus.values.firstWhere(
         (e) => e.toString().split('.').last == rawStatus,
@@ -59,51 +62,72 @@ class Pickup {
       );
     }
 
+    // Waste Types parsing: can be list of strings in Django
+    List<WasteType> wasteTypesList = [];
+    if (json['waste_types'] != null) {
+      final List<dynamic> wt = json['waste_types'];
+      wasteTypesList = wt.map((val) {
+        final str = val.toString().toLowerCase();
+        return WasteType.values.firstWhere(
+          (e) => e.toString().split('.').last == str,
+          orElse: () => WasteType.mixed,
+        );
+      }).toList();
+    } else if (json['item'] != null) {
+      // Fallback for older mock or single item field
+      wasteTypesList = [WasteType.mixed];
+    }
+
     return Pickup(
-      id: json['id']?.toString() ?? '',
-      userId: json['resident']?.toString() ?? json['userId'] ?? '',
-      userName: json['resident_name'] ?? json['userName'] ?? '',
-      userPhone: json['userPhone'] ?? '',
+      id: (json['id'] ?? '').toString(),
+      userId: (json['resident'] ?? json['user_id'] ?? json['userId'] ?? '').toString(),
+      userName: json['resident_name'] ?? json['user_name'] ?? json['userName'] ?? '',
+      userPhone: json['resident_phone'] ?? json['phone_number'] ?? json['userPhone'] ?? '',
       address: json['address'] ?? '',
-      wardNumber: json['wardNumber'] ?? '',
+      wardNumber: (json['ward'] ?? json['ward_number'] ?? json['wardNumber'] ?? '').toString(),
       type: PickupType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['type'],
+        (e) => e.toString().split('.').last == (json['type'] ?? 'regular'),
         orElse: () => PickupType.regular,
       ),
       status: parsedStatus,
       scheduledDate: json['date'] != null 
           ? DateTime.tryParse(json['date']) ?? DateTime.now()
-          : (json['scheduledDate'] != null ? DateTime.parse(json['scheduledDate']) : DateTime.now()),
-      scheduledTime: json['scheduledTime'] != null 
-          ? TimeOfDay.fromDateTime(DateTime.parse(json['scheduledTime'])) 
-          : TimeOfDay.now(),
-      notes: json['notes'],
-      assignedWorkerId: json['assignedWorkerId'],
-      assignedWorkerName: json['assignedWorkerName'],
-      completedAt: json['completedAt'] != null ? DateTime.parse(json['completedAt']) : null,
+          : (json['scheduled_date'] != null ? DateTime.parse(json['scheduled_date']) : DateTime.now()),
+      scheduledTime: json['scheduled_time'] != null 
+          ? _parseTime(json['scheduled_time']) 
+          : const TimeOfDay(hour: 8, minute: 0),
+      notes: json['notes'] ?? json['special_instructions'],
+      assignedWorkerId: json['assigned_worker']?.toString() ?? json['assignedWorkerId'],
+      assignedWorkerName: json['worker_name'] ?? json['assignedWorkerName'],
+      completedAt: json['completed_at'] != null ? DateTime.parse(json['completed_at']) : null,
       createdAt: json['created_at'] != null 
           ? DateTime.parse(json['created_at']) 
-          : (json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now()),
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      weight: json['weight']?.toDouble(),
-      wasteTypes: [],
-      specialInstructions: json['item_display'] ?? json['item'] ?? json['specialInstructions'],
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
+      weight: json['weight_kg']?.toDouble() ?? json['weight']?.toDouble(),
+      wasteTypes: wasteTypesList,
+      specialInstructions: json['item_display'] ?? json['item'] ?? json['special_instructions'],
     );
   }
 
-  Map<String, dynamic> toJson() {
-    // Determine the status string backend expects
-    String targetStatus = status.toString().split('.').last;
-    if (targetStatus == 'scheduled') {
-      targetStatus = 'pending';
+  static TimeOfDay _parseTime(String timeStr) {
+    try {
+      final parts = timeStr.split(':');
+      return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+    } catch (e) {
+      return const TimeOfDay(hour: 8, minute: 0);
     }
+  }
 
-    // Backend expects item, address, date, status for creating
+  Map<String, dynamic> toJson() {
     return {
-      'item': 'ampoules', // or a default value, or grab from wasteTypes if it existed
       'address': address,
       'date': "${scheduledDate.year}-${scheduledDate.month.toString().padLeft(2, '0')}-${scheduledDate.day.toString().padLeft(2, '0')}",
-      'status': targetStatus,
+      'scheduled_time': "${scheduledTime.hour.toString().padLeft(2, '0')}:${scheduledTime.minute.toString().padLeft(2, '0')}",
+      'status': status == PickupStatus.scheduled ? 'pending' : status.toString().split('.').last,
+      'waste_types': wasteTypes.map((e) => e.toString().split('.').last).toList(),
+      'notes': notes,
+      'ward_number': wardNumber,
     };
   }
 

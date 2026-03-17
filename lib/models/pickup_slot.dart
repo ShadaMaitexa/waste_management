@@ -23,15 +23,15 @@ class PickupSlot {
     return PickupSlot(
       id: json['id']?.toString() ?? '',
       date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
-      startTime: json['startTime'] != null 
-          ? _parseTime(json['startTime'])
+      startTime: (json['start_time'] != null || json['startTime'] != null)
+          ? _parseTime(json['start_time'] ?? json['startTime'])
           : const TimeOfDay(hour: 8, minute: 0),
-      endTime: json['endTime'] != null 
-          ? _parseTime(json['endTime'])
+      endTime: (json['end_time'] != null || json['endTime'] != null)
+          ? _parseTime(json['end_time'] ?? json['endTime'])
           : const TimeOfDay(hour: 10, minute: 0),
-      isAvailable: json['isAvailable'] ?? true,
+      isAvailable: json['is_available'] ?? json['isAvailable'] ?? true,
       capacity: json['capacity'] ?? 10,
-      bookedCount: json['bookedCount'] ?? 0,
+      bookedCount: json['booked_count'] ?? json['bookedCount'] ?? 0,
     );
   }
 
@@ -46,11 +46,11 @@ class PickupSlot {
   Map<String, dynamic> toJson() => {
     'id': id,
     'date': date.toIso8601String().split('T')[0],
-    'startTime': '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}',
-    'endTime': '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
-    'isAvailable': isAvailable,
+    'start_time': '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}',
+    'end_time': '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
+    'is_available': isAvailable,
     'capacity': capacity,
-    'bookedCount': bookedCount,
+    'booked_count': bookedCount,
   };
 
   String formatTime(BuildContext context) {

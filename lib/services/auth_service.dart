@@ -57,40 +57,31 @@ class AuthService extends ChangeNotifier {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email.trim(),
-          'username': email.trim(), // Support backend if it expects 'username' instead of 'email'
+          'username': email.trim(), 
           'password': password,
         }),
       );
 
       debugPrint('[AuthService] Login status: ${response.statusCode}');
-      debugPrint('[AuthService] Login body: ${response.body}');
-
       _isLoading = false;
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        // Token may be nested: { tokens: { access: '...' } } or at root level
         String? token;
         if (data['tokens'] != null) {
           token = data['tokens']['access'];
         }
         token ??= data['access'] ?? data['token'];
 
-        if (token == null) {
-          debugPrint('[AuthService] No token found in response');
-          notifyListeners();
-          return false;
-        }
+        if (token == null) return false;
+        
         await _saveToken(token);
 
-        // Try to build user from login response directly (avoids extra profile call)
         try {
           _currentUser = User.fromJson(data);
-          debugPrint('[AuthService] User from login: ${_currentUser?.name}, role: ${_currentUser?.userType}');
           notifyListeners();
         } catch (e) {
-          debugPrint('[AuthService] Could not parse user from login response: $e');
-          // Fall back to separate profile fetch
           await getProfile();
         }
 
@@ -99,7 +90,6 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return false;
     } catch (e) {
-      debugPrint('[AuthService] Login error: $e');
       _isLoading = false;
       notifyListeners();
       return false;
@@ -119,21 +109,17 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Django REST API requires: username, email, password, phone, ward
-      // Use provided ward, or default "15" if null/empty
       final finalWard = (ward != null && ward.isNotEmpty) ? ward : '15';
       
       final body = jsonEncode({
         'username': name,
         'email': email,
         'password': password,
-        'phone': phoneNumber, // API expects 'phone' not 'phone_number'
+        'phone_number': phoneNumber,
         'address': address,
-        'ward': finalWard, // Required field
+        'ward_number': finalWard,
         'role': userType.toString().split('.').last,
       });
-
-      debugPrint('[AuthService] Register body: $body');
 
       final response = await http.post(
         Uri.parse(ApiConstants.register),
@@ -141,14 +127,10 @@ class AuthService extends ChangeNotifier {
         body: body,
       );
 
-      debugPrint('[AuthService] Register status: ${response.statusCode}');
-      debugPrint('[AuthService] Register response: ${response.body}');
-
       _isLoading = false;
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        // Token may be nested: { tokens: { access: '...' } } or at root level
         String? token;
         if (data['tokens'] != null) {
           token = data['tokens']['access'];
@@ -157,19 +139,16 @@ class AuthService extends ChangeNotifier {
 
         if (token != null) await _saveToken(token);
 
-        // Parse user from response
         try {
           _currentUser = User.fromJson(data);
           notifyListeners();
         } catch (e) {
-          debugPrint('[AuthService] Could not parse user from register response: $e');
           if (token != null) await getProfile();
         }
 
         return true;
       }
 
-      // Handle validation errors (e.g. username taken)
       if (response.statusCode >= 400 && response.statusCode < 500) {
         try {
           final errorData = jsonDecode(response.body) as Map<String, dynamic>;
@@ -183,7 +162,6 @@ class AuthService extends ChangeNotifier {
           }
         } catch (e) {
           if (e is Exception && e.toString().contains('Exception:')) rethrow;
-          // Fall back if it's not JSON
         }
       }
 
@@ -192,7 +170,6 @@ class AuthService extends ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      // Re-throw if we manually threw to show the specific error message in the UI
       if (e is Exception && e.toString().contains('Exception:')) {
         throw Exception(e.toString().replaceAll('Exception: ', ''));
       }
@@ -211,12 +188,8 @@ class AuthService extends ChangeNotifier {
         },
       );
 
-      debugPrint('[AuthService] Profile status: ${response.statusCode}');
-      debugPrint('[AuthService] Profile body: ${response.body}');
-
       if (response.statusCode == 200) {
         _currentUser = User.fromJson(jsonDecode(response.body));
-        debugPrint('[AuthService] Parsed user: ${_currentUser?.name}, type: ${_currentUser?.userType}');
         notifyListeners();
       } else if (response.statusCode == 401) {
         await _clearToken();
@@ -226,7 +199,7 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateProfile({String? name, String? phone, String? address}) async {
+  Future<bool> updateProfile({String? name, String? phone, String? address, String? ward}) async {
     if (_token == null) return false;
 
     try {
@@ -238,8 +211,10 @@ class AuthService extends ChangeNotifier {
         },
         body: jsonEncode({
           if (name != null) 'username': name,
-          if (phone != null) 'phone': phone,
+          if (name != null) 'full_name': name,
+          if (phone != null) 'phone_number': phone,
           if (address != null) 'address': address,
+          if (ward != null) 'ward_number': ward,
         }),
       );
 

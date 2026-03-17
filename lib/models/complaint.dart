@@ -47,6 +47,7 @@ class Complaint {
       'description': description,
       'status': status.toString().split('.').last,
       'category': category,
+      'ward_number': wardNumber,
     };
   }
 }
