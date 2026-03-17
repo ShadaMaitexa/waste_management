@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../models/pickup.dart';
+import '../../models/pickup_slot.dart';
 import '../../services/pickup_service.dart';
+import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
 class BookPickupScreen extends StatefulWidget {
@@ -18,7 +22,16 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   final _notesController = TextEditingController();
 
   final List<WasteType> _selectedWasteTypes = [];
+  PickupSlot? _selectedSlot;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PickupService>(context, listen: false).fetchAvailableSlots();
+    });
+  }
 
   @override
   void dispose() {
@@ -49,22 +62,35 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
       return;
     }
 
+    if (_selectedSlot == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a collection slot'),
+          backgroundColor: AppTheme.error,
+        ),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
       final pickupService = Provider.of<PickupService>(context, listen: false);
 
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final user = authService.currentUser;
+
       final pickup = Pickup(
         id: pickupService.generatePickupId(),
-        userId: 'user1',
-        userName: 'John Doe',
-        userPhone: '+91 9876543210',
+        userId: user?.id ?? 'user_anonymous',
+        userName: user?.name ?? 'Guest User',
+        userPhone: user?.phoneNumber ?? '+91 0000000000',
         address: _addressController.text.trim(),
-        wardNumber: '15',
+        wardNumber: user?.wardNumber ?? '15',
         type: PickupType.regular,
         status: PickupStatus.scheduled,
-        scheduledDate: DateTime.now(), 
-        scheduledTime: const TimeOfDay(hour: 8, minute: 0), 
+        scheduledDate: _selectedSlot!.date, 
+        scheduledTime: _selectedSlot!.startTime, 
         notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
         createdAt: DateTime.now(),
         wasteTypes: _selectedWasteTypes,
@@ -138,7 +164,20 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                         _buildWasteTypeGrid(),
                         const SizedBox(height: 56),
 
-                        _buildStepHeader('02', 'SERVICE PARAMETERS'),
+                        _buildStepHeader('02', 'COLLECTION WINDOW'),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Text(
+                            'Select an available operational slot',
+                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        _buildSlotSelection(),
+                        const SizedBox(height: 56),
+
+                        _buildStepHeader('03', 'SERVICE PARAMETERS'),
                         const SizedBox(height: 8),
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
@@ -441,6 +480,109 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                       const Icon(Icons.bolt_rounded, size: 22, color: AppTheme.primaryEmerald),
                     ],
                   ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSlotSelection() {
+    return Consumer<PickupService>(
+      builder: (context, service, child) {
+        if (service.isLoading && service.availableSlots.isEmpty) {
+          return _buildSlotShimmer();
+        }
+
+        if (service.availableSlots.isEmpty) {
+          return Center(
+            child: Text(
+              'No available slots found for your region.',
+              style: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 13),
+            ),
+          );
+        }
+
+        return SizedBox(
+          height: 100,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: service.availableSlots.length,
+            itemBuilder: (context, index) {
+              final slot = service.availableSlots[index];
+              final isSelected = _selectedSlot?.id == slot.id;
+              final isToday = DateFormat('yyyy-MM-dd').format(slot.date) == DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+              return GestureDetector(
+                onTap: () => setState(() => _selectedSlot = slot),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width: 140,
+                  margin: const EdgeInsets.only(right: 16),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppTheme.bgDark : Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: isSelected ? AppTheme.bgDark : AppTheme.grey100,
+                      width: 1.5,
+                    ),
+                    boxShadow: isSelected ? [
+                      BoxShadow(
+                        color: AppTheme.bgDark.withValues(alpha: 0.2),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      )
+                    ] : AppTheme.cardShadow,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        isToday ? 'TODAY' : DateFormat('EEE, MMM d').format(slot.date).toUpperCase(),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey400,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        slot.formatTime(context),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: isSelected ? Colors.white : AppTheme.grey900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSlotShimmer() {
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        itemBuilder: (_, __) => Shimmer.fromColors(
+          baseColor: Colors.grey[200]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            width: 140,
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+            ),
           ),
         ),
       ),
