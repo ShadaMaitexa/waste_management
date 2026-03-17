@@ -51,19 +51,19 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Reduced
         child: Column(
           children: [
             _buildCurrentWeekHeader(),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24), // Reduced from 32
             _buildWeekCalendar(),
-            const SizedBox(height: 40),
+            const SizedBox(height: 28), // Reduced from 40
             _buildTodaysSchedule(),
-            const SizedBox(height: 48),
+            const SizedBox(height: 32), // Reduced from 48
             _buildWeeklyOverview(),
-            const SizedBox(height: 40),
+            const SizedBox(height: 28), // Reduced from 40
             _buildUpcomingShifts(),
-            const SizedBox(height: 40),
+            const SizedBox(height: 32), // Adjusted
           ],
         ),
       ),
@@ -75,24 +75,24 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
     final weekEnd = weekStart.add(const Duration(days: 6));
     
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20), // Reduced from 24
       decoration: BoxDecoration(
         color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24), // Reduced from 32
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10), // Reduced from 12
             decoration: BoxDecoration(
               color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12), // Reduced from 14
             ),
-            child: const Icon(Icons.display_settings_rounded, color: AppTheme.primaryEmerald, size: 22),
+            child: const Icon(Icons.display_settings_rounded, color: AppTheme.primaryEmerald, size: 20), // Reduced from 22
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14), // Reduced from 16
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +100,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                 Text(
                   'ACTIVE TIMEFRAME',
                   style: GoogleFonts.inter(
-                    fontSize: 9,
+                    fontSize: 8, // Reduced from 9
                     fontWeight: FontWeight.w800,
                     color: AppTheme.grey400,
                     letterSpacing: 1,
@@ -110,7 +110,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                   '${DateFormat('MMM d').format(weekStart)} — ${DateFormat('MMM d').format(weekEnd)}',
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w800,
-                    fontSize: 16,
+                    fontSize: 14, // Reduced from 16
                     color: AppTheme.grey900,
                   ),
                 ),
@@ -118,14 +118,18 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 14), // Reduced from 16
             onPressed: _previousWeek,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
             style: IconButton.styleFrom(backgroundColor: AppTheme.bgSurface),
           ),
           const SizedBox(width: 8),
           IconButton(
-            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14), // Reduced from 16
             onPressed: _nextWeek,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
             style: IconButton.styleFrom(backgroundColor: AppTheme.bgSurface),
           ),
         ],
@@ -163,11 +167,11 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
               onTap: () => setState(() => _selectedDate = day),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: 44,
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                width: 40, // Reduced from 44
+                padding: const EdgeInsets.symmetric(vertical: 10), // Reduced from 12
                 decoration: BoxDecoration(
                   color: isSelected ? AppTheme.bgDark : (isToday ? AppTheme.primaryEmerald.withValues(alpha: 0.1) : AppTheme.bgCanvas),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16), // Reduced from 20
                   boxShadow: isSelected ? AppTheme.smoothShadow : null,
                   border: Border.all(
                     color: isSelected ? AppTheme.bgDark : AppTheme.grey100,
@@ -178,16 +182,16 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                     Text(
                       DateFormat('E').format(day)[0],
                       style: GoogleFonts.inter(
-                        fontSize: 10,
+                        fontSize: 9, // Reduced from 10
                         fontWeight: FontWeight.w800,
                         color: isSelected ? Colors.white.withValues(alpha: 0.5) : AppTheme.grey400,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2), // Reduced from 4
                     Text(
                       '${day.day}',
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 15,
+                        fontSize: 14, // Reduced from 15
                         fontWeight: FontWeight.w800,
                         color: isSelected ? Colors.white : (isToday ? AppTheme.primaryEmerald : AppTheme.grey800),
                       ),
@@ -269,11 +273,11 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
 
   Widget _buildShiftCard(Map<String, dynamic> shift) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.only(bottom: 16), // Reduced from 20
+      padding: const EdgeInsets.all(20), // Reduced from 24
       decoration: BoxDecoration(
         color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(28), // Reduced from 36
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100),
       ),
@@ -282,18 +286,18 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10), // Reduced from 12
                 decoration: BoxDecoration(
                   color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12), // Reduced from 16
                 ),
                 child: Icon(
                   shift['type'] == 'Morning' ? Icons.wb_twilight_rounded : Icons.nights_stay_rounded,
                   color: AppTheme.primaryEmerald,
-                  size: 22,
+                  size: 20, // Reduced from 22
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14), // Reduced from 16
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,7 +306,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                       '${shift['start']} — ${shift['end']}',
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w800,
-                        fontSize: 18,
+                        fontSize: 16, // Reduced from 18
                         color: AppTheme.grey900,
                       ),
                     ),
@@ -310,7 +314,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                       '${shift['type']} Operational Shift',
                       style: GoogleFonts.inter(
                         color: AppTheme.grey500,
-                        fontSize: 12,
+                        fontSize: 11, // Reduced from 12
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -318,16 +322,16 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced from 10, 6
                 decoration: BoxDecoration(
                   color: shift['status'] == 'Confirmed' ? AppTheme.primaryEmerald.withValues(alpha: 0.1) : const Color(0xFFF59E0B).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(8), // Reduced from 10
                 ),
                 child: Text(
                   shift['status'].toString().toUpperCase(),
                   style: GoogleFonts.inter(
                     color: shift['status'] == 'Confirmed' ? AppTheme.primaryEmerald : const Color(0xFFF59E0B),
-                    fontSize: 9,
+                    fontSize: 8, // Reduced from 9
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.8,
                   ),
@@ -335,7 +339,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20), // Reduced from 24
           Row(
             children: [
               Expanded(child: _shiftMetric(Icons.hub_rounded, 'UNIT', 'Ward ${shift['ward']}')),
@@ -419,28 +423,28 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
 
   Widget _overviewItem(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: const EdgeInsets.symmetric(vertical: 20), // Reduced from 24
       decoration: BoxDecoration(
         color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24), // Reduced from 32
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100),
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8), // Reduced from 10
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 18),
+            child: Icon(icon, color: color, size: 16), // Reduced from 18
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10), // Reduced from 12
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 24,
+              fontSize: 20, // Reduced from 24
               fontWeight: FontWeight.w800,
               color: AppTheme.grey900,
               letterSpacing: -0.5,
@@ -449,7 +453,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
           Text(
             label.toUpperCase(),
             style: GoogleFonts.inter(
-              fontSize: 9,
+              fontSize: 8, // Reduced from 9
               fontWeight: FontWeight.w800,
               color: AppTheme.grey400,
               letterSpacing: 0.5,
@@ -484,37 +488,37 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
         Container(
           decoration: BoxDecoration(
             color: AppTheme.bgCanvas,
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(24), // Reduced from 32
             boxShadow: AppTheme.cardShadow,
             border: Border.all(color: AppTheme.grey100),
           ),
           child: ListView.separated(
             shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 4), // Reduced from 8
             physics: const NeverScrollableScrollPhysics(),
             itemCount: upcomingShifts.length,
             separatorBuilder: (_, __) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 20), // Reduced from 24
               child: Divider(height: 1, color: AppTheme.grey100),
             ),
             itemBuilder: (_, index) {
               final shift = upcomingShifts[index];
               return ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4), // Reduced
                 leading: Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8), // Reduced from 10
                   decoration: BoxDecoration(
                     color: AppTheme.bgSurface,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10), // Reduced from 12
                     border: Border.all(color: AppTheme.grey100),
                   ),
-                  child: const Icon(Icons.sensor_door_rounded, color: AppTheme.grey400, size: 20),
+                  child: const Icon(Icons.sensor_door_rounded, color: AppTheme.grey400, size: 18), // Reduced from 20
                 ),
                 title: Text(
                   DateFormat('EEE, MMM d').format(shift['date']),
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w800,
-                    fontSize: 15,
+                    fontSize: 14, // Reduced from 15
                     color: AppTheme.grey900,
                   ),
                 ),
@@ -522,15 +526,15 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                   '${shift['start']} • Ward ${shift['ward']}',
                   style: GoogleFonts.inter(
                     color: AppTheme.grey500,
-                    fontSize: 12,
+                    fontSize: 11, // Reduced from 12
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced
                   decoration: BoxDecoration(
                     color: AppTheme.bgSurface,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6), // Reduced from 8
                     border: Border.all(color: AppTheme.grey100),
                   ),
                   child: Text(
@@ -538,7 +542,7 @@ class _WorkerScheduleScreenState extends State<WorkerScheduleScreen> {
                     style: GoogleFonts.inter(
                       color: AppTheme.grey400,
                       fontWeight: FontWeight.w900,
-                      fontSize: 9,
+                      fontSize: 8, // Reduced from 9
                       letterSpacing: 0.5,
                     ),
                   ),

@@ -148,16 +148,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Column(
                   children: [
                     _buildHeader(),
-                    const SizedBox(height: 56),
+                    const SizedBox(height: 32), // Reduced from 56
                     Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           _buildFormFields(),
-                          const SizedBox(height: 48),
+                          const SizedBox(height: 32), // Reduced from 48
                           _buildRegisterButton(),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 24), // Reduced from 32
                           _buildLoginLink(),
                         ],
                       ),
@@ -193,13 +193,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Column(
       children: [
         Container(
-          width: 100,
-          height: 100,
+          width: 80, // Reduced from 100
+          height: 80, // Reduced from 100
           decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
             boxShadow: AppTheme.cardShadow,
-            border: Border.all(color: Colors.white, width: 4),
+            border: Border.all(color: Colors.white, width: 3),
           ),
           child: Container(
             margin: const EdgeInsets.all(20),
@@ -216,19 +216,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             child: const Icon(
               Icons.person_add_alt_1_rounded,
-              size: 28,
+              size: 24, // Reduced from 28
               color: Colors.white,
             ),
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 24), // Reduced from 32
         Text(
           'Join the Movement',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 36,
+            fontSize: 28, // Reduced from 36
             fontWeight: FontWeight.w900,
             color: AppTheme.grey900,
-            letterSpacing: -1.5,
+            letterSpacing: -1.2,
             height: 1,
           ),
         ),
@@ -387,7 +387,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget _buildRegisterButton() {
     return SizedBox(
       width: double.infinity,
-      height: 64,
+      height: 56, // Reduced from 64
       child: ElevatedButton(
         onPressed: _isLoading ? null : _register,
         style: ElevatedButton.styleFrom(

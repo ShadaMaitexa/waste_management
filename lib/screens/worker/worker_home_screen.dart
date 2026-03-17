@@ -57,23 +57,23 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        height: 100,
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+        height: 84, // Reduced from 100
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20), // Reduced
         decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(24), // Reduced from 32
           child: Container(
             decoration: BoxDecoration(
               color: AppTheme.bgDark.withValues(alpha: 0.95),
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.2), // Reduced
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
                 )
               ],
             ),
@@ -159,15 +159,15 @@ class _DashboardTab extends StatelessWidget {
               slivers: [
                 _buildSliverAppBar(context, workerName),
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingL, vertical: AppTheme.spacingL),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // Reduced from spacingL
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       _buildStatsGrid(context, pendingCount, completedCount),
-                      const SizedBox(height: AppTheme.spacingXL),
+                      const SizedBox(height: 24), // Reduced from spacingXL
                       _buildCurrentTaskCard(context, currentPickup),
-                      const SizedBox(height: AppTheme.spacingXL),
+                      const SizedBox(height: 24), // Reduced from spacingXL
                       _buildQuickActions(context),
-                      const SizedBox(height: AppTheme.spacingXL),
+                      const SizedBox(height: 80), // Adjusted
                     ]),
                   ),
                 ),
@@ -181,7 +181,7 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildSliverAppBar(BuildContext context, String name) {
     return SliverAppBar(
-      expandedHeight: 280.0,
+      expandedHeight: 200.0, // Reduced from 280
       pinned: true,
       elevation: 0,
       backgroundColor: AppTheme.bgDark,
@@ -195,11 +195,11 @@ class _DashboardTab extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               Positioned(
-                right: -40,
-                top: -40,
+                right: -30,
+                top: -30,
                 child: Container(
-                  width: 250,
-                  height: 250,
+                  width: 180, // Reduced from 250
+                  height: 180,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -212,66 +212,59 @@ class _DashboardTab extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(28, 0, 28, 56),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 36), // Reduced
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Reduced
                       decoration: BoxDecoration(
                         color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1.5),
+                        borderRadius: BorderRadius.circular(10), // Reduced
+                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1.2), // Reduced
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            width: 6,
-                            height: 6,
+                            width: 5, // Reduced
+                            height: 5,
                             decoration: const BoxDecoration(
                               color: AppTheme.primaryEmerald,
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.primaryEmerald,
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                )
-                              ],
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 8),
                           Text(
                             'OPERATIVE ACTIVE',
                             style: GoogleFonts.plusJakartaSans(
                               color: Colors.white,
-                              fontSize: 10,
+                              fontSize: 9, // Reduced from 10
                               fontWeight: FontWeight.w900,
-                              letterSpacing: 2,
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 16), // Reduced from 28
                     Text(
                       name,
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white,
-                        fontSize: 48,
+                        fontSize: 32, // Reduced from 48
                         fontWeight: FontWeight.w900,
-                        letterSpacing: -2.5,
+                        letterSpacing: -1.2,
                         height: 1.0,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4), // Reduced
                     Text(
                       'LOGISTICS COMMAND • WARD 15',
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 13,
+                        fontSize: 12, // Reduced from 13
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.5,
                       ),
@@ -286,12 +279,12 @@ class _DashboardTab extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: () {},
-          icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 22),
+          icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 20), // Reduced
           style: IconButton.styleFrom(
             backgroundColor: Colors.white.withValues(alpha: 0.05),
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12), // Reduced
       ],
     );
   }
@@ -322,10 +315,10 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildStatItem(String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // Reduced from 24
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24), // Reduced from 28
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100, width: 1),
       ),
@@ -333,31 +326,31 @@ class _DashboardTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8), // Reduced from 10
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10), // Reduced
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(icon, color: color, size: 18), // Reduced from 20
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16), // Reduced from 20
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 28,
+              fontSize: 24, // Reduced from 28
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -1,
+              letterSpacing: -0.8,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1), // Reduced
           Text(
             title.toUpperCase(),
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 9,
+              fontSize: 8, // Reduced from 9
               color: AppTheme.grey400,
               fontWeight: FontWeight.w900,
-              letterSpacing: 2,
+              letterSpacing: 1.5, // Reduced
             ),
           ),
         ],
@@ -414,19 +407,19 @@ class _DashboardTab extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             color: AppTheme.bgDark,
-            borderRadius: BorderRadius.circular(36),
+            borderRadius: BorderRadius.circular(28), // Reduced from 36
             boxShadow: [
               BoxShadow(
-                color: AppTheme.bgDark.withValues(alpha: 0.3),
-                blurRadius: 30,
-                offset: const Offset(0, 15),
+                color: AppTheme.bgDark.withValues(alpha: 0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(28),
+                padding: const EdgeInsets.all(24), // Reduced from 28
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -434,41 +427,41 @@ class _DashboardTab extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Reduced
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
+                            borderRadius: BorderRadius.circular(10), // Reduced
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.2), // Reduced
                           ),
                           child: Text(
                             'WARD ${pickup.wardNumber}',
                             style: GoogleFonts.plusJakartaSans(
                               color: Colors.white,
                               fontWeight: FontWeight.w900,
-                              fontSize: 10,
-                              letterSpacing: 2,
+                              fontSize: 9, // Reduced from 10
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ),
-                        const Icon(Icons.more_horiz_rounded, color: Colors.white24, size: 20),
+                        const Icon(Icons.more_horiz_rounded, color: Colors.white24, size: 18),
                       ],
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24), // Reduced from 32
                     Text(
                       pickup.address,
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 20, // Reduced from 24
                         fontWeight: FontWeight.w900,
-                        letterSpacing: -1,
+                        letterSpacing: -0.6,
                         height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20), // Reduced from 24
                     Row(
                       children: [
                         _infoChip(Icons.access_time_filled_rounded, pickup.formattedTime),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 10),
                         _infoChip(Icons.layers_rounded, '${pickup.wasteTypes.length} Classes'),
                       ],
                     ),
@@ -476,27 +469,27 @@ class _DashboardTab extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                height: 60,
+                margin: const EdgeInsets.fromLTRB(14, 0, 14, 14), // Reduced from 16
+                height: 52, // Reduced from 60
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 24
                     elevation: 0,
                     padding: EdgeInsets.zero,
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
                       gradient: AppTheme.emeraldGradient,
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
+                          color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
                         )
                       ],
                     ),
@@ -506,8 +499,8 @@ class _DashboardTab extends StatelessWidget {
                         'MARK EXTRACTION COMPLETE',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
-                          letterSpacing: 1.5,
-                          fontSize: 12,
+                          letterSpacing: 1.2,
+                          fontSize: 11, // Reduced from 12
                         ),
                       ),
                     ),
@@ -582,7 +575,7 @@ class _DashboardTab extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24), // Reduced from 28
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100, width: 1),
       ),
@@ -590,18 +583,18 @@ class _DashboardTab extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10), // Reduced from 12
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12), // Reduced from 14
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 20), // Reduced from 24
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10), // Reduced from 12
           Text(
             label,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 10,
+              fontSize: 9, // Reduced from 10
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
               letterSpacing: 0.2,

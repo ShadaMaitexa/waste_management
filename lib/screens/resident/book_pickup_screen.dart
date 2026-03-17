@@ -145,55 +145,55 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
               _buildSliverAppBar(),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // Reduced from 24
                   child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildStepHeader('01', 'CLASSIFICATION'),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6), // Reduced from 8
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
                           child: Text(
                             'Select operational categories for collection',
-                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w600),
+                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 11, fontWeight: FontWeight.w600), // Reduced from 12
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20), // Reduced from 24
                         _buildWasteTypeGrid(),
-                        const SizedBox(height: 56),
+                        const SizedBox(height: 32), // Reduced from 40
 
                         _buildStepHeader('02', 'COLLECTION WINDOW'),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6), // Reduced from 8
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
                           child: Text(
                             'Select an available operational slot',
-                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w600),
+                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 11, fontWeight: FontWeight.w600), // Reduced from 12
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16), // Reduced from 20
                         _buildSlotSelection(),
-                        const SizedBox(height: 56),
+                        const SizedBox(height: 32), // Reduced from 40
 
                         _buildStepHeader('03', 'SERVICE PARAMETERS'),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6), // Reduced from 8
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
                           child: Text(
                             'Define delivery geometry and logistics',
-                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w600),
+                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 11, fontWeight: FontWeight.w600), // Reduced from 12
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20), // Reduced from 24
                         _buildServiceParameters(),
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 24), // Reduced from 32
                         _buildCollectionInfo(),
-                        const SizedBox(height: 64),
+                        const SizedBox(height: 32), // Reduced from 48
 
                         _buildSubmitButton(),
-                        const SizedBox(height: 120),
+                        const SizedBox(height: 60), // Reduced from 80
                       ],
                     ),
                   ),
@@ -225,7 +225,7 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   Widget _buildSliverAppBar() {
     return SliverAppBar(
-      expandedHeight: 200.0,
+      expandedHeight: 160.0, // Reduced from 200
       floating: false,
       pinned: true,
       backgroundColor: AppTheme.bgDark,
@@ -242,16 +242,16 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
             fit: StackFit.expand,
             children: [
               Positioned(
-                right: -40,
-                bottom: -20,
+                right: -30,
+                bottom: -15,
                 child: Icon(
                   Icons.add_task_rounded,
-                  size: 200,
+                  size: 140, // Reduced from 200
                   color: Colors.white.withValues(alpha: 0.03),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(28, 0, 28, 32),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,9 +260,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                       'Schedule Pickup',
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white,
-                        fontSize: 36,
+                        fontSize: 28, // Reduced from 36
                         fontWeight: FontWeight.w900,
-                        letterSpacing: -1.5,
+                        letterSpacing: -1.2,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -270,7 +270,7 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                       'SMART ECO-LOGISTICS DISPATCH',
                       style: GoogleFonts.plusJakartaSans(
                         color: AppTheme.primaryEmerald,
-                        fontSize: 10,
+                        fontSize: 9, // Reduced from 10
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
                       ),
@@ -325,9 +325,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 1.3,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        childAspectRatio: 1.4, // Adjusted for mobile
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
       ),
       itemCount: WasteType.values.length,
       itemBuilder: (context, index) {
@@ -339,13 +339,13 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
             duration: const Duration(milliseconds: 300),
             decoration: BoxDecoration(
               color: isSelected ? AppTheme.primaryEmerald : Colors.white,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(20),
               boxShadow: isSelected 
-                ? [BoxShadow(color: AppTheme.primaryEmerald.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))]
+                ? [BoxShadow(color: AppTheme.primaryEmerald.withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 8))]
                 : AppTheme.cardShadow,
               border: Border.all(
                 color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey100,
-                width: 1.5,
+                width: 1.2,
               ),
             ),
             child: Column(
@@ -353,14 +353,14 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
               children: [
                 Icon(
                   _getWasteIcon(type),
-                  size: 28,
+                  size: 24, // Reduced from 28
                   color: isSelected ? Colors.white : AppTheme.grey900,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
                   _getWasteTypeTitle(type),
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
+                    fontSize: 13, // Reduced from 14
                     fontWeight: FontWeight.w800,
                     color: isSelected ? Colors.white : AppTheme.grey900,
                     letterSpacing: -0.2,
@@ -403,29 +403,29 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   Widget _buildCollectionInfo() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16), // Reduced from 24
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20), // Reduced from 24
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100, width: 1),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8), // Reduced from 10
             decoration: BoxDecoration(
               color: AppTheme.info.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10), // Reduced from 12
             ),
-            child: const Icon(Icons.info_outline_rounded, color: AppTheme.info, size: 20),
+            child: const Icon(Icons.info_outline_rounded, color: AppTheme.info, size: 18), // Reduced from 20
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12), // Reduced from 16
           Expanded(
             child: Text(
               'Pickups usually occur between 08:00 AM and 11:00 AM local time.',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 13,
+                fontSize: 12, // Reduced from 13
                 color: AppTheme.grey500,
                 fontWeight: FontWeight.w600,
               ),
@@ -439,27 +439,20 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   Widget _buildSubmitButton() {
     return SizedBox(
       width: double.infinity,
-      height: 64,
+      height: 56, // Reduced from 64
       child: ElevatedButton(
         onPressed: _isLoading ? null : _submitPickup,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.bgDark,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
           elevation: 0,
           padding: EdgeInsets.zero,
         ),
         child: Ink(
           decoration: BoxDecoration(
             gradient: AppTheme.slateGradient,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.bgDark.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              )
-            ],
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Container(
             alignment: Alignment.center,
@@ -472,12 +465,12 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                         'INITIALIZE DISPATCH',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                          fontSize: 14,
+                          letterSpacing: 1.5,
+                          fontSize: 13,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      const Icon(Icons.bolt_rounded, size: 22, color: AppTheme.primaryEmerald),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.bolt_rounded, size: 20, color: AppTheme.primaryEmerald),
                     ],
                   ),
           ),
@@ -502,8 +495,8 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
           );
         }
 
-        return SizedBox(
-          height: 100,
+          return SizedBox(
+          height: 88, // Reduced from 100
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
@@ -517,21 +510,21 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                 onTap: () => setState(() => _selectedSlot = slot),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  width: 140,
-                  margin: const EdgeInsets.only(right: 16),
-                  padding: const EdgeInsets.all(16),
+                  width: 120, // Reduced from 140
+                  margin: const EdgeInsets.only(right: 12), // Reduced from 16
+                  padding: const EdgeInsets.all(12), // Reduced from 16
                   decoration: BoxDecoration(
                     color: isSelected ? AppTheme.bgDark : Colors.white,
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20), // Reduced from 24
                     border: Border.all(
                       color: isSelected ? AppTheme.bgDark : AppTheme.grey100,
-                      width: 1.5,
+                      width: 1.2, // Reduced from 1.5
                     ),
                     boxShadow: isSelected ? [
                       BoxShadow(
-                        color: AppTheme.bgDark.withValues(alpha: 0.2),
-                        blurRadius: 15,
-                        offset: const Offset(0, 8),
+                        color: AppTheme.bgDark.withValues(alpha: 0.15),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
                       )
                     ] : AppTheme.cardShadow,
                   ),
@@ -541,17 +534,17 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                       Text(
                         isToday ? 'TODAY' : DateFormat('EEE, MMM d').format(slot.date).toUpperCase(),
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 9,
+                          fontSize: 8, // Reduced from 9
                           fontWeight: FontWeight.w900,
                           color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey400,
-                          letterSpacing: 1,
+                          letterSpacing: 0.8,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6), // Reduced from 8
                       Text(
                         slot.formatTime(context),
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13,
+                          fontSize: 12, // Reduced from 13
                           fontWeight: FontWeight.w800,
                           color: isSelected ? Colors.white : AppTheme.grey900,
                         ),
@@ -569,7 +562,7 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   Widget _buildSlotShimmer() {
     return SizedBox(
-      height: 100,
+      height: 88, // Reduced from 100
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 3,
@@ -577,11 +570,11 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
           baseColor: Colors.grey[200]!,
           highlightColor: Colors.grey[100]!,
           child: Container(
-            width: 140,
-            margin: const EdgeInsets.only(right: 16),
+            width: 120, // Reduced from 140
+            margin: const EdgeInsets.only(right: 12), // Reduced from 16
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(20), // Reduced from 24
             ),
           ),
         ),

@@ -116,44 +116,44 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
   Widget _buildHeaderSection() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24), // Reduced from 32
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [AppTheme.primaryGreen, AppTheme.secondaryGreen],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24), // Reduced from 32
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryGreen.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: AppTheme.primaryGreen.withValues(alpha: 0.2), // Reduced from 0.3
+            blurRadius: 16,
+            offset: const Offset(0, 8), // Reduced
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.support_agent_rounded, color: Colors.white, size: 48),
-          const SizedBox(height: 24),
+          const Icon(Icons.support_agent_rounded, color: Colors.white, size: 36), // Reduced from 48
+          const SizedBox(height: 16), // Reduced from 24
           const Text(
             'How can we help?',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 28,
+              fontSize: 22, // Reduced from 28
               fontWeight: FontWeight.w900,
-              letterSpacing: -1,
+              letterSpacing: -0.8, // Reduced from -1
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6), // Reduced from 8
           Text(
             'Our team is ready to assist you with any questions or technical issues.',
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 14,
+              fontSize: 12, // Reduced from 14
               fontWeight: FontWeight.w500,
-              height: 1.5,
+              height: 1.4, // Reduced from 1.5
             ),
           ),
         ],
@@ -163,15 +163,15 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
 
   Widget _buildContactForm() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20), // Reduced from 24
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24), // Reduced from 32
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -181,37 +181,37 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
           const Text(
             'Send a Message',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16, // Reduced from 18
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -0.5,
+              letterSpacing: -0.4, // Reduced
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20), // Reduced from 24
           _buildField('Full Name', _nameController, Icons.person_outline_rounded),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12), // Reduced from 16
           _buildField('Email Address', _emailController, Icons.email_outlined),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12), // Reduced from 16
           _buildDropdownField(),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12), // Reduced from 16
           _buildField('Subject', _subjectController, Icons.subject_rounded),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12), // Reduced from 16
           _buildField('Message', _messageController, Icons.chat_bubble_outline_rounded, maxLines: 4),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24), // Reduced from 32
           SizedBox(
             width: double.infinity,
-            height: 56,
+            height: 50, // Reduced from 56
             child: ElevatedButton(
               onPressed: _submitContactForm,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryGreen,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)), // Reduced from 16
                 elevation: 0,
               ),
               child: const Text(
                 'SEND ENQUIRY',
-                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
+                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, fontSize: 13), // Adjusted
               ),
             ),
           ),
@@ -226,12 +226,12 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
       maxLines: maxLines,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w600),
-        prefixIcon: Icon(icon, color: AppTheme.primaryGreen, size: 20),
+        labelStyle: const TextStyle(color: AppTheme.grey500, fontSize: 12, fontWeight: FontWeight.w600), // Reduced from 13
+        prefixIcon: Icon(icon, color: AppTheme.primaryGreen, size: 18), // Reduced from 20
         filled: true,
         fillColor: AppTheme.grey50,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none), // Reduced from 16
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // Reduced from 20, 16
       ),
     );
   }
@@ -286,22 +286,22 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
 
   Widget _contactInfoItem(IconData icon, String info, String description) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14), // Reduced from 16
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14), // Reduced from 16
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8), // Reduced from 10
             decoration: BoxDecoration(
               color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10), // Reduced from 12
             ),
-            child: Icon(icon, color: AppTheme.primaryGreen, size: 18),
+            child: Icon(icon, color: AppTheme.primaryGreen, size: 16), // Reduced from 18
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12), // Reduced from 16
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,7 +312,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen>
                 ),
                 Text(
                   info,
-                  style: const TextStyle(fontWeight: FontWeight.w800, color: AppTheme.grey900, fontSize: 14),
+                  style: const TextStyle(fontWeight: FontWeight.w800, color: AppTheme.grey900, fontSize: 13), // Reduced from 14
                 ),
               ],
             ),

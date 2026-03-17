@@ -108,47 +108,47 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         background: Container(
           color: AppTheme.bgSurface,
         ),
-        titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         title: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    width: 6,
-                    height: 6,
+                    width: 5,
+                    height: 5,
                     decoration: const BoxDecoration(color: AppTheme.primaryEmerald, shape: BoxShape.circle),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'SYSTEM OPERATIONAL',
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 8,
+                      fontSize: 7, // Reduced from 8
                       fontWeight: FontWeight.w900,
-                      letterSpacing: 2,
+                      letterSpacing: 1.5,
                       color: AppTheme.primaryEmerald,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               'Command Center',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 28, 
+                fontSize: 24, // Reduced from 28
                 fontWeight: FontWeight.w900, 
                 color: AppTheme.grey900,
-                letterSpacing: -1.5,
+                letterSpacing: -1.2,
                 height: 1.1,
               ),
             ),
@@ -196,10 +196,10 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
 
   Widget _buildWelcomeSection(BoxConstraints constraints) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24), // Reduced from 32
       decoration: BoxDecoration(
         color: AppTheme.bgDark,
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(28), // Reduced from 40
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -207,9 +207,9 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.bgDark.withValues(alpha: 0.3),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
+            color: AppTheme.bgDark.withValues(alpha: 0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -261,33 +261,33 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                   ),
                 ],
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 24), // Reduced from 36
               Text(
                 'Intelligence\nCommand Engine',
                 style: GoogleFonts.plusJakartaSans(
                   color: Colors.white, 
-                  fontSize: 34, 
+                  fontSize: 28, // Reduced from 34
                   fontWeight: FontWeight.w900, 
-                  letterSpacing: -2.0, 
+                  letterSpacing: -1.5, 
                   height: 1.0,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Text(
-                'Monitoring 1,248 active service nodes across the Kozhikode district network.',
+                'Monitoring 1,248 active service nodes across the district network.',
                 style: GoogleFonts.inter(
                   color: Colors.white.withValues(alpha: 0.5), 
-                  fontSize: 14, 
+                  fontSize: 13, // Reduced from 14
                   fontWeight: FontWeight.w500, 
-                  height: 1.6,
+                  height: 1.5,
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 28), // Reduced from 40
               Container(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(20), // Reduced from 24
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.04),
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(20), // Reduced from 28
                   border: Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1.5),
                 ),
                 child: SingleChildScrollView(
@@ -339,8 +339,8 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: GoogleFonts.plusJakartaSans(fontSize: 20, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.8)),
-            Text(subtitle, style: GoogleFonts.inter(fontSize: 13, color: AppTheme.grey500, fontWeight: FontWeight.w500)),
+            Text(title, style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.6)),
+            Text(subtitle, style: GoogleFonts.inter(fontSize: 12, color: AppTheme.grey500, fontWeight: FontWeight.w500)),
           ],
         ),
         TextButton(
@@ -411,10 +411,10 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
 
   Widget _buildMetricCard(String label, String value, String growth, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20), // Reduced from 24
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24), // Reduced from 32
         border: Border.all(color: AppTheme.grey100, width: 1),
         boxShadow: AppTheme.cardShadow,
       ),
@@ -425,26 +425,25 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8), // Reduced from 10
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1), 
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: color, size: 20),
+                child: Icon(icon, color: color, size: 18),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3), // Reduced
                 decoration: BoxDecoration(
                   color: growth.contains('+') ? AppTheme.success.withValues(alpha: 0.1) : AppTheme.error.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   growth, 
                   style: GoogleFonts.plusJakartaSans(
                     color: growth.contains('+') ? AppTheme.success : AppTheme.error, 
-                    fontSize: 10, 
+                    fontSize: 9, // Reduced from 10
                     fontWeight: FontWeight.w900, 
-                    letterSpacing: 0.5,
                   ),
                 ),
               ),
@@ -454,20 +453,20 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           Text(
             value, 
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 28, 
+              fontSize: 24, // Reduced from 28
               fontWeight: FontWeight.w900, 
               color: AppTheme.grey900, 
-              letterSpacing: -1.2,
+              letterSpacing: -1.0,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label.toUpperCase(), 
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 9, 
+              fontSize: 8, // Reduced from 9
               color: AppTheme.grey400, 
               fontWeight: FontWeight.w900, 
-              letterSpacing: 1,
+              letterSpacing: 0.8,
             ),
           ),
         ],
@@ -503,7 +502,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24), // Reduced from 32
         border: Border.all(color: AppTheme.grey100, width: 1),
         boxShadow: AppTheme.cardShadow,
       ),
@@ -511,35 +510,35 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(24),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(20), // Reduced from 24
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10), // Reduced from 12
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1), 
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon, color: color, size: 24),
+                  child: Icon(icon, color: color, size: 20),
                 ),
                 const Spacer(),
                 Text(
                   title, 
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w900, 
-                    fontSize: 16, 
+                    fontSize: 15, // Reduced from 16
                     color: AppTheme.grey900, 
-                    letterSpacing: -0.5,
+                    letterSpacing: -0.4,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   subtitle, 
                   style: GoogleFonts.inter(
-                    fontSize: 12, 
+                    fontSize: 11, // Reduced from 12
                     color: AppTheme.grey500, 
                     fontWeight: FontWeight.w500, 
                     height: 1.2,

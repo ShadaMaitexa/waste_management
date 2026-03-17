@@ -86,53 +86,53 @@ class AppTheme {
   // Professional Typography (Inter / Plus Jakarta Sans)
   static TextTheme get textTheme => TextTheme(
     displayLarge: GoogleFonts.inter(
-      fontSize: 34,
+      fontSize: 24, // Reduced from 28
       fontWeight: FontWeight.w800,
       color: grey900,
-      letterSpacing: -1.2,
+      letterSpacing: -1.0,
     ),
     displayMedium: GoogleFonts.inter(
-      fontSize: 28,
+      fontSize: 20, // Reduced from 24
       fontWeight: FontWeight.w800,
       color: grey900,
-      letterSpacing: -0.8,
+      letterSpacing: -0.6,
     ),
     displaySmall: GoogleFonts.inter(
-      fontSize: 24,
+      fontSize: 18, // Reduced from 20
       fontWeight: FontWeight.w700,
       color: grey900,
-      letterSpacing: -0.5,
+      letterSpacing: -0.4,
     ),
     headlineLarge: GoogleFonts.plusJakartaSans(
-      fontSize: 22,
+      fontSize: 16, // Reduced from 18
       fontWeight: FontWeight.w800,
       color: grey900,
-      letterSpacing: -0.5,
+      letterSpacing: -0.4,
     ),
     headlineMedium: GoogleFonts.plusJakartaSans(
-      fontSize: 20,
+      fontSize: 14, // Reduced from 16
       fontWeight: FontWeight.w700,
       color: grey900,
     ),
     titleLarge: GoogleFonts.plusJakartaSans(
-      fontSize: 18,
+      fontSize: 14, // Reduced from 16
       fontWeight: FontWeight.w700,
       color: grey900,
     ),
     bodyLarge: GoogleFonts.inter(
-      fontSize: 16,
+      fontSize: 14, // Reduced from 15
       fontWeight: FontWeight.w500,
       color: grey800,
-      height: 1.6,
-    ),
-    bodyMedium: GoogleFonts.inter(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      color: grey600,
       height: 1.5,
     ),
+    bodyMedium: GoogleFonts.inter(
+      fontSize: 12, // Reduced from 13
+      fontWeight: FontWeight.w500,
+      color: grey600,
+      height: 1.4,
+    ),
     labelLarge: GoogleFonts.plusJakartaSans(
-      fontSize: 14,
+      fontSize: 11, // Reduced from 13
       fontWeight: FontWeight.w800,
       color: grey700,
       letterSpacing: 0.5,
@@ -178,37 +178,37 @@ class AppTheme {
           backgroundColor: primaryEmerald,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 15, letterSpacing: 0.5),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), // Reduced from 24, 18
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Slightly sharper corners
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 14, letterSpacing: 0.5),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: grey800,
           side: const BorderSide(color: grey200, width: 1.5),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), // Reduced from 24, 18
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 14),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: bgCanvas,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: grey100, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: grey100, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: primaryEmerald, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        hintStyle: GoogleFonts.inter(color: grey400, fontSize: 14, fontWeight: FontWeight.w500),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), // Reduced from 24, 20
+        hintStyle: GoogleFonts.inter(color: grey400, fontSize: 13, fontWeight: FontWeight.w500),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: bgCanvas,

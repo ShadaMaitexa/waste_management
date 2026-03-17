@@ -39,40 +39,40 @@ class RecyclerDashboardTab extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20), // Reduced
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3), // Reduced
                           decoration: BoxDecoration(
                             color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(6), // Reduced
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.verified_user_rounded, color: AppTheme.primaryEmerald, size: 10),
-                              const SizedBox(width: 6),
+                              const Icon(Icons.verified_user_rounded, color: AppTheme.primaryEmerald, size: 9), // Reduced
+                              const SizedBox(width: 4),
                               Text(
                                 'LICENSED OPERATOR',
                                 style: GoogleFonts.plusJakartaSans(
                                   color: AppTheme.primaryEmerald,
-                                  fontSize: 8,
+                                  fontSize: 7, // Reduced from 8
                                   fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.5,
+                                  letterSpacing: 1.2, // Reduced
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8), // Reduced
                         Text(
                           'Sustainability Hub',
                           style: GoogleFonts.plusJakartaSans(
                             color: Colors.white.withValues(alpha: 0.6),
-                            fontSize: 16,
+                            fontSize: 14, // Reduced from 16
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -80,9 +80,9 @@ class RecyclerDashboardTab extends StatelessWidget {
                           'Recycler Portal',
                           style: GoogleFonts.plusJakartaSans(
                             color: Colors.white,
-                            fontSize: 32,
+                            fontSize: 26, // Reduced from 32
                             fontWeight: FontWeight.w900,
-                            letterSpacing: -1.5,
+                            letterSpacing: -1.0, // Reduced
                           ),
                         ),
                       ],
@@ -118,21 +118,18 @@ class RecyclerDashboardTab extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24), // Reduced
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                    _buildHeaderInfo(context),
-                  const SizedBox(height: 32),
-                  // Monthly Summary
+                  const SizedBox(height: 24), // Reduced from 32
                   _buildMonthlySummary(context),
-                  const SizedBox(height: 32),
-                  // Recent Transactions
+                  const SizedBox(height: 24),
                   _buildRecentTransactions(context),
-                  const SizedBox(height: 32),
-                  // Quick Actions
+                  const SizedBox(height: 24),
                   _buildQuickActions(context),
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 80), // Adjusted
                 ],
               ),
             ),
@@ -145,10 +142,10 @@ class RecyclerDashboardTab extends StatelessWidget {
   Widget _buildHeaderInfo(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20), // Reduced from 24
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24), // Reduced from 32
         boxShadow: AppTheme.smoothShadow,
         border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
@@ -160,11 +157,11 @@ class RecyclerDashboardTab extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              fontSize: 20,
-              letterSpacing: -0.5,
+              fontSize: 18, // Reduced from 20
+              letterSpacing: -0.4, // Reduced
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10), // Reduced from 12
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
@@ -217,7 +214,7 @@ class RecyclerDashboardTab extends StatelessWidget {
                 AppTheme.info,
               ),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 16), // Reduced from 20
             Expanded(
               child: _summaryCard(
                 context,
@@ -235,10 +232,10 @@ class RecyclerDashboardTab extends StatelessWidget {
 
   Widget _summaryCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20), // Reduced from 24
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24), // Reduced from 32
         boxShadow: AppTheme.smoothShadow,
         border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
       ),
@@ -246,31 +243,31 @@ class RecyclerDashboardTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10), // Reduced from 12
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12), // Reduced from 16
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 20), // Reduced from 24
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16), // Reduced from 24
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              fontSize: 22,
-              letterSpacing: -1,
+              fontSize: 18, // Reduced from 22
+              letterSpacing: -0.8, // Reduced
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
             title.toUpperCase(),
             style: GoogleFonts.inter(
               color: AppTheme.grey400,
               fontWeight: FontWeight.w800,
-              fontSize: 9,
-              letterSpacing: 1,
+              fontSize: 8, // Reduced from 9
+              letterSpacing: 0.8, // Reduced from 1
             ),
           ),
         ],
@@ -308,7 +305,7 @@ class RecyclerDashboardTab extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(24), // Reduced from 32
             boxShadow: AppTheme.smoothShadow,
             border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
           ),
@@ -347,22 +344,22 @@ class RecyclerDashboardTab extends StatelessWidget {
 
   Widget _transactionTile(BuildContext context, String title, String subtitle, String time, {required bool isIncoming}) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4), // Reduced
       leading: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8), // Reduced from 10
         decoration: BoxDecoration(
           color: isIncoming ? AppTheme.info.withValues(alpha: 0.08) : AppTheme.primaryEmerald.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10), // Reduced from 12
         ),
         child: Icon(
           isIncoming ? Icons.south_west_rounded : Icons.north_east_rounded,
           color: isIncoming ? AppTheme.info : AppTheme.primaryEmerald,
-          size: 18,
+          size: 16, // Reduced from 18
         ),
       ),
-      title: Text(title, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 14, color: AppTheme.grey800)),
-      subtitle: Text(subtitle, style: GoogleFonts.inter(fontSize: 12, color: AppTheme.grey400, fontWeight: FontWeight.w500)),
-      trailing: Text(time.toUpperCase(), style: GoogleFonts.plusJakartaSans(fontSize: 10, color: AppTheme.grey400, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+      title: Text(title, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 13, color: AppTheme.grey800)), // Reduced from 14
+      subtitle: Text(subtitle, style: GoogleFonts.inter(fontSize: 11, color: AppTheme.grey400, fontWeight: FontWeight.w500)), // Reduced from 12
+      trailing: Text(time.toUpperCase(), style: GoogleFonts.plusJakartaSans(fontSize: 9, color: AppTheme.grey400, fontWeight: FontWeight.w900, letterSpacing: 0.5)), // Reduced from 10
     );
   }
 
@@ -383,7 +380,7 @@ class RecyclerDashboardTab extends StatelessWidget {
         Row(
           children: [
             Expanded(child: _actionCard(context, 'Add Material', Icons.add_rounded, AppTheme.info, () => onNavigate(1))),
-            const SizedBox(width: 20),
+            const SizedBox(width: 16), // Reduced from 20
             Expanded(child: _actionCard(context, 'Get Certificate', Icons.workspace_premium_rounded, AppTheme.primaryEmerald, () => onNavigate(2))),
           ],
         ),
@@ -394,33 +391,33 @@ class RecyclerDashboardTab extends StatelessWidget {
   Widget _actionCard(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(20), // Reduced from 24
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 32),
+        padding: const EdgeInsets.symmetric(vertical: 24), // Reduced from 32
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20), // Reduced from 24
           border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
           boxShadow: AppTheme.smoothShadow,
         ),
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10), // Reduced from 12
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: color, size: 28),
+              child: Icon(icon, color: color, size: 24), // Reduced from 28
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12), // Reduced from 16
             Text(
               label.toUpperCase(),
               style: GoogleFonts.plusJakartaSans(
                 color: AppTheme.grey800,
                 fontWeight: FontWeight.w900,
-                fontSize: 10,
-                letterSpacing: 1,
+                fontSize: 9, // Reduced from 10
+                letterSpacing: 0.8, // Reduced from 1
               ),
             ),
           ],

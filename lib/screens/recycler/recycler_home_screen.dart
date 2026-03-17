@@ -60,17 +60,17 @@ class _RecyclerHomeScreenState extends State<RecyclerHomeScreen> {
     return Positioned(
       left: 24,
       right: 24,
-      bottom: 32,
+      bottom: 24, // Reduced from 32
       child: Container(
-        height: 76,
+        height: 64, // Reduced from 76
         decoration: BoxDecoration(
           color: AppTheme.bgDark.withValues(alpha: 0.98),
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(24), // Reduced from 28
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 40,
-              offset: const Offset(0, 20),
+              color: Colors.black.withValues(alpha: 0.3), // Reduced from 0.4
+              blurRadius: 30, // Reduced from 40
+              offset: const Offset(0, 15), // Reduced from 20
             ),
             BoxShadow(
               color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
@@ -99,17 +99,17 @@ class _RecyclerHomeScreenState extends State<RecyclerHomeScreen> {
       onTap: () => _onItemTapped(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), // Reduced
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16), // Reduced
         ),
         child: Row(
           children: [
             Icon(
               icon,
               color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.5),
-              size: 22,
+              size: 20, // Reduced from 22
             ),
             if (isSelected) ...[
               const SizedBox(width: 8),
@@ -117,9 +117,9 @@ class _RecyclerHomeScreenState extends State<RecyclerHomeScreen> {
                 label.toUpperCase(),
                 style: GoogleFonts.plusJakartaSans(
                   color: AppTheme.primaryEmerald,
-                  fontSize: 11,
+                  fontSize: 10, // Reduced from 11
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 1,
+                  letterSpacing: 0.8, // Reduced from 1
                 ),
               ),
             ],

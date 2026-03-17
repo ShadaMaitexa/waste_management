@@ -26,15 +26,15 @@ class ProfileScreen extends StatelessWidget {
               _buildSliverAppBar(),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24), // Reduced
                   child: Column(
                     children: [
                       _buildProfileHeader(),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 32), // Reduced
                       _buildStatsSection(),
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 40), // Reduced
                       _buildActionSection(),
-                      const SizedBox(height: 120),
+                      const SizedBox(height: 80), // Reduced
                     ],
                   ),
                 ),
@@ -103,9 +103,9 @@ class ProfileScreen extends StatelessWidget {
                   boxShadow: AppTheme.cardShadow,
                 ),
                 child: CircleAvatar(
-                  radius: 64,
+                  radius: 54, // Reduced from 64
                   backgroundColor: AppTheme.grey50,
-                  child: Icon(Icons.person_outline_rounded, size: 48, color: AppTheme.grey300),
+                  child: Icon(Icons.person_outline_rounded, size: 40, color: AppTheme.grey300), // Reduced from 48
                 ),
               ),
             ),
@@ -125,14 +125,14 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 20), // Reduced from 24
         Text(
           'John Doe',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 32,
+            fontSize: 26, // Reduced from 32
             fontWeight: FontWeight.w900,
             color: AppTheme.grey900,
-            letterSpacing: -1.5,
+            letterSpacing: -1.0,
           ),
         ),
         const SizedBox(height: 8),
@@ -193,30 +193,23 @@ class ProfileScreen extends StatelessWidget {
           _SettingItem(Icons.language_rounded, 'Regional Settings', Icons.translate_rounded, () {}),
           _SettingItem(Icons.help_outline_rounded, 'Support Modules', Icons.support_agent_rounded, () {}),
         ]),
-        const SizedBox(height: 56),
+        const SizedBox(height: 48), // Reduced from 56
         SizedBox(
           width: double.infinity,
-          height: 64,
+          height: 56, // Reduced from 64
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.bgDark,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
               elevation: 0,
               padding: EdgeInsets.zero,
             ),
             child: Ink(
               decoration: BoxDecoration(
                 gradient: AppTheme.slateGradient,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.bgDark.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  )
-                ],
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Container(
                 alignment: Alignment.center,
@@ -227,12 +220,12 @@ class ProfileScreen extends StatelessWidget {
                       'TERMINATE SESSION',
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        fontSize: 14,
+                        letterSpacing: 1.5,
+                        fontSize: 13, // Reduced from 14
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.power_settings_new_rounded, size: 20, color: AppTheme.primaryEmerald),
+                    const SizedBox(width: 10),
+                    const Icon(Icons.power_settings_new_rounded, size: 18, color: AppTheme.primaryEmerald),
                   ],
                 ),
               ),
@@ -260,10 +253,10 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildStatItem(String value, String label, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // Reduced from 24
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24), // Reduced from 28
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100, width: 1),
       ),
@@ -271,31 +264,31 @@ class ProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8), // Reduced from 10
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(icon, color: color, size: 18), // Reduced from 20
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16), // Reduced from 20
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 28,
+              fontSize: 24, // Reduced from 28
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -1,
+              letterSpacing: -0.8,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
             label,
             style: GoogleFonts.plusJakartaSans(
               color: AppTheme.grey400,
-              fontSize: 9,
+              fontSize: 8, // Reduced from 9
               fontWeight: FontWeight.w900,
-              letterSpacing: 1,
+              letterSpacing: 0.8,
             ),
           ),
         ],
@@ -307,9 +300,9 @@ class ProfileScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24), // Reduced from 28
         boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100, width: 1),
+        border: Border.all(color: AppTheme.grey100, width: 1.2),
       ),
       child: Column(
         children: items.asMap().entries.map((entry) {
@@ -321,41 +314,41 @@ class ProfileScreen extends StatelessWidget {
               InkWell(
                 onTap: item.onTap,
                 borderRadius: index == 0 
-                  ? const BorderRadius.vertical(top: Radius.circular(28))
+                  ? const BorderRadius.vertical(top: Radius.circular(24))
                   : index == items.length - 1
-                    ? const BorderRadius.vertical(bottom: Radius.circular(28))
+                    ? const BorderRadius.vertical(bottom: Radius.circular(24))
                     : null,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16), // Reduced from 20
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(8), // Reduced from 10
                         decoration: BoxDecoration(
                           color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(item.activeIcon, color: AppTheme.primaryEmerald, size: 18),
+                        child: Icon(item.activeIcon, color: AppTheme.primaryEmerald, size: 16), // Reduced from 18
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 14),
                       Text(
                         item.title,
                         style: GoogleFonts.plusJakartaSans(
                           color: AppTheme.grey900,
                           fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                          fontSize: 14, // Reduced from 15
                           letterSpacing: -0.2,
                         ),
                       ),
                       const Spacer(),
-                      const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey300),
+                      const Icon(Icons.chevron_right_rounded, size: 18, color: AppTheme.grey300),
                     ],
                   ),
                 ),
               ),
               if (index != items.length - 1)
                 Padding(
-                  padding: const EdgeInsets.only(left: 66, right: 20),
+                  padding: const EdgeInsets.only(left: 60, right: 16),
                   child: Divider(height: 1, color: AppTheme.grey100),
                 ),
             ],

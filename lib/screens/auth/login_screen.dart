@@ -139,20 +139,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildLogo(),
-                    const SizedBox(height: 56),
+                    const SizedBox(height: 32),
                     _buildWelcomeText(),
-                    const SizedBox(height: 56),
+                    const SizedBox(height: 40),
                     Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           _buildLoginForm(),
-                          const SizedBox(height: 48),
-                          _buildLoginButton(),
                           const SizedBox(height: 32),
+                          _buildLoginButton(),
+                          const SizedBox(height: 24),
                           _buildForgotPassword(),
-                          const SizedBox(height: 80),
+                          const SizedBox(height: 48),
                           _buildSignUpPrompt(),
                         ],
                       ),
@@ -169,18 +169,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildLogo() {
     return Container(
-      width: 120,
-      height: 120,
+      width: 90,
+      height: 90,
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
         boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: Colors.white, width: 4),
+        border: Border.all(color: Colors.white, width: 3),
       ),
       child: Center(
         child: Container(
-          width: 80,
-          height: 80,
+          width: 64,
+          height: 64,
           decoration: BoxDecoration(
             gradient: AppTheme.emeraldGradient,
             shape: BoxShape.circle,
@@ -194,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           child: const Icon(
             Icons.recycling_rounded,
-            size: 40,
+            size: 32,
             color: Colors.white,
           ),
         ),
@@ -208,10 +208,10 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           'GreenLoop',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 44,
+            fontSize: 32,
             fontWeight: FontWeight.w900,
             color: AppTheme.grey900,
-            letterSpacing: -2,
+            letterSpacing: -1.5,
             height: 1,
           ),
         ),
@@ -285,7 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildLoginButton() {
     return SizedBox(
       width: double.infinity,
-      height: 64,
+      height: 56,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _login,
         style: ElevatedButton.styleFrom(

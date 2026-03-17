@@ -52,17 +52,22 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final payload = {
+        'username': email.trim(), // Most Django backends use 'username' as the key even for email login
+        'password': password,
+      };
+
+      debugPrint('[AuthService] Login payload: ${jsonEncode(payload)}');
+
       final response = await http.post(
         Uri.parse(ApiConstants.login),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email.trim(),
-          'username': email.trim(), 
-          'password': password,
-        }),
+        body: jsonEncode(payload),
       );
 
       debugPrint('[AuthService] Login status: ${response.statusCode}');
+      debugPrint('[AuthService] Login response body: ${response.body}');
+      
       _isLoading = false;
 
       if (response.statusCode == 200) {
@@ -74,14 +79,19 @@ class AuthService extends ChangeNotifier {
         }
         token ??= data['access'] ?? data['token'];
 
-        if (token == null) return false;
+        if (token == null) {
+          debugPrint('[AuthService] No token found in successful response');
+          return false;
+        }
         
         await _saveToken(token);
 
         try {
+          // If response has user data, parse it
           _currentUser = User.fromJson(data);
           notifyListeners();
         } catch (e) {
+          // Otherwise, fetch profile
           await getProfile();
         }
 
@@ -90,6 +100,7 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return false;
     } catch (e) {
+      debugPrint('[AuthService] Login exception: $e');
       _isLoading = false;
       notifyListeners();
       return false;
@@ -112,14 +123,18 @@ class AuthService extends ChangeNotifier {
       final finalWard = (ward != null && ward.isNotEmpty) ? ward : '15';
       
       final body = jsonEncode({
-        'username': name,
-        'email': email,
+        'username': email.trim(),
+        'email': email.trim(),
         'password': password,
-        'phone_number': phoneNumber,
-        'address': address,
-        'ward_number': finalWard,
+        'name': name.trim(),
+        'full_name': name.trim(),
+        'phone': phoneNumber.trim(), // Backend requires exactly 'phone'
+        'address': address.trim(),
+        'ward': finalWard, // Backend requires exactly 'ward'
         'role': userType.toString().split('.').last,
       });
+
+      debugPrint('[AuthService] Register payload: $body');
 
       final response = await http.post(
         Uri.parse(ApiConstants.register),

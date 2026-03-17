@@ -146,10 +146,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       right: 20,
       bottom: 24,
       child: Container(
-        height: 80,
+        height: 68, // Reduced from 80
         decoration: BoxDecoration(
           color: AppTheme.bgDark.withValues(alpha: 0.95),
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(24), // Reduced from 32
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.3),
@@ -157,7 +157,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               offset: const Offset(0, 15),
             ),
           ],
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.2), // Reduced width
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -184,10 +184,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), // Reduced
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16), // Reduced
         ),
         child: Row(
           children: [

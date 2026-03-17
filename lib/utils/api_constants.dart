@@ -32,6 +32,23 @@ class ApiConstants {
   static const String pickupSlots = '$baseUrl/api/pickup-slots/';
   static const String availableDates = '$baseUrl/api/pickup-slots/available-dates/';
 
+  // Worker Endpoints
+  static const String workerShifts = '$baseUrl/api/worker-shifts/';
+  static const String workerAttendance = '$baseUrl/api/worker-attendance/';
+  static const String workerStats = '$baseUrl/api/worker-stats/';
+
+  // Rewards Endpoints
+  static const String rewards = '$baseUrl/api/rewards/';
+  static const String rewardsHistory = '$baseUrl/api/rewards/history/';
+  static const String rewardsLeaderboard = '$baseUrl/api/rewards/leaderboard/';
+
+  // Referrals Endpoints
+  static const String referrals = '$baseUrl/api/referrals/';
+  
+  // Support Endpoints
+  static const String supportTickets = '$baseUrl/api/support-tickets/';
+  static const String faqs = '$baseUrl/api/faqs/';
+
   // Schema
   static const String schema = '$baseUrl/api/schema/';
 }

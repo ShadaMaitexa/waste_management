@@ -35,7 +35,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     // Django REST typically uses 'role' or 'user_type' in snake_case
     final userTypeStr = json['role'] ?? json['user_type'] ?? json['userType'] ?? 'resident';
-    final phoneNumber = json['phone_number'] ?? json['phoneNumber'] ?? '';
+    final phoneNumber = json['phone'] ?? json['phone_number'] ?? json['phoneNumber'] ?? '';
     final address = json['address'] ?? '';
     final createdAtRaw = json['created_at'] ?? json['createdAt'];
     final isActive = json['is_active'] ?? json['isActive'] ?? true;

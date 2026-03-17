@@ -33,6 +33,7 @@ import 'services/reward_service.dart';
 import 'services/referral_service.dart';
 import 'services/admin_service.dart';
 import 'services/complaint_service.dart';
+import 'services/worker_service.dart'; // Added WorkerService
 
 void main() {
   runApp(const GreenLoopApp());
@@ -58,8 +59,18 @@ class GreenLoopApp extends StatelessWidget {
           create: (context) => AdminService(context.read<AuthService>()),
           update: (_, auth, admin) => AdminService(auth),
         ),
-        ChangeNotifierProvider(create: (_) => RewardService()),
-        ChangeNotifierProvider(create: (_) => ReferralService()),
+        ChangeNotifierProxyProvider<AuthService, RewardService>(
+          create: (context) => RewardService(context.read<AuthService>()),
+          update: (_, auth, reward) => RewardService(auth),
+        ),
+        ChangeNotifierProxyProvider<AuthService, ReferralService>(
+          create: (context) => ReferralService(context.read<AuthService>()),
+          update: (_, auth, referral) => ReferralService(auth),
+        ),
+        ChangeNotifierProxyProvider<AuthService, WorkerService>(
+          create: (context) => WorkerService(context.read<AuthService>()),
+          update: (_, auth, worker) => WorkerService(auth),
+        ),
       ],
       child: MaterialApp(
         title: 'GreenLoop - Smart Waste Management',
