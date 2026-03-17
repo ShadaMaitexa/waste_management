@@ -11,12 +11,14 @@ import 'auth_service.dart';
 class AdminService extends ChangeNotifier {
   final AuthService _authService;
   List<User> _users = [];
+  List<User> _availableWorkers = [];
   List<Pickup> _pickups = [];
   List<Complaint> _complaints = [];
   final Map<String, dynamic> _systemStats = {};
   bool _isLoading = false;
 
   List<User> get allUsers => List.unmodifiable(_users);
+  List<User> get availableWorkers => List.unmodifiable(_availableWorkers);
   List<Pickup> get allPickups => List.unmodifiable(_pickups);
   List<Pickup> get pickups => List.unmodifiable(_pickups);
   List<Complaint> get allComplaints => List.unmodifiable(_complaints);
@@ -178,6 +180,24 @@ class AdminService extends ChangeNotifier {
     }
   }
 
+  Future<bool> deleteComplaint(String id) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('${ApiConstants.complaints}$id/'),
+        headers: {'Authorization': 'Bearer ${_authService.token}'},
+      );
+
+      if (response.statusCode == 204) {
+        _complaints.removeWhere((c) => c.id == id);
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // ==================== BOOKINGS & ASSIGNMENTS ====================
 
   Future<void> fetchAllBookings() async {
@@ -200,6 +220,23 @@ class AdminService extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> fetchAvailableWorkers() async {
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.availableWorkers),
+        headers: {'Authorization': 'Bearer ${_authService.token}'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _availableWorkers = data.map((json) => User.fromJson(json)).toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error fetching available workers: $e');
     }
   }
 

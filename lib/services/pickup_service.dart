@@ -193,36 +193,23 @@ class PickupService extends ChangeNotifier {
   // ==================== PICKUP SLOTS ====================
 
   Future<void> fetchAvailableSlots() async {
-    // Mocking for now as backend might not have this yet
+    if (!_authService.isAuthenticated) return;
+    
     _isLoading = true;
     notifyListeners();
 
     try {
-      // simulate network delay
-      await Future.delayed(const Duration(milliseconds: 500));
+      final response = await http.get(
+        Uri.parse(ApiConstants.pickupSlots),
+        headers: {
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+      );
       
-      // Some mock data
-      final now = DateTime.now();
-      _availableSlots = [
-        PickupSlot(
-          id: 'slot1',
-          date: now,
-          startTime: const TimeOfDay(hour: 8, minute: 0),
-          endTime: const TimeOfDay(hour: 10, minute: 0),
-        ),
-        PickupSlot(
-          id: 'slot2',
-          date: now,
-          startTime: const TimeOfDay(hour: 10, minute: 30),
-          endTime: const TimeOfDay(hour: 12, minute: 30),
-        ),
-        PickupSlot(
-          id: 'slot3',
-          date: now.add(const Duration(days: 1)),
-          startTime: const TimeOfDay(hour: 9, minute: 0),
-          endTime: const TimeOfDay(hour: 11, minute: 0),
-        ),
-      ];
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _availableSlots = data.map((json) => PickupSlot.fromJson(json)).toList();
+      }
     } catch (e) {
       debugPrint('Error fetching slots: $e');
     } finally {
@@ -232,15 +219,43 @@ class PickupService extends ChangeNotifier {
   }
 
   Future<bool> createPickupSlot(PickupSlot slot) async {
-    // Mocking
-    _availableSlots.add(slot);
-    notifyListeners();
-    return true;
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.pickupSlots),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+        body: jsonEncode(slot.toJson()),
+      );
+
+      if (response.statusCode == 201) {
+        await fetchAvailableSlots();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> deletePickupSlot(String slotId) async {
-    _availableSlots.removeWhere((s) => s.id == slotId);
-    notifyListeners();
-    return true;
+    try {
+      final response = await http.delete(
+        Uri.parse('${ApiConstants.pickupSlots}$slotId/'),
+        headers: {
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+      );
+
+      if (response.statusCode == 204) {
+        _availableSlots.removeWhere((s) => s.id == slotId);
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 }

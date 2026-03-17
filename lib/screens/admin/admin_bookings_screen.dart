@@ -21,7 +21,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final adminService = context.read<AdminService>();
       adminService.fetchAllBookings();
-      adminService.fetchUsers();
+      adminService.fetchAvailableWorkers();
     });
   }
 
@@ -152,7 +152,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
 
   Widget _buildPickupCard(Pickup pickup, AdminService adminService) {
     final statusColor = _getStatusColor(pickup.status);
-    final workers = adminService.allUsers.where((u) => u.userType == UserType.worker).toList();
+    final workers = adminService.availableWorkers;
     
     String? assignedWorkerName = pickup.assignedWorkerName;
     if (assignedWorkerName == null && pickup.assignedWorkerId != null) {

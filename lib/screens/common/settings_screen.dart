@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -185,60 +186,168 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildProfileCard() {
+    final user = Provider.of<AuthService>(context).currentUser;
+    if (user == null) return const SizedBox.shrink();
+
     return Card(
+      elevation: 0,
+       shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: AppTheme.grey100, width: 1.5),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingM),
+        padding: const EdgeInsets.all(24),
         child: Row(
           children: [
             Container(
-              width: 60,
-              height: 60,
+              width: 72,
+              height: 72,
               decoration: BoxDecoration(
-                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusM),
+                gradient: AppTheme.emeraldGradient,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
               child: const Icon(
-                Icons.person,
-                size: 30,
-                color: AppTheme.primaryGreen,
+                Icons.person_rounded,
+                size: 32,
+                color: Colors.white,
               ),
             ),
-            const SizedBox(width: AppTheme.spacingM),
-            const Expanded(
+            const SizedBox(width: 20),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'John Doe',
-                    style: TextStyle(
+                    user.name,
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.grey900,
+                      letterSpacing: -0.5,
                     ),
                   ),
+                  const SizedBox(height: 4),
                   Text(
-                    'john.doe@email.com',
-                    style: TextStyle(
-                      color: AppTheme.grey600,
+                    user.email,
+                    style: GoogleFonts.inter(
+                      color: AppTheme.grey500,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    'Ward 15, Kozhikode',
-                    style: TextStyle(
-                      color: AppTheme.grey600,
-                      fontSize: 12,
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryEmerald.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'WARD ${user.wardNumber ?? "NA"} • ${user.userType.toString().split('.').last.toUpperCase()}',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppTheme.primaryEmerald,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.edit_outlined),
-              color: AppTheme.primaryGreen,
+              onPressed: () => _showEditProfileDialog(user.name, user.address),
+              icon: const Icon(Icons.edit_note_rounded),
+              color: AppTheme.primaryEmerald,
+              iconSize: 28,
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showEditProfileDialog(String currentName, String currentAddress) {
+    final nameController = TextEditingController(text: currentName);
+    final addressController = TextEditingController(text: currentAddress);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(36))),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 32, right: 32, top: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(child: Container(width: 48, height: 5, decoration: BoxDecoration(color: AppTheme.grey200, borderRadius: BorderRadius.circular(10)))),
+            const SizedBox(height: 32),
+            Text('Update Profile', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 26, letterSpacing: -1.5)),
+            const SizedBox(height: 36),
+            _buildDialogField('NAME', nameController, Icons.person_rounded),
+            const SizedBox(height: 20),
+            _buildDialogField('ADDRESS', addressController, Icons.location_on_rounded),
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  final success = await context.read<AuthService>().updateProfile(
+                    name: nameController.text.trim(),
+                    address: addressController.text.trim(),
+                  );
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Profile updated successfully'), backgroundColor: AppTheme.bgDark),
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryEmerald,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 22),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                ),
+                child: const Text('SAVE CHANGES', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+              ),
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDialogField(String label, TextEditingController controller, IconData icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 9, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 1.5)),
+        const SizedBox(height: 10),
+        TextField(
+          controller: controller,
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15, color: AppTheme.grey900),
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, size: 20, color: AppTheme.grey400),
+            filled: true,
+            fillColor: AppTheme.grey50,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          ),
+        ),
+      ],
     );
   }
 

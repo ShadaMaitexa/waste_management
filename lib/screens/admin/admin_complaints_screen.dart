@@ -270,17 +270,37 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Confirm Deletion'),
+                          content: const Text('Are you sure you want to permanently delete this complaint record?'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('CANCEL')),
+                            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('DELETE', style: TextStyle(color: AppTheme.error))),
+                          ],
+                        ),
+                      );
+                      if (confirm == true && mounted) {
+                        final success = await context.read<AdminService>().deleteComplaint(complaint.id);
+                        if (mounted && success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Complaint deleted successfully'), backgroundColor: AppTheme.bgDark),
+                          );
+                        }
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.bgDark,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppTheme.error.withValues(alpha: 0.1),
+                      foregroundColor: AppTheme.error,
                       padding: const EdgeInsets.symmetric(vertical: 18),
-                      elevation: 4,
-                      shadowColor: AppTheme.bgDark.withValues(alpha: 0.3),
+                      elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      side: BorderSide(color: AppTheme.error.withValues(alpha: 0.2), width: 1.5),
                     ),
                     child: Text(
-                      'ENGAGE AGENT', 
+                      'DELETE CASE', 
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w900, 
                         letterSpacing: 1, 

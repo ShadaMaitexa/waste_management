@@ -6,6 +6,7 @@ class ApiConstants {
   static const String register = '$baseUrl/api/auth/register/';
   static const String profile = '$baseUrl/api/auth/profile/';
   static const String forgotPassword = '$baseUrl/api/auth/forgot-password/';
+  static const String resetPassword = '$baseUrl/api/auth/reset-password/'; // {uid}/{token}/ to be appended
   static const String createHksWorker = '$baseUrl/api/auth/create-hks-worker/';
   static const String users = '$baseUrl/api/auth/users/';
   
@@ -25,4 +26,12 @@ class ApiConstants {
   
   // Pickups Endpoints
   static const String pickups = '$baseUrl/api/pickups/';
+  static const String availableWorkers = '$baseUrl/api/pickups/available-workers/';
+  
+  // Pickup Slots Endpoints
+  static const String pickupSlots = '$baseUrl/api/pickup-slots/';
+  static const String availableDates = '$baseUrl/api/pickup-slots/available-dates/';
+
+  // Schema
+  static const String schema = '$baseUrl/api/schema/';
 }

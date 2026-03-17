@@ -226,6 +226,35 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateProfile({String? name, String? phone, String? address}) async {
+    if (_token == null) return false;
+
+    try {
+      final response = await http.patch(
+        Uri.parse(ApiConstants.profile),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_token',
+        },
+        body: jsonEncode({
+          if (name != null) 'username': name,
+          if (phone != null) 'phone': phone,
+          if (address != null) 'address': address,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        _currentUser = User.fromJson(jsonDecode(response.body));
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('[AuthService] Error updating profile: $e');
+      return false;
+    }
+  }
+
   Future<bool> forgotPassword(String email) async {
     try {
       final response = await http.post(
@@ -239,8 +268,20 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  Future<bool> resetPassword(String uid, String token, String newPassword) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiConstants.resetPassword}$uid/$token/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'new_password': newPassword}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     await _clearToken();
   }
 }
-
