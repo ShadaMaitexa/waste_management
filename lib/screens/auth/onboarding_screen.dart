@@ -44,7 +44,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          color: AppTheme.bgDark,
+          gradient: AppTheme.slateGradient,
         ),
         child: SafeArea(
           child: Column(
@@ -59,26 +60,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       onPressed: _skipOnboarding,
                       child: Text(
                         'SKIP',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           color: Colors.white.withValues(alpha: 0.5),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
                         ),
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                       ),
                       child: Text(
-                        '${_currentPage + 1} / $_totalPages',
-                        style: GoogleFonts.inter(
+                        'STEP ${_currentPage + 1} / $_totalPages',
+                        style: GoogleFonts.plusJakartaSans(
                           color: Colors.white.withValues(alpha: 0.7),
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
                         ),
                       ),
                     ),
@@ -99,25 +102,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       'Welcome to GreenLoop',
                       'Your smart waste management solution for Kozhikode',
                       'Together, let\'s build a cleaner, greener city',
-                      Icons.recycling,
+                      Icons.recycling_rounded,
                     ),
                     _buildPage(
                       'Easy Pickup Booking',
                       'Schedule waste collection at your convenience',
                       'Regular, bulk, and emergency pickups available',
-                      Icons.schedule,
+                      Icons.schedule_rounded,
                     ),
                     _buildPage(
                       'Earn Rewards',
                       'Get points for proper waste segregation',
                       'Redeem points for eco-friendly products',
-                      Icons.stars,
+                      Icons.stars_rounded,
                     ),
                     _buildPage(
                       'Join the Movement',
                       'Be part of Kozhikode\'s sustainability journey',
                       'Small actions, big impact for our planet',
-                      Icons.eco,
+                      Icons.eco_rounded,
                     ),
                   ],
                 ),
@@ -135,12 +138,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         (index) => AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: _currentPage == index ? 32 : 8,
+                          width: _currentPage == index ? 40 : 10,
                           height: 6,
                           decoration: BoxDecoration(
                             color: _currentPage == index
-                                ? Colors.white
-                                : Colors.white.withValues(alpha: 0.2),
+                                ? AppTheme.primaryEmerald
+                                : Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
@@ -148,33 +151,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     // Next/Skip button
                     SizedBox(
-                      height: 56,
+                      height: 64,
                       child: ElevatedButton(
                         onPressed: _nextPage,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: AppTheme.bgDark,
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 28,
-                          ),
+                          padding: EdgeInsets.zero,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              _currentPage == _totalPages - 1 ? 'GET STARTED' : 'CONTINUE',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.5,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 28),
+                          child: Row(
+                            children: [
+                              Text(
+                                _currentPage == _totalPages - 1 ? 'GET STARTED' : 'CONTINUE',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.arrow_forward_rounded, size: 18),
-                          ],
+                              const SizedBox(width: 12),
+                              Icon(
+                                _currentPage == _totalPages - 1 ? Icons.check_circle_outline_rounded : Icons.arrow_forward_rounded, 
+                                size: 20, 
+                                color: AppTheme.primaryEmerald
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -190,56 +198,73 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildPage(String title, String subtitle, String description, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Icon container with premium glass effect
           Container(
-            width: 140,
-            height: 140,
+            width: 180,
+            height: 180,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(48),
+              color: Colors.white.withValues(alpha: 0.03),
+              shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1),
-                width: 2,
+                color: Colors.white.withValues(alpha: 0.08),
+                width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 40,
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                  blurRadius: 60,
                   offset: const Offset(0, 20),
                 ),
               ],
             ),
-            child: Icon(
-              icon,
-              size: 64,
-              color: Colors.white,
+            child: Container(
+              margin: const EdgeInsets.all(40),
+              decoration: BoxDecoration(
+                gradient: AppTheme.emeraldGradient,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
+              ),
+              child: Center(
+                child: Icon(
+                  icon,
+                  size: 52,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 56),
+          const SizedBox(height: 64),
           // Title
           Text(
             title.toUpperCase(),
             style: GoogleFonts.plusJakartaSans(
               color: Colors.white,
               fontWeight: FontWeight.w900,
-              fontSize: 28,
-              letterSpacing: -0.5,
+              fontSize: 32,
+              letterSpacing: -1,
               height: 1.1,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           // Subtitle
           Text(
             subtitle,
-            style: GoogleFonts.inter(
-              color: Colors.white.withValues(alpha: 0.7),
+            style: GoogleFonts.plusJakartaSans(
+              color: AppTheme.primaryEmerald,
               fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
             ),
             textAlign: TextAlign.center,
           ),
@@ -248,9 +273,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Text(
             description,
             style: GoogleFonts.inter(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 13,
-              height: 1.5,
+              color: Colors.white.withValues(alpha: 0.4),
+              fontSize: 14,
+              height: 1.6,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,

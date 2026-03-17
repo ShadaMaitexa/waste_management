@@ -57,37 +57,34 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.fromLTRB(28, 0, 28, 32),
-        decoration: BoxDecoration(
+        height: 100,
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+        decoration: const BoxDecoration(
           color: Colors.transparent,
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.bgDark.withValues(alpha: 0.2),
-              blurRadius: 40,
-              offset: const Offset(0, 15),
-            ),
-          ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(32),
           child: Container(
-            height: 72,
             decoration: BoxDecoration(
               color: AppTheme.bgDark.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1.5),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                )
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavItem(0, Icons.grid_view_rounded, 'DESK'),
-                  _buildNavItem(1, Icons.map_rounded, 'ROUTE'),
-                  _buildNavItem(2, Icons.assignment_rounded, 'LOGS'),
-                  _buildNavItem(3, Icons.account_circle_rounded, 'SELF'),
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(0, Icons.grid_view_rounded, 'DESK'),
+                _buildNavItem(1, Icons.map_rounded, 'ROUTE'),
+                _buildNavItem(2, Icons.assignment_rounded, 'LOGS'),
+                _buildNavItem(3, Icons.account_circle_rounded, 'SELF'),
+              ],
             ),
           ),
         ),
@@ -102,10 +99,10 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        curve: Curves.fastOutSlowIn,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.08) : Colors.transparent,
+          color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -113,18 +110,18 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.2),
-              size: 22,
+              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.3),
+              size: 20,
             ),
             if (isSelected) ...[
-              const SizedBox(width: 10),
+              const SizedBox(width: 8),
               Text(
                 label,
                 style: GoogleFonts.plusJakartaSans(
                   color: AppTheme.primaryEmerald,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 10,
-                  letterSpacing: 2,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 11,
+                  letterSpacing: 1.5,
                 ),
               ),
             ],
@@ -191,22 +188,23 @@ class _DashboardTab extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: const BoxDecoration(
-            gradient: AppTheme.emeraldGradient,
+            color: AppTheme.bgDark,
+            gradient: AppTheme.slateGradient,
           ),
           child: Stack(
             fit: StackFit.expand,
             children: [
               Positioned(
-                right: -60,
-                top: -60,
+                right: -40,
+                top: -40,
                 child: Container(
-                  width: 300,
-                  height: 300,
+                  width: 250,
+                  height: 250,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.white.withValues(alpha: 0.1),
+                        Colors.white.withValues(alpha: 0.05),
                         Colors.transparent,
                       ],
                     ),
@@ -214,37 +212,37 @@ class _DashboardTab extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(32, 0, 32, 56),
+                padding: const EdgeInsets.fromLTRB(28, 0, 28, 56),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
+                        color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1.5),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            width: 8,
-                            height: 8,
+                            width: 6,
+                            height: 6,
                             decoration: const BoxDecoration(
                               color: AppTheme.primaryEmerald,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
                                   color: AppTheme.primaryEmerald,
-                                  blurRadius: 8,
+                                  blurRadius: 10,
                                   spreadRadius: 2,
                                 )
                               ],
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 10),
                           Text(
                             'OPERATIVE ACTIVE',
                             style: GoogleFonts.plusJakartaSans(
@@ -257,25 +255,25 @@ class _DashboardTab extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 28),
                     Text(
                       name,
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white,
-                        fontSize: 52,
+                        fontSize: 48,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: -3,
-                        height: 0.9,
+                        letterSpacing: -2.5,
+                        height: 1.0,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'HKS Logistics Specialist • Unit 204',
+                      'LOGISTICS COMMAND • WARD 15',
                       style: GoogleFonts.plusJakartaSans(
-                        color: Colors.white.withValues(alpha: 0.6),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.2,
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ],
@@ -288,9 +286,12 @@ class _DashboardTab extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: () {},
-          icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 24),
+          icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 22),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.white.withValues(alpha: 0.05),
+          ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 16),
       ],
     );
   }
@@ -306,7 +307,7 @@ class _DashboardTab extends StatelessWidget {
             AppTheme.warning,
           ),
         ),
-        const SizedBox(width: AppTheme.spacingL),
+        const SizedBox(width: 16),
         Expanded(
           child: _buildStatItem(
             'COMPLETED',
@@ -321,38 +322,39 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildStatItem(String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(40),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 20),
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 36,
+              fontSize: 28,
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -2,
+              letterSpacing: -1,
             ),
           ),
+          const SizedBox(height: 2),
           Text(
             title.toUpperCase(),
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 10,
+              fontSize: 9,
               color: AppTheme.grey400,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -366,18 +368,26 @@ class _DashboardTab extends StatelessWidget {
   Widget _buildCurrentTaskCard(BuildContext context, Pickup? pickup) {
     if (pickup == null) {
       return Container(
-        padding: const EdgeInsets.all(AppTheme.spacingXL),
+        padding: const EdgeInsets.all(40),
         decoration: BoxDecoration(
-          color: AppTheme.bgCanvas,
-          borderRadius: BorderRadius.circular(AppTheme.radiusXL),
-          border: Border.all(color: AppTheme.grey200),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: AppTheme.cardShadow,
+          border: Border.all(color: AppTheme.grey100, width: 1),
         ),
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.inbox_rounded, size: 48, color: AppTheme.grey300),
+              Icon(Icons.inbox_outlined, size: 40, color: AppTheme.grey300),
               const SizedBox(height: 16),
-              Text('Logistics Queue Empty', style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w700)),
+              Text(
+                'Logistics Queue Empty', 
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.grey500, 
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
             ],
           ),
         ),
@@ -392,31 +402,31 @@ class _DashboardTab extends StatelessWidget {
           child: Text(
             'CURRENT OPERATIONAL UNIT',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w900,
               color: AppTheme.grey400,
               letterSpacing: 2,
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
             color: AppTheme.bgDark,
-            borderRadius: BorderRadius.circular(44),
+            borderRadius: BorderRadius.circular(36),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.bgDark.withValues(alpha: 0.4),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
+                color: AppTheme.bgDark.withValues(alpha: 0.3),
+                blurRadius: 30,
+                offset: const Offset(0, 15),
               ),
             ],
           ),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(32),
+                padding: const EdgeInsets.all(28),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -424,45 +434,41 @@ class _DashboardTab extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), width: 1.5),
+                            color: Colors.white.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
                           ),
                           child: Text(
                             'WARD ${pickup.wardNumber}',
                             style: GoogleFonts.plusJakartaSans(
-                              color: AppTheme.primaryEmerald,
+                              color: Colors.white,
                               fontWeight: FontWeight.w900,
                               fontSize: 10,
                               letterSpacing: 2,
                             ),
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.more_horiz_rounded, color: Colors.white24),
-                          visualDensity: VisualDensity.compact,
-                        ),
+                        const Icon(Icons.more_horiz_rounded, color: Colors.white24, size: 20),
                       ],
                     ),
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 32),
                     Text(
                       pickup.address,
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white,
-                        fontSize: 28,
+                        fontSize: 24,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -1,
                         height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 24),
                     Row(
                       children: [
                         _infoChip(Icons.access_time_filled_rounded, pickup.formattedTime),
-                        const SizedBox(width: 14),
+                        const SizedBox(width: 12),
                         _infoChip(Icons.layers_rounded, '${pickup.wasteTypes.length} Classes'),
                       ],
                     ),
@@ -470,27 +476,27 @@ class _DashboardTab extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.all(16),
-                height: 64,
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                height: 60,
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withValues(alpha: 0.05),
+                    backgroundColor: Colors.transparent,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     elevation: 0,
                     padding: EdgeInsets.zero,
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
                       gradient: AppTheme.emeraldGradient,
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
                           color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
                         )
                       ],
                     ),
@@ -500,8 +506,8 @@ class _DashboardTab extends StatelessWidget {
                         'MARK EXTRACTION COMPLETE',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                          fontSize: 13,
+                          letterSpacing: 1.5,
+                          fontSize: 12,
                         ),
                       ),
                     ),
@@ -517,21 +523,21 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _infoChip(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppTheme.primaryEmerald, size: 14),
-          const SizedBox(width: 10),
+          Icon(icon, color: AppTheme.primaryEmerald, size: 12),
+          const SizedBox(width: 8),
           Text(
             label,
             style: GoogleFonts.plusJakartaSans(
               color: Colors.white,
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.2,
             ),
@@ -548,19 +554,19 @@ class _DashboardTab extends StatelessWidget {
         Text(
           'OPERATIONAL TOOLS',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.w900,
             color: AppTheme.grey400,
             letterSpacing: 2,
           ),
         ),
-        const SizedBox(height: AppTheme.spacingL),
+        const SizedBox(height: 16),
         GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: AppTheme.spacingM,
-          crossAxisSpacing: AppTheme.spacingM,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
           childAspectRatio: 0.85,
           children: [
             _actionCard('Reporting', Icons.camera_alt_rounded, AppTheme.accentIndigo),
@@ -576,29 +582,29 @@ class _DashboardTab extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(40),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: color, size: 28),
+            child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
             label,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: 0.5,
+              letterSpacing: 0.2,
             ),
           ),
         ],

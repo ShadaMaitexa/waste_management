@@ -34,52 +34,53 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
         return Scaffold(
           backgroundColor: AppTheme.bgSurface,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(160),
+            preferredSize: const Size.fromHeight(170),
             child: Container(
               padding: const EdgeInsets.only(top: 20),
               decoration: const BoxDecoration(
-                color: AppTheme.bgDark,
-                gradient: AppTheme.slateGradient,
+                color: AppTheme.bgSurface,
               ),
               child: Column(
                 children: [
-                  AppBar(
+                   AppBar(
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     scrolledUnderElevation: 0,
+                    centerTitle: false,
                     title: Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(
                         'User Registry',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
-                          fontSize: 26,
-                          color: Colors.white,
-                          letterSpacing: -1,
+                          fontSize: 28,
+                          color: AppTheme.grey900,
+                          letterSpacing: -1.5,
                         ),
                       ),
                     ),
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppTheme.grey900,
                     actions: [
                       Container(
-                        margin: const EdgeInsets.only(right: 16, top: 8),
+                        margin: const EdgeInsets.only(right: 20, top: 12),
                         child: ElevatedButton.icon(
                           onPressed: _showAddWorkerDialog,
-                          icon: const Icon(Icons.add_rounded, size: 18),
+                          icon: const Icon(Icons.add_rounded, size: 18, color: Colors.white),
                           label: Text(
                             'NEW WORKER', 
                             style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.w900, 
-                              letterSpacing: 1,
+                              color: Colors.white,
+                              letterSpacing: 1.5,
                               fontSize: 11,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.primaryEmerald,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
+                            elevation: 8,
+                            shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                           ),
                         ),
                       ),
@@ -93,8 +94,8 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                     indicatorColor: AppTheme.primaryEmerald,
                     indicatorWeight: 4,
                     indicatorSize: TabBarIndicatorSize.label,
-                    labelColor: Colors.white,
-                    unselectedLabelColor: Colors.white.withValues(alpha: 0.4),
+                    labelColor: AppTheme.grey900,
+                    unselectedLabelColor: AppTheme.grey400,
                     labelStyle: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w900, 
                       fontSize: 12, 
@@ -109,7 +110,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                       Tab(text: 'ADMINS'),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
@@ -137,43 +138,41 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
 
   Widget _buildControlBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(bottom: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5))),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border(bottom: BorderSide(color: AppTheme.grey100, width: 1)),
       ),
       child: Column(
         children: [
           TextField(
             onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
-            style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14),
+            style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
             decoration: InputDecoration(
               hintText: 'Search by UID, name, or metadata...',
-              hintStyle: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 14, fontWeight: FontWeight.w500),
+              hintStyle: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w500),
               prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppTheme.grey400),
               contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               fillColor: AppTheme.grey50,
               filled: true,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16), 
-                borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+                borderRadius: BorderRadius.circular(18), 
+                borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16), 
-                borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+                borderRadius: BorderRadius.circular(18), 
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18), 
+                borderSide: const BorderSide(color: AppTheme.primaryEmerald, width: 1.5),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
             child: Row(
               children: [
                 _buildFilterChip('Active Nodes', true),
@@ -191,33 +190,32 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
 
   Widget _buildFilterChip(String label, bool isActive) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: isActive ? AppTheme.primaryEmerald.withValues(alpha: 0.05) : Colors.white,
+        color: isActive ? AppTheme.primaryEmerald : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isActive ? AppTheme.primaryEmerald.withValues(alpha: 0.3) : AppTheme.grey200,
+          color: isActive ? AppTheme.primaryEmerald : AppTheme.grey200,
           width: 1.5,
         ),
+        boxShadow: isActive ? [
+          BoxShadow(
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ] : null,
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (isActive) 
-            const Padding(
-              padding: EdgeInsets.only(right: 8),
-              child: Icon(Icons.check_circle_rounded, size: 14, color: AppTheme.primaryEmerald),
-            ),
-          Text(
-            label, 
-            style: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w800, 
-              fontSize: 11, 
-              color: isActive ? AppTheme.primaryEmerald : AppTheme.grey500,
-              letterSpacing: 0.2,
-            ),
+      child: Center(
+        child: Text(
+          label, 
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w900, 
+            fontSize: 10, 
+            color: isActive ? Colors.white : AppTheme.grey500,
+            letterSpacing: 0.5,
           ),
-        ],
+        ),
       ),
     );
   }
@@ -276,42 +274,35 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
 
   Widget _buildUserRow(User user) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1),
-        boxShadow: AppTheme.smoothShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
+        boxShadow: AppTheme.cardShadow,
       ),
       child: Row(
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: 52,
+            height: 52,
             decoration: BoxDecoration(
-              gradient: AppTheme.emeraldGradient,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Center(
               child: Text(
                 user.name[0].toUpperCase(), 
                 style: GoogleFonts.plusJakartaSans(
-                  color: Colors.white, 
+                  color: AppTheme.primaryEmerald, 
                   fontWeight: FontWeight.w900, 
-                  fontSize: 22,
+                  fontSize: 20,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +311,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                   user.name, 
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w900, 
-                    fontSize: 17, 
+                    fontSize: 16, 
                     color: AppTheme.grey900, 
                     letterSpacing: -0.5,
                   ),
@@ -329,7 +320,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                 Text(
                   user.email, 
                   style: GoogleFonts.inter(
-                    fontSize: 13, 
+                    fontSize: 12, 
                     color: AppTheme.grey400, 
                     fontWeight: FontWeight.w500,
                   ),
@@ -337,16 +328,16 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
               ],
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               _buildStatusBadge(user.isActive),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 (user.wardNumber != null ? 'WARD ${user.wardNumber}' : 'UNASSIGNED'),
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 9, 
+                  fontSize: 8, 
                   fontWeight: FontWeight.w900, 
                   color: AppTheme.grey300, 
                   letterSpacing: 1,
@@ -354,9 +345,9 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
               ),
             ],
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           IconButton(
-            icon: const Icon(Icons.more_vert_rounded, color: AppTheme.grey300),
+            icon: const Icon(Icons.more_vert_rounded, color: AppTheme.grey300, size: 20),
             onPressed: () => _showUserActions(user),
             splashRadius: 24,
           ),
@@ -373,7 +364,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: color.withValues(alpha: 0.2),
+          color: color.withValues(alpha: 0.1),
           width: 1.5,
         ),
       ),
@@ -393,7 +384,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
             isActive ? 'ACTIVE' : 'SUSPENDED',
             style: GoogleFonts.plusJakartaSans(
               color: color, 
-              fontSize: 9, 
+              fontSize: 8, 
               fontWeight: FontWeight.w900, 
               letterSpacing: 1,
             ),
@@ -555,11 +546,11 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
             ),
             const SizedBox(height: 32),
             Text(
-              'Onboard New Worker', 
+              'Onboard Field Force', 
               style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.w900, 
-                fontSize: 24, 
-                letterSpacing: -1,
+                fontSize: 26, 
+                letterSpacing: -1.5,
                 color: AppTheme.grey900,
               ),
             ),
@@ -572,7 +563,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 36),
             _buildDialogField('FULL LEGAL NAME', nameController, Icons.person_rounded),
             const SizedBox(height: 20),
             _buildDialogField('EMAIL ADDRESS', emailController, Icons.alternate_email_rounded),
@@ -621,7 +612,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
                   'PROVISION IDENTITY', 
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w900, 
-                    letterSpacing: 1.5,
+                    letterSpacing: 2,
                     fontSize: 13,
                   ),
                 ),
@@ -656,18 +647,18 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
             filled: true,
             fillColor: AppTheme.grey50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16), 
-              borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+              borderRadius: BorderRadius.circular(18), 
+              borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16), 
-              borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+              borderRadius: BorderRadius.circular(18), 
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16), 
+              borderRadius: BorderRadius.circular(18), 
               borderSide: const BorderSide(color: AppTheme.primaryEmerald, width: 1.5),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           ),
         ),
       ],

@@ -64,10 +64,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.pushReplacementNamed(context, route);
       } else if (mounted) {
-        _showErrorSnackBar('Login failed. Please check your credentials.');
+        _showErrorSnackBar('Check your email and password');
       }
     } catch (e) {
-      _showErrorSnackBar('Login failed: $e');
+      _showErrorSnackBar('Error: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -97,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.bgSurface,
       body: Stack(
         children: [
           // Elevated Gradient Background
@@ -106,43 +107,32 @@ class _LoginScreenState extends State<LoginScreen> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppTheme.bgSurface, Color(0xFFE8F5E9)],
+                colors: [AppTheme.bgSurface, Color(0xFFF1F8E9)],
               ),
             ),
           ),
           // Subtle Eco Patterns
           Positioned(
-            right: -120,
-            top: -60,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.eco_rounded,
-                size: 280,
-                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-              ),
+            right: -100,
+            top: -50,
+            child: Icon(
+              Icons.eco_rounded,
+              size: 300,
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
             ),
           ),
           Positioned(
-            left: -100,
-            bottom: -50,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                color: AppTheme.accentIndigo.withValues(alpha: 0.03),
-                shape: BoxShape.circle,
-              ),
+            left: -150,
+            bottom: -100,
+            child: Icon(
+              Icons.blur_on_rounded,
+              size: 400,
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.03),
             ),
           ),
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 450),
                 child: Column(
@@ -158,14 +148,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           _buildLoginForm(),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 48),
                           _buildLoginButton(),
-                          const SizedBox(height: 28),
+                          const SizedBox(height: 32),
                           _buildForgotPassword(),
-                          const SizedBox(height: 64),
+                          const SizedBox(height: 80),
                           _buildSignUpPrompt(),
-                          const SizedBox(height: 24),
-                          _buildAdminLoginLink(),
                         ],
                       ),
                     ),
@@ -181,26 +169,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildLogo() {
     return Container(
-      width: 140,
-      height: 140,
-      padding: const EdgeInsets.all(32),
+      width: 120,
+      height: 120,
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
-        boxShadow: AppTheme.smoothShadow,
+        boxShadow: AppTheme.cardShadow,
         border: Border.all(color: Colors.white, width: 4),
       ),
       child: Center(
         child: Container(
-          padding: const EdgeInsets.all(16),
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
             gradient: AppTheme.emeraldGradient,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
                 color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -220,20 +208,30 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           'GreenLoop',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 40,
+            fontSize: 44,
             fontWeight: FontWeight.w900,
             color: AppTheme.grey900,
-            letterSpacing: -1.5,
+            letterSpacing: -2,
+            height: 1,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
           'SMART LOGISTICS ECOSYSTEM',
+          style: GoogleFonts.plusJakartaSans(
+            color: AppTheme.primaryEmerald,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 4,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'Login to your account',
           style: GoogleFonts.inter(
             color: AppTheme.grey400,
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 4,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -247,13 +245,13 @@ class _LoginScreenState extends State<LoginScreen> {
         TextFormField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: AppTheme.grey900),
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900),
           decoration: const InputDecoration(
-            hintText: 'Email or Username',
-            prefixIcon: Icon(Icons.alternate_email_rounded, size: 20),
+            hintText: 'Email address',
+            prefixIcon: Icon(Icons.alternate_email_rounded, size: 20, color: AppTheme.primaryEmerald),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Access credential required';
+            if (value == null || value.isEmpty) return 'Email is required';
             return null;
           },
         ),
@@ -261,10 +259,10 @@ class _LoginScreenState extends State<LoginScreen> {
         TextFormField(
           controller: _passwordController,
           obscureText: _obscurePassword,
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: AppTheme.grey900),
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900),
           decoration: InputDecoration(
-            hintText: 'Secure Password',
-            prefixIcon: const Icon(Icons.lock_rounded, size: 20),
+            hintText: 'Password',
+            prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20, color: AppTheme.primaryEmerald),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
@@ -275,8 +273,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Security key required';
-            if (value.length < 6) return 'Minimal 6 characters';
+            if (value == null || value.isEmpty) return 'Password is required';
+            if (value.length < 6) return 'At least 6 characters';
             return null;
           },
         ),
@@ -293,15 +291,21 @@ class _LoginScreenState extends State<LoginScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.bgDark,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          elevation: 12,
-          shadowColor: AppTheme.bgDark.withValues(alpha: 0.4),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 0,
           padding: EdgeInsets.zero,
         ),
         child: Ink(
           decoration: BoxDecoration(
             gradient: AppTheme.slateGradient,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.bgDark.withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              )
+            ],
           ),
           child: Container(
             alignment: Alignment.center,
@@ -314,13 +318,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
-                : Text(
-                    'INITIALIZE SESSION',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 2,
-                      fontSize: 14,
-                    ),
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'LOGIN',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Icon(Icons.bolt_rounded, size: 20, color: AppTheme.primaryEmerald),
+                    ],
                   ),
           ),
         ),
@@ -332,57 +343,41 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextButton(
       onPressed: _navigateToForgotPassword,
       child: Text(
-        'RECOVER CREDENTIALS',
-        style: GoogleFonts.inter(
+        'FORGOT PASSWORD?',
+        style: GoogleFonts.plusJakartaSans(
           color: AppTheme.grey400, 
           fontWeight: FontWeight.w800,
           fontSize: 11,
-          letterSpacing: 1,
+          letterSpacing: 2,
         ),
       ),
     );
   }
 
   Widget _buildSignUpPrompt() {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      crossAxisAlignment: WrapCrossAlignment.center,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Don\'t have an account? ',
-          style: GoogleFonts.inter(color: AppTheme.grey500, fontWeight: FontWeight.w500, fontSize: 13),
+          'Don\'t have an account?',
+          style: GoogleFonts.inter(color: AppTheme.grey400, fontWeight: FontWeight.w600, fontSize: 13),
         ),
         TextButton(
           onPressed: _navigateToSignUp,
           style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             foregroundColor: AppTheme.primaryEmerald,
           ),
           child: Text(
-            'Create Identity',
+            'Sign Up',
             style: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
               fontSize: 13,
+              letterSpacing: -0.2,
             ),
           ),
         ),
       ],
     );
   }
-
-  Widget _buildAdminLoginLink() {
-    return TextButton.icon(
-      onPressed: () => Navigator.pushNamed(context, '/admin-login'),
-      icon: const Icon(Icons.shield_rounded, color: AppTheme.grey400, size: 16),
-      label: const Text(
-        'Admin Access',
-        style: TextStyle(
-          color: AppTheme.grey500,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
-
 }

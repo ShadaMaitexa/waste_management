@@ -102,66 +102,80 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bgSurface,
-      appBar: AppBar(
-        title: Text(
-          'Schedule Dispatch',
-          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white, letterSpacing: -0.5),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: AppTheme.bgDark,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.slateGradient,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: AppTheme.bgSurface,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppTheme.bgSurface, Color(0xFFF1F8E9)],
+              ),
+            ),
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildStepHeader('01', 'WASTE CLASSIFICATION'),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: Text(
-                        'Select operational categories for collection',
-                        style: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    _buildWasteTypeGrid(),
-                    const SizedBox(height: 56),
+          CustomScrollView(
+            slivers: [
+              _buildSliverAppBar(),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildStepHeader('01', 'CLASSIFICATION'),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Text(
+                            'Select operational categories for collection',
+                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        _buildWasteTypeGrid(),
+                        const SizedBox(height: 56),
 
-                    _buildStepHeader('02', 'SERVICE PARAMETERS'),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: Text(
-                        'Define delivery geometry and logistics',
-                        style: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    _buildAddressSection(),
-                    const SizedBox(height: 40),
-                    _buildCollectionInfo(),
-                    const SizedBox(height: 64),
+                        _buildStepHeader('02', 'SERVICE PARAMETERS'),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Text(
+                            'Define delivery geometry and logistics',
+                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 13, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        _buildServiceParameters(),
+                        const SizedBox(height: 40),
+                        _buildCollectionInfo(),
+                        const SizedBox(height: 64),
 
-                    _buildSubmitButton(),
-                    const SizedBox(height: 48),
-                  ],
+                        _buildSubmitButton(),
+                        const SizedBox(height: 120),
+                      ],
+                    ),
+                  ),
                 ),
+              ),
+            ],
+          ),
+          // Back Button
+          Positioned(
+            top: 50,
+            left: 20,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: AppTheme.cardShadow,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 18),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
           ),
@@ -170,30 +184,85 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     );
   }
 
+  Widget _buildSliverAppBar() {
+    return SliverAppBar(
+      expandedHeight: 200.0,
+      floating: false,
+      pinned: true,
+      backgroundColor: AppTheme.bgDark,
+      automaticallyImplyLeading: false,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: const BoxDecoration(
+            color: AppTheme.bgDark,
+            gradient: AppTheme.slateGradient,
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned(
+                right: -40,
+                bottom: -20,
+                child: Icon(
+                  Icons.add_task_rounded,
+                  size: 200,
+                  color: Colors.white.withValues(alpha: 0.03),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(28, 0, 28, 32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Schedule Pickup',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'SMART ECO-LOGISTICS DISPATCH',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppTheme.primaryEmerald,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildStepHeader(String step, String title) {
     return Row(
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
-            gradient: AppTheme.emeraldGradient,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            color: AppTheme.bgDark,
+            borderRadius: BorderRadius.circular(8),
           ),
           alignment: Alignment.center,
           child: Text(
             step,
             style: GoogleFonts.plusJakartaSans(
-              color: Colors.white,
+              color: AppTheme.primaryEmerald,
               fontWeight: FontWeight.w900,
-              fontSize: 14,
+              fontSize: 12,
             ),
           ),
         ),
@@ -201,10 +270,10 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         Text(
           title,
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 11,
+            fontSize: 14,
             fontWeight: FontWeight.w900,
             color: AppTheme.grey900,
-            letterSpacing: 1.5,
+            letterSpacing: 1,
           ),
         ),
       ],
@@ -217,7 +286,7 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 1.4,
+        childAspectRatio: 1.3,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
@@ -229,48 +298,33 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
           onTap: () => _toggleWasteType(type),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.bgDark : Colors.white,
-              borderRadius: BorderRadius.circular(32),
+              color: isSelected ? AppTheme.primaryEmerald : Colors.white,
+              borderRadius: BorderRadius.circular(24),
               boxShadow: isSelected 
-                ? [BoxShadow(color: AppTheme.bgDark.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))]
-                : AppTheme.smoothShadow,
+                ? [BoxShadow(color: AppTheme.primaryEmerald.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))]
+                : AppTheme.cardShadow,
               border: Border.all(
-                color: isSelected ? AppTheme.bgDark : AppTheme.grey200.withValues(alpha: 0.5),
+                color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey100,
                 width: 1.5,
               ),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.white.withValues(alpha: 0.1) : AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        _getWasteIcon(type),
-                        color: isSelected ? Colors.white : AppTheme.primaryEmerald,
-                        size: 24,
-                      ),
-                    ),
-                    if (isSelected)
-                      const Icon(Icons.check_circle_rounded, color: AppTheme.primaryEmerald, size: 24),
-                  ],
+                Icon(
+                  _getWasteIcon(type),
+                  size: 28,
+                  color: isSelected ? Colors.white : AppTheme.grey900,
                 ),
+                const SizedBox(height: 12),
                 Text(
-                  _getWasteTypeTitle(type).toUpperCase(),
+                  _getWasteTypeTitle(type),
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
                     color: isSelected ? Colors.white : AppTheme.grey900,
-                    letterSpacing: 0.5,
+                    letterSpacing: -0.2,
                   ),
                 ),
               ],
@@ -281,77 +335,65 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     );
   }
 
-  Widget _buildCollectionInfo() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppTheme.bgCanvas,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppTheme.info.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.info_rounded, color: AppTheme.info, size: 18),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'DISPATCH PROTOCOL',
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.grey400,
-                    fontSize: 10,
-                    letterSpacing: 1,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Collection typically occurs within the 08:00 — 10:30 window.',
-                  style: GoogleFonts.inter(fontSize: 13, color: AppTheme.grey700, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAddressSection() {
+  Widget _buildServiceParameters() {
     return Column(
       children: [
         TextFormField(
           controller: _addressController,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          maxLines: 2,
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900),
           decoration: const InputDecoration(
-            labelText: 'Service Location',
-            prefixIcon: Icon(Icons.location_on_rounded, color: AppTheme.primaryEmerald),
+            hintText: 'Collection address',
+            prefixIcon: Icon(Icons.location_pin, color: AppTheme.primaryEmerald, size: 20),
           ),
-          validator: (value) => value!.isEmpty ? 'Location required' : null,
+          validator: (value) => value == null || value.isEmpty ? 'Address required' : null,
         ),
         const SizedBox(height: 20),
         TextFormField(
           controller: _notesController,
           maxLines: 3,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900),
           decoration: const InputDecoration(
-            labelText: 'Operational Notes (Optional)',
-            prefixIcon: Icon(Icons.speaker_notes_rounded, color: AppTheme.grey400),
-            hintText: 'e.g. Near the main gate',
+            hintText: 'Operational notes (optional)',
+            prefixIcon: Icon(Icons.note_alt_rounded, color: AppTheme.primaryEmerald, size: 20),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCollectionInfo() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.info.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.info_outline_rounded, color: AppTheme.info, size: 20),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              'Pickups usually occur between 08:00 AM and 11:00 AM local time.',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                color: AppTheme.grey500,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -364,15 +406,21 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.bgDark,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          elevation: 12,
-          shadowColor: AppTheme.bgDark.withValues(alpha: 0.4),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 0,
           padding: EdgeInsets.zero,
         ),
         child: Ink(
           decoration: BoxDecoration(
             gradient: AppTheme.slateGradient,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.bgDark.withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              )
+            ],
           ),
           child: Container(
             alignment: Alignment.center,
@@ -385,7 +433,7 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                         'INITIALIZE DISPATCH',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
-                          letterSpacing: 1.5,
+                          letterSpacing: 2,
                           fontSize: 14,
                         ),
                       ),

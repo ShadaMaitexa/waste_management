@@ -55,34 +55,37 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
         decoration: BoxDecoration(
           color: Colors.transparent,
           boxShadow: [
             BoxShadow(
-              color: AppTheme.bgDark.withValues(alpha: 0.15),
+              color: AppTheme.bgDark.withValues(alpha: 0.1),
               blurRadius: 40,
               offset: const Offset(0, 10),
             ),
           ],
         ),
-        child: Container(
-          height: 76,
-          decoration: BoxDecoration(
-            color: AppTheme.bgDark.withValues(alpha: 0.98),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(0, Icons.grid_view_rounded, 'DASH'),
-                _buildNavItem(1, Icons.add_circle_outline_rounded, 'BOOK'),
-                _buildNavItem(2, Icons.auto_awesome_rounded, 'EARN'),
-                _buildNavItem(3, Icons.account_circle_rounded, 'SELF'),
-              ],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: Container(
+            height: 76,
+            decoration: BoxDecoration(
+              color: AppTheme.bgDark.withValues(alpha: 0.98),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(0, Icons.grid_view_rounded, 'DASH'),
+                  _buildNavItem(1, Icons.add_circle_outline_rounded, 'BOOK'),
+                  _buildNavItem(2, Icons.auto_awesome_rounded, 'EARN'),
+                  _buildNavItem(3, Icons.account_circle_rounded, 'SELF'),
+                ],
+              ),
             ),
           ),
         ),
@@ -97,28 +100,28 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.4),
+              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.3),
               size: 20,
             ),
             if (isSelected) ...[
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(
                 label,
                 style: GoogleFonts.plusJakartaSans(
                   color: AppTheme.primaryEmerald,
                   fontWeight: FontWeight.w900,
-                  fontSize: 11,
-                  letterSpacing: 1,
+                  fontSize: 10,
+                  letterSpacing: 2,
                 ),
               ),
             ],
@@ -164,16 +167,16 @@ class _DashboardTab extends StatelessWidget {
                 _buildSliverAppBar(context, userName, wardNumber),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingL),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
-                        const SizedBox(height: AppTheme.spacingL),
+                        const SizedBox(height: 24),
                         _buildNextPickupCard(context, pickups.isNotEmpty ? pickups.first : null),
-                        const SizedBox(height: AppTheme.spacingL),
+                        const SizedBox(height: 24),
                         _buildStatsOverview(context, stats, wardNumber),
-                        const SizedBox(height: AppTheme.spacingL),
+                        const SizedBox(height: 32),
                         _buildQuickActionsGrid(context),
-                        const SizedBox(height: AppTheme.spacingL),
+                        const SizedBox(height: 32),
                         _buildRecentActivity(context, referralService),
                         const SizedBox(height: 120),
                       ],
@@ -190,7 +193,7 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildSliverAppBar(BuildContext context, String userName, String? wardNumber) {
     return SliverAppBar(
-      expandedHeight: 220.0,
+      expandedHeight: 240.0,
       floating: false,
       pinned: true,
       backgroundColor: AppTheme.bgDark,
@@ -206,35 +209,45 @@ class _DashboardTab extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               Positioned(
-                right: -40,
+                right: -60,
                 top: -20,
                 child: Icon(
                   Icons.eco_rounded,
-                  size: 240,
+                  size: 280,
                   color: Colors.white.withValues(alpha: 0.03),
                 ),
               ),
+              Positioned(
+                left: -40,
+                bottom: -20,
+                child: Icon(
+                  Icons.blur_on_rounded,
+                  size: 200,
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.04),
+                ),
+              ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                padding: const EdgeInsets.fromLTRB(28, 0, 28, 36),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                        color: AppTheme.success.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.success.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.stars_rounded, color: AppTheme.primaryEmerald, size: 14),
+                          const Icon(Icons.stars_rounded, color: AppTheme.success, size: 14),
                           const SizedBox(width: 8),
                           Text(
-                            'PREMIUM CITIZEN',
+                            'CERTIFIED ECO CITIZEN',
                             style: GoogleFonts.plusJakartaSans(
-                              color: AppTheme.primaryEmerald,
+                              color: AppTheme.success,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.5,
@@ -243,36 +256,38 @@ class _DashboardTab extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     Text(
                       'Welcome back,',
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white.withValues(alpha: 0.4),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
                       userName,
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white,
-                        fontSize: 36,
+                        fontSize: 40,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -1.5,
-                        height: 1.1,
+                        height: 1,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
-                        Icon(Icons.location_on_rounded, color: AppTheme.primaryEmerald, size: 16),
+                        const Icon(Icons.location_on_rounded, color: AppTheme.primaryEmerald, size: 16),
                         const SizedBox(width: 8),
                         Text(
                           'Ward ${wardNumber ?? "15"} • Smart City District',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             color: Colors.white.withValues(alpha: 0.6),
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
@@ -296,7 +311,7 @@ class _DashboardTab extends StatelessWidget {
             Navigator.pushReplacementNamed(context, '/login');
           },
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 12),
       ],
     );
   }
@@ -307,12 +322,12 @@ class _DashboardTab extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: AppTheme.smoothShadow,
-          border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: AppTheme.cardShadow,
+          border: Border.all(color: AppTheme.grey100, width: 1.5),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(28),
           child: Stack(
             children: [
               Positioned(
@@ -320,29 +335,29 @@ class _DashboardTab extends StatelessWidget {
                 top: -20,
                 child: Icon(
                   Icons.recycling_rounded,
-                  size: 160,
+                  size: 140,
                   color: AppTheme.grey50,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(28),
+                padding: const EdgeInsets.all(24),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(18),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const Icon(Icons.add_task_rounded, color: AppTheme.primaryEmerald, size: 32),
+                      child: const Icon(Icons.add_task_rounded, color: AppTheme.primaryEmerald, size: 28),
                     ),
-                    const SizedBox(width: 24),
+                    const SizedBox(width: 20),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Ready to Recycle?',
+                            'Plan Next Collection',
                             style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.w900,
                               fontSize: 18,
@@ -350,18 +365,19 @@ class _DashboardTab extends StatelessWidget {
                               letterSpacing: -0.5,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 4),
                           Text(
-                            'Schedule your next pickup today.',
-                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontSize: 13, fontWeight: FontWeight.w600),
+                            'Ready to recycle? Schedule now.',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppTheme.grey500, 
+                              fontSize: 13, 
+                              fontWeight: FontWeight.w600
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    IconButton(
-                      onPressed: () => onNavigate(1),
-                      icon: const Icon(Icons.chevron_right_rounded, color: AppTheme.primaryEmerald, size: 28),
-                    ),
+                    Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.grey300, size: 16),
                   ],
                 ),
               ),
@@ -376,23 +392,29 @@ class _DashboardTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.primaryEmerald,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.intenseShadow,
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          )
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32),
         child: Stack(
           children: [
             Positioned(
-              right: -30,
-              bottom: -30,
+              right: -20,
+              bottom: -20,
               child: Icon(
                 Icons.local_shipping_rounded,
-                size: 200,
-                color: Colors.white.withValues(alpha: 0.15),
+                size: 180,
+                color: Colors.white.withValues(alpha: 0.1),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(28),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -400,62 +422,59 @@ class _DashboardTab extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.access_time_filled, color: Colors.white, size: 14),
-                            const SizedBox(width: 8),
+                            const Icon(Icons.access_time_filled_rounded, color: Colors.white, size: 12),
+                            const SizedBox(width: 6),
                             Text(
                               'UPCOMING DISPATCH',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                   color: Colors.white, 
-                                  fontWeight: FontWeight.w800, 
+                                  fontWeight: FontWeight.w900, 
                                   fontSize: 10,
                                   letterSpacing: 1),
                             ),
                           ],
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle),
-                        child: const Icon(Icons.more_horiz_rounded, color: Colors.white, size: 18),
-                      ),
+                      const Icon(Icons.more_horiz_rounded, color: Colors.white, size: 20),
                     ],
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 32),
                   Text(
                     pickup.scheduledDate != null
                         ? DateFormat('EEEE, MMM d').format(pickup.scheduledDate!)
                         : 'Tomorrow',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       color: Colors.white,
                       fontSize: 32,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1.2,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Text(
-                    'ETA: ${pickup.formattedTime ?? '10:30 AM'} • Your Location',
-                    style: GoogleFonts.inter(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                    'ETA: ${pickup.formattedTime ?? '09:30 AM'} • RESIDENTIAL WARD',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 28),
                   Row(
                     children: [
-                      _pickupTag(Icons.delete_outline_rounded, 'Mixed Waste'),
-                      const SizedBox(width: 12),
-                      _pickupTag(Icons.eco_rounded, 'Eco Friendly'),
+                      _pickupTag(Icons.auto_awesome_mosaic_rounded, 'Mixed Load'),
+                      const SizedBox(width: 10),
+                      _pickupTag(Icons.verified_rounded, 'Verified'),
                     ],
                   ),
                 ],
@@ -469,23 +488,24 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _pickupTag(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: Colors.white),
+          Icon(icon, size: 12, color: Colors.white),
           const SizedBox(width: 6),
           Text(
-            label,
+            label.toUpperCase(),
             style: GoogleFonts.plusJakartaSans(
               color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              fontSize: 9,
+              letterSpacing: 0.5,
             ),
           ),
         ],
@@ -497,158 +517,138 @@ class _DashboardTab extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _expressCard(context, wardNumber),
+          child: _liveTrackerCard(context, wardNumber),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: _statCard(
             context,
-            'Recycled (Kg)',
-            stats['totalWaste'].toStringAsFixed(1),
-            Icons.scale_rounded,
-            AppTheme.info,
+            'NET RECYCLED',
+            '${stats['totalWaste'].toStringAsFixed(1)} kg',
+            Icons.eco_rounded,
+            AppTheme.success,
           ),
         ),
       ],
     );
   }
 
-  Widget _expressCard(BuildContext context, String? wardNumber) {
-    return GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Initializing live tracking module...')),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.all(28),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: AppTheme.smoothShadow,
-          border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentIndigo.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(
-                    Icons.sensors_rounded,
-                    color: AppTheme.accentIndigo,
-                    size: 24,
-                  ),
+  Widget _liveTrackerCard(BuildContext context, String? wardNumber) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppTheme.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: const BoxDecoration(
-                          color: AppTheme.error,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'LIVE',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppTheme.error,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: const Icon(
+                  Icons.radar_rounded,
+                  color: AppTheme.primaryEmerald,
+                  size: 20,
                 ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            Text(
-              'Fleet Tracking',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                color: AppTheme.grey900,
-                letterSpacing: -0.5,
               ),
-            ),
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                Text(
-                  'Ward ${wardNumber ?? "15"}',
-                  style: GoogleFonts.inter(
-                    color: AppTheme.grey500,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.error.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.arrow_forward_rounded,
-                  color: AppTheme.accentIndigo,
-                  size: 16,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 5,
+                      height: 5,
+                      decoration: const BoxDecoration(color: AppTheme.error, shape: BoxShape.circle),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      'LIVE',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppTheme.error,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Fleet Tracker',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: AppTheme.grey900,
+              letterSpacing: -0.5,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Ward ${wardNumber ?? "15"} Territory',
+            style: GoogleFonts.plusJakartaSans(
+              color: AppTheme.grey500,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _statCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 20),
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
+              fontSize: 24,
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -1.5,
+              letterSpacing: -1,
             ),
           ),
           const SizedBox(height: 2),
           Text(
-            title.toUpperCase(),
+            title,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 10,
+              fontSize: 9,
               color: AppTheme.grey400,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
               letterSpacing: 1,
             ),
           ),
@@ -659,25 +659,25 @@ class _DashboardTab extends StatelessWidget {
 
   Widget _buildQuickActionsGrid(BuildContext context) {
     final actions = [
-      {'icon': Icons.add_rounded, 'label': 'Book Pickup', 'color': AppTheme.primaryEmerald, 'index': 1},
-      {'icon': Icons.history_rounded, 'label': 'History', 'color': AppTheme.accentIndigo, 'index': -1},
-      {'icon': Icons.support_agent_rounded, 'label': 'Support', 'color': const Color(0xFF8B5CF6), 'index': -1},
-      {'icon': Icons.military_tech_rounded, 'label': 'Rewards', 'color': const Color(0xFFF59E0B), 'index': 2},
+      {'icon': Icons.add_task_rounded, 'label': 'BOOK', 'color': AppTheme.primaryEmerald, 'index': 1},
+      {'icon': Icons.history_edu_rounded, 'label': 'LOGS', 'color': const Color(0xFF6366F1), 'index': -1},
+      {'icon': Icons.support_rounded, 'label': 'HELP', 'color': const Color(0xFFEC4899), 'index': -1},
+      {'icon': Icons.token_rounded, 'label': 'POOL', 'color': const Color(0xFFF59E0B), 'index': 2},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'QUICK LAUNCH',
+          'OPERATIONAL MODULES',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.grey500,
-            letterSpacing: 1.5,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.grey400,
+            letterSpacing: 2,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         Row(
           children: actions.map((action) {
             final color = action['color'] as Color;
@@ -689,15 +689,14 @@ class _DashboardTab extends StatelessWidget {
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 6),
-                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   decoration: BoxDecoration(
-                    color: AppTheme.bgCanvas,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: AppTheme.cardShadow,
-                    border: Border.all(color: AppTheme.grey200),
+                    border: Border.all(color: AppTheme.grey100, width: 1),
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -705,18 +704,17 @@ class _DashboardTab extends StatelessWidget {
                           color: color.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(action['icon'] as IconData, color: color, size: 24),
+                        child: Icon(action['icon'] as IconData, color: color, size: 20),
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        (action['label'] as String).split(' ')[0],
+                        action['label'] as String,
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
                           color: AppTheme.grey700,
-                          letterSpacing: 0.2,
+                          letterSpacing: 1,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),

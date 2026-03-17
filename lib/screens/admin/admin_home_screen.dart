@@ -142,34 +142,29 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   Widget _buildFloatingBottomBar() {
     return Positioned(
-      left: 24,
-      right: 24,
-      bottom: 32,
+      left: 20,
+      right: 20,
+      bottom: 24,
       child: Container(
-        height: 76,
+        height: 80,
         decoration: BoxDecoration(
-          color: AppTheme.bgDark.withValues(alpha: 0.98),
-          borderRadius: BorderRadius.circular(28),
+          color: AppTheme.bgDark.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 40,
-              offset: const Offset(0, 20),
-            ),
-            BoxShadow(
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 30,
+              offset: const Offset(0, 15),
             ),
           ],
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(0, Icons.dashboard_rounded, 'Dash'),
-            _buildNavItem(1, Icons.analytics_rounded, 'Metrics'),
-            _buildNavItem(2, Icons.badge_rounded, 'Users'),
+            _buildNavItem(0, Icons.grid_view_rounded, 'DASH'),
+            _buildNavItem(1, Icons.analytics_rounded, 'METRICS'),
+            _buildNavItem(2, Icons.badge_rounded, 'USERS'),
           ],
         ),
       ),
@@ -183,12 +178,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         setState(() => _currentIndex = index);
         _pageController.animateToPage(
           index,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOutQuart,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn,
         );
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 400),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
@@ -198,18 +193,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.5),
-              size: 22,
+              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.3),
+              size: 20,
             ),
             if (isSelected) ...[
               const SizedBox(width: 8),
               Text(
-                label.toUpperCase(),
+                label,
                 style: GoogleFonts.plusJakartaSans(
                   color: AppTheme.primaryEmerald,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.5,
                 ),
               ),
             ],

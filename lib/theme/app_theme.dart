@@ -10,6 +10,11 @@ class AppTheme {
   static const Color accentIndigo = Color(0xFF5D6D7E);
   static const Color accentGreen = Color(0xFF2ECC71);
 
+  // Waste Categories
+  static const Color dryWaste = Color(0xFF3498DB);
+  static const Color wetWaste = Color(0xFFE67E22); 
+  static const Color ewaste = Color(0xFF9B59B6);
+
   // Backgrounds & Surfaces
   static const Color bgSurface = Color(0xFFF7F9F9);
   static const Color bgCanvas = Color(0xFFFFFFFF);

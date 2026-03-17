@@ -12,119 +12,147 @@ class ReferralScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bgSurface,
-      appBar: AppBar(
-        title: Text(
-          'Ambassador Portal',
-          style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.w900, 
-            fontSize: 18,
-            color: Colors.white,
-            letterSpacing: -0.5,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: AppTheme.bgDark,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.slateGradient,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      extendBodyBehindAppBar: false,
-      body: Consumer<ReferralService>(
-        builder: (context, referralService, child) {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeroSection(context),
-                Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingL),
-                  child: Column(
-                    children: [
-                      _buildReferralCodeCard(context, referralService),
-                      const SizedBox(height: AppTheme.spacingL),
-                      _buildStatsSection(referralService),
-                      const SizedBox(height: AppTheme.spacingXL),
-                      _buildHowItWorks(),
-                      const SizedBox(height: AppTheme.spacingXL),
-                      _buildHistorySection(referralService),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-      bottomNavigationBar: _buildShareButton(context),
-    );
-  }
-
-  Widget _buildHeroSection(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: AppTheme.smoothShadow,
-              border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 16),
-                const SizedBox(width: 10),
-                Text(
-                  'CERTIFIED ADVOCATE',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppTheme.primaryEmerald,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
-          Text(
-            'Propagate\nSustainable\nImpact.',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 52,
-              fontWeight: FontWeight.w900,
-              color: AppTheme.grey900,
-              letterSpacing: -3,
-              height: 0.95,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: Text(
-              'Expand the network and receive dividends for every verified deployment.',
-              style: GoogleFonts.plusJakartaSans(
-                color: AppTheme.grey500,
-                fontSize: 16,
-                height: 1.6,
-                fontWeight: FontWeight.w500,
-                letterSpacing: -0.2,
+            decoration: const BoxDecoration(
+              color: AppTheme.bgSurface,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppTheme.bgSurface, Color(0xFFF1F8E9)],
               ),
             ),
           ),
+          Consumer<ReferralService>(
+            builder: (context, referralService, child) {
+              return CustomScrollView(
+                slivers: [
+                  _buildSliverAppBar(),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildHeroSection(),
+                          const SizedBox(height: 40),
+                          _buildReferralCodeCard(context, referralService),
+                          const SizedBox(height: 48),
+                          _buildStatsSection(referralService),
+                          const SizedBox(height: 56),
+                          _buildHowItWorks(),
+                          const SizedBox(height: 56),
+                          _buildHistorySection(referralService),
+                          const SizedBox(height: 140),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          // Back Button
+          Positioned(
+            top: 50,
+            left: 20,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: AppTheme.cardShadow,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 18),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ),
+          // Broadcast Button
+          Positioned(
+            bottom: 40,
+            left: 24,
+            right: 24,
+            child: _buildShareButton(context),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSliverAppBar() {
+    return SliverAppBar(
+      expandedHeight: 120.0,
+      floating: false,
+      pinned: true,
+      backgroundColor: AppTheme.bgDark,
+      automaticallyImplyLeading: false,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: const BoxDecoration(
+            color: AppTheme.bgDark,
+            gradient: AppTheme.slateGradient,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.1)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
+              const SizedBox(width: 8),
+              Text(
+                'CERTIFIED ADVOCATE',
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.primaryEmerald,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'Propagate\nSustainable\nImpact.',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 48,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.grey900,
+            letterSpacing: -2.5,
+            height: 1.0,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Expand the network and receive dividends for every verified deployment.',
+          style: GoogleFonts.plusJakartaSans(
+            color: AppTheme.grey500,
+            fontSize: 15,
+            height: 1.6,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.2,
+          ),
+        ),
+      ],
     );
   }
 
@@ -133,30 +161,30 @@ class ReferralScreen extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: AppTheme.bgDark,
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.bgDark.withValues(alpha: 0.4),
-            blurRadius: 40,
-            offset: const Offset(0, 20),
+            color: AppTheme.bgDark.withValues(alpha: 0.3),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(32),
         child: Stack(
           children: [
             Positioned(
-              right: -40,
-              top: -40,
+              right: -30,
+              top: -30,
               child: Container(
-                width: 250,
-                height: 250,
+                width: 200,
+                height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.08),
+                      Colors.white.withValues(alpha: 0.05),
                       Colors.transparent,
                     ],
                   ),
@@ -164,7 +192,7 @@ class ReferralScreen extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(40),
+              padding: const EdgeInsets.all(32),
               child: Column(
                 children: [
                   Text(
@@ -176,12 +204,12 @@ class ReferralScreen extends StatelessWidget {
                       letterSpacing: 3,
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     ),
                     child: Row(
@@ -190,20 +218,20 @@ class ReferralScreen extends StatelessWidget {
                         Text(
                           service.referralCode,
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 36,
+                            fontSize: 32,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
-                            letterSpacing: 10,
+                            letterSpacing: 8,
                           ),
                         ),
-                        const SizedBox(width: 24),
+                        const SizedBox(width: 20),
                         GestureDetector(
                           onTap: () {
                             Clipboard.setData(ClipboardData(text: service.referralCode));
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  'Token added to clipboard',
+                                  'Token copied to clipboard',
                                   style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
                                 ),
                                 backgroundColor: AppTheme.bgDark,
@@ -213,19 +241,19 @@ class ReferralScreen extends StatelessWidget {
                             );
                           },
                           child: Container(
-                            padding: const EdgeInsets.all(14),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               gradient: AppTheme.emeraldGradient,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
                                   color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 5),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
                                 )
                               ],
                             ),
-                            child: const Icon(Icons.copy_rounded, color: Colors.white, size: 20),
+                            child: const Icon(Icons.copy_rounded, color: Colors.white, size: 18),
                           ),
                         ),
                       ],
@@ -247,14 +275,14 @@ class ReferralScreen extends StatelessWidget {
           child: _buildStatCard(
             'Acquisitions',
             service.referralCount.toString(),
-            Icons.group_add_rounded,
+            Icons.people_alt_rounded,
             AppTheme.accentIndigo,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: _buildStatCard(
-            'Revenue',
+            'Dividends',
             '₹${service.totalEarned.toStringAsFixed(0)}',
             Icons.account_balance_wallet_rounded,
             const Color(0xFFF59E0B),
@@ -266,42 +294,42 @@ class ReferralScreen extends StatelessWidget {
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(40),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 20),
           Text(
             value,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 36,
+              fontSize: 28,
               fontWeight: FontWeight.w900,
               color: AppTheme.grey900,
-              letterSpacing: -2,
+              letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             label.toUpperCase(),
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 10,
+              fontSize: 9,
               fontWeight: FontWeight.w900,
               color: AppTheme.grey400,
-              letterSpacing: 2,
+              letterSpacing: 1.5,
             ),
           ),
         ],
@@ -311,12 +339,12 @@ class ReferralScreen extends StatelessWidget {
 
   Widget _buildHowItWorks() {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(40),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,31 +352,31 @@ class ReferralScreen extends StatelessWidget {
           Text(
             'OPERATIONAL PROTOCOL',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w900,
               color: AppTheme.grey400,
               letterSpacing: 2,
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
           _buildHowItWorksStep(
             '01',
             'Distribute Token',
-            'Transmit your exclusive identifier to your peer network.',
+            'Transmit your identifier to your network.',
             Icons.share_rounded,
             AppTheme.accentIndigo,
           ),
           _buildHowItWorksStep(
             '02',
             'Network Conversion',
-            'Peers register and schedule their initial collection.',
+            'Peers register and schedule collections.',
             Icons.verified_user_rounded,
             const Color(0xFF8B5CF6),
           ),
           _buildHowItWorksStep(
             '03',
             'Mutual Dividend',
-            'You receive ₹50. They receive an onboarding discount.',
+            'Receive ₹50 for every verified deployment.',
             Icons.redeem_rounded,
             AppTheme.primaryEmerald,
             isLast: true,
@@ -365,37 +393,30 @@ class ReferralScreen extends StatelessWidget {
         Column(
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: color, size: 22),
+              child: Icon(icon, color: color, size: 18),
             ),
             if (!isLast)
               Container(
-                width: 2,
-                height: 48,
+                width: 1.5,
+                height: 40,
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      color.withValues(alpha: 0.3),
-                      color.withValues(alpha: 0.05),
-                    ],
-                  ),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
           ],
         ),
-        const SizedBox(width: 24),
+        const SizedBox(width: 20),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.only(bottom: isLast ? 0 : 32),
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -406,30 +427,28 @@ class ReferralScreen extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         color: color,
                         fontWeight: FontWeight.w900,
-                        fontSize: 12,
-                        letterSpacing: 1,
+                        fontSize: 11,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 8),
                     Text(
                       title.toUpperCase(),
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w900,
                         fontSize: 12,
                         color: AppTheme.grey900,
-                        letterSpacing: 1,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Text(
                   desc,
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
                     color: AppTheme.grey500,
-                    height: 1.6,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -448,19 +467,19 @@ class ReferralScreen extends StatelessWidget {
         Text(
           'ACQUISITION LOG',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.w900,
             color: AppTheme.grey400,
             letterSpacing: 2,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(40),
-            boxShadow: AppTheme.smoothShadow,
-            border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey100, width: 1),
           ),
           child: ListView.separated(
             shrinkWrap: true,
@@ -469,23 +488,23 @@ class ReferralScreen extends StatelessWidget {
             itemCount: history.length,
             separatorBuilder: (context, index) => Divider(
               height: 1,
-              color: AppTheme.grey100,
-              indent: 80,
-              endIndent: 24,
+              color: AppTheme.grey50,
+              indent: 74,
+              endIndent: 20,
             ),
             itemBuilder: (context, index) {
               final item = history[index];
               final bool isPaid = item.amount > 0;
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   children: [
                     Container(
-                      width: 56,
-                      height: 56,
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
                         color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: Center(
                         child: Text(
@@ -493,12 +512,12 @@ class ReferralScreen extends StatelessWidget {
                           style: GoogleFonts.plusJakartaSans(
                             color: AppTheme.primaryEmerald,
                             fontWeight: FontWeight.w900,
-                            fontSize: 20,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -507,16 +526,16 @@ class ReferralScreen extends StatelessWidget {
                             item.name,
                             style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.w800,
-                              fontSize: 16,
+                              fontSize: 15,
                               color: AppTheme.grey900,
                               letterSpacing: -0.2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
                             item.date,
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 11,
                               color: AppTheme.grey400,
                               fontWeight: FontWeight.w600,
                             ),
@@ -528,26 +547,26 @@ class ReferralScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          isPaid ? '+₹${item.amount.toStringAsFixed(0)}' : 'Pending',
+                          isPaid ? '+₹${item.amount.toStringAsFixed(0)}' : 'PENDING',
                           style: GoogleFonts.plusJakartaSans(
                             fontWeight: FontWeight.w900,
-                            fontSize: 18,
+                            fontSize: 15,
                             color: isPaid ? AppTheme.success : AppTheme.grey400,
                             letterSpacing: -0.5,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 4),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: (isPaid ? AppTheme.success : AppTheme.grey400).withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: (isPaid ? AppTheme.success : AppTheme.grey400).withValues(alpha: 0.1)),
                           ),
                           child: Text(
                             item.status.toUpperCase(),
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 9,
+                              fontSize: 8,
                               fontWeight: FontWeight.w900,
                               color: isPaid ? AppTheme.success : AppTheme.grey500,
                               letterSpacing: 1,
@@ -567,48 +586,48 @@ class ReferralScreen extends StatelessWidget {
   }
 
   Widget _buildShareButton(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(24, 12, 24, 48),
-      decoration: const BoxDecoration(
-        color: Colors.transparent,
-      ),
-      child: SizedBox(
-        height: 64,
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () {
-            Provider.of<ReferralService>(context, listen: false).shareReferral();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.bgDark,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            elevation: 12,
-            shadowColor: AppTheme.bgDark.withValues(alpha: 0.4),
-            padding: EdgeInsets.zero,
+    return SizedBox(
+      height: 64,
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          Provider.of<ReferralService>(context, listen: false).shareReferral();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppTheme.bgDark,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 0,
+          padding: EdgeInsets.zero,
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: AppTheme.slateGradient,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.bgDark.withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              )
+            ],
           ),
-          child: Ink(
-            decoration: BoxDecoration(
-              gradient: AppTheme.slateGradient,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Container(
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'BROADCAST TOKEN',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 14,
-                      letterSpacing: 2,
-                    ),
+          child: Container(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'BROADCAST TOKEN',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    letterSpacing: 2,
                   ),
-                  const SizedBox(width: 12),
-                  const Icon(Icons.bolt_rounded, size: 20, color: AppTheme.primaryEmerald),
-                ],
-              ),
+                ),
+                const SizedBox(width: 12),
+                const Icon(Icons.bolt_rounded, size: 20, color: AppTheme.primaryEmerald),
+              ],
             ),
           ),
         ),

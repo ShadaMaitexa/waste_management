@@ -111,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen>
             child: Icon(
               Icons.blur_on_rounded,
               size: 500,
-              color: Colors.white.withValues(alpha: 0.03),
+              color: Colors.white.withValues(alpha: 0.05),
             ),
           ),
           Center(
@@ -139,82 +139,97 @@ class _SplashScreenState extends State<SplashScreen>
       children: [
         // Premium Glass Logo Container
         Container(
-          width: 140,
-          height: 140,
+          width: 160,
+          height: 160,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.03),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 2),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                blurRadius: 60,
+                color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                blurRadius: 80,
                 spreadRadius: 2,
               ),
             ],
           ),
-          child: const Center(
-            child: Icon(
-              Icons.recycling_rounded,
-              size: 64,
-              color: AppTheme.primaryEmerald,
+          child: Container(
+            margin: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              gradient: AppTheme.emeraldGradient,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryEmerald.withValues(alpha: 0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                )
+              ],
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.recycling_rounded,
+                size: 48,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 48),
+        const SizedBox(height: 56),
         // App Title
         Text(
           'GreenLoop',
           style: GoogleFonts.plusJakartaSans(
             color: Colors.white,
-            fontSize: 48,
+            fontSize: 52,
             fontWeight: FontWeight.w900,
-            letterSpacing: -2,
+            letterSpacing: -2.5,
+            height: 1,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         // Ecosystem Label
         Text(
           'SMART LOGISTICS ECOSYSTEM',
           style: GoogleFonts.plusJakartaSans(
-            color: AppTheme.primaryEmerald.withValues(alpha: 0.7),
-            fontSize: 10,
+            color: AppTheme.primaryEmerald,
+            fontSize: 11,
             fontWeight: FontWeight.w900,
             letterSpacing: 4,
           ),
         ),
-        const SizedBox(height: 80),
+        const SizedBox(height: 100),
         // Minimalist Sequence Indicator
         Stack(
           alignment: Alignment.center,
           children: [
             SizedBox(
-              width: 48,
-              height: 48,
+              width: 56,
+              height: 56,
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white.withValues(alpha: 0.1)),
                 strokeWidth: 2,
               ),
             ),
-            SizedBox(
-              width: 32,
-              height: 32,
+            const SizedBox(
+              width: 36,
+              height: 36,
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryEmerald.withValues(alpha: 0.5)),
-                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryEmerald),
+                strokeWidth: 3,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 64),
+        const SizedBox(height: 80),
         // Vision Statement
         Text(
           'DEFINING SUSTAINABLE FUTURES',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             color: Colors.white.withValues(alpha: 0.3),
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 2,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 3,
           ),
         ),
       ],

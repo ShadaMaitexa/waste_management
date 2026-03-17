@@ -31,50 +31,53 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
         return Scaffold(
           backgroundColor: AppTheme.bgSurface,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(100),
+            preferredSize: const Size.fromHeight(120),
             child: Container(
               padding: const EdgeInsets.only(top: 20),
               decoration: const BoxDecoration(
-                color: AppTheme.bgDark,
-                gradient: AppTheme.slateGradient,
+                color: AppTheme.bgSurface,
               ),
               child: AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 scrolledUnderElevation: 0,
+                centerTitle: false,
                 title: Padding(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.only(top: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Strategic Analytics',
+                        'Strategic Intel',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
-                          fontSize: 24,
-                          color: Colors.white,
-                          letterSpacing: -1,
+                          fontSize: 28,
+                          color: AppTheme.grey900,
+                          letterSpacing: -1.5,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
-                        'Real-time system insight dashboard',
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: Colors.white.withValues(alpha: 0.6),
-                          fontWeight: FontWeight.w500,
+                        'DECISION SUPPORT & ANALYTICS Hub',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 8,
+                          color: AppTheme.grey400,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-                foregroundColor: Colors.white,
+                foregroundColor: AppTheme.grey900,
                 actions: [
                   PopupMenuButton<String>(
                     onSelected: (value) {
                       setState(() => _selectedPeriod = value);
                     },
-                    offset: const Offset(0, 50),
+                    offset: const Offset(0, 52),
+                    elevation: 10,
+                    shadowColor: AppTheme.grey900.withValues(alpha: 0.1),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     itemBuilder: (_) => _periods
                         .map(
@@ -98,26 +101,27 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                         )
                         .toList(),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      margin: const EdgeInsets.only(right: 16, top: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.only(right: 20, top: 12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppTheme.grey100),
+                        boxShadow: AppTheme.cardShadow,
                       ),
                       child: Row(
                         children: [
                           Text(
                             _selectedPeriod.toUpperCase(),
                             style: GoogleFonts.plusJakartaSans(
-                              color: Colors.white, 
+                              color: AppTheme.grey900, 
                               fontWeight: FontWeight.w900, 
-                              fontSize: 10, 
+                              fontSize: 9, 
                               letterSpacing: 1.5,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 16),
+                          const SizedBox(width: 10),
+                          const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.grey400, size: 16),
                         ],
                       ),
                     ),
@@ -130,19 +134,19 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
             onRefresh: () => adminService.fetchDashboardStats(),
             color: AppTheme.primaryEmerald,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
               physics: const BouncingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildKeyMetricsSection(stats),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
                   _buildChartsSection(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
                   _buildWardPerformanceSection(stats),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
                   _buildRecentAlertsSection(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -166,7 +170,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryEmerald.withValues(alpha: 0.08),
+                    color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.analytics_rounded, color: AppTheme.primaryEmerald, size: 20),
@@ -175,32 +179,36 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                 Text(
                   'Key Indicators',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18, 
+                    fontSize: 20, 
                     fontWeight: FontWeight.w900, 
                     color: AppTheme.grey900, 
-                    letterSpacing: -0.5,
+                    letterSpacing: -1,
                   ),
                 ),
               ],
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: AppTheme.error.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppTheme.error.withValues(alpha: 0.2)),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppTheme.error.withValues(alpha: 0.1)),
               ),
               child: Row(
                 children: [
-                  Container(width: 6, height: 6, decoration: const BoxDecoration(color: AppTheme.error, shape: BoxShape.circle)),
-                  const SizedBox(width: 6),
+                  Container(
+                    width: 6, 
+                    height: 6, 
+                    decoration: const BoxDecoration(color: AppTheme.error, shape: BoxShape.circle),
+                  ),
+                  const SizedBox(width: 8),
                   Text(
                     'LIVE',
                     style: GoogleFonts.plusJakartaSans(
                       color: AppTheme.error, 
-                      fontSize: 8, 
+                      fontSize: 9, 
                       fontWeight: FontWeight.w900, 
-                      letterSpacing: 1.5,
+                      letterSpacing: 2,
                     ),
                   ),
                 ],
@@ -208,7 +216,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         GridView.count(
           primary: false,
           shrinkWrap: true,
@@ -262,7 +270,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppTheme.accentIndigo.withValues(alpha: 0.08),
+                color: AppTheme.accentIndigo.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.pie_chart_rounded, color: AppTheme.accentIndigo, size: 20),
@@ -271,17 +279,17 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
             Text(
               'System Distribution',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 18, 
+                fontSize: 20, 
                 fontWeight: FontWeight.w900, 
                 color: AppTheme.grey900, 
-                letterSpacing: -0.5,
+                letterSpacing: -1,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         _buildLineChart(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         _buildPieChart(),
       ],
     );
@@ -291,12 +299,12 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(28),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -305,20 +313,20 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
               style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.w900, 
                 color: AppTheme.grey900, 
-                fontSize: 14, 
+                fontSize: 15, 
                 letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 36),
             SizedBox(
-              height: 200,
+              height: 220,
               child: LineChart(
                 LineChartData(
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
                     getDrawingHorizontalLine: (value) => FlLine(
-                      color: AppTheme.grey100,
+                      color: AppTheme.grey50,
                       strokeWidth: 1,
                     ),
                   ),
@@ -332,17 +340,37 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                         getTitlesWidget: (value, meta) {
                           const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
                           if (value.toInt() >= 0 && value.toInt() < days.length) {
-                            return Text(
-                              days[value.toInt()], 
-                              style: GoogleFonts.inter(
-                                fontSize: 10, 
-                                color: AppTheme.grey400, 
-                                fontWeight: FontWeight.w700,
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                days[value.toInt()], 
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 10, 
+                                  color: AppTheme.grey400, 
+                                  fontWeight: FontWeight.w900,
+                                ),
                               ),
                             );
                           }
                           return const Text('');
                         },
+                        reservedSize: 28,
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            '${value.toInt()}K',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 10,
+                              color: AppTheme.grey400,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          );
+                        },
+                        reservedSize: 28,
                       ),
                     ),
                   ),
@@ -350,7 +378,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                   lineBarsData: [
                     LineChartBarData(
                       isCurved: true,
-                      barWidth: 5,
+                      barWidth: 6,
                       color: AppTheme.primaryEmerald,
                       isStrokeCapRound: true,
                       dotData: FlDotData(show: false),
@@ -358,7 +386,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                            AppTheme.primaryEmerald.withValues(alpha: 0.1),
                             AppTheme.primaryEmerald.withValues(alpha: 0.0),
                           ],
                           begin: Alignment.topCenter,
@@ -389,12 +417,12 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(28),
         child: Column(
           children: [
             Row(
@@ -405,33 +433,33 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w900, 
                     color: AppTheme.grey900, 
-                    fontSize: 14, 
+                    fontSize: 15, 
                     letterSpacing: -0.5,
                   ),
                 ),
-                Icon(Icons.more_vert_rounded, color: AppTheme.grey300, size: 20),
+                Icon(Icons.more_horiz_rounded, color: AppTheme.grey300, size: 20),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             Row(
               children: [
                 SizedBox(
-                  height: 160,
-                  width: 160,
+                  height: 180,
+                  width: 180,
                   child: PieChart(
                     PieChartData(
-                      sectionsSpace: 4,
-                      centerSpaceRadius: 40,
+                      sectionsSpace: 6,
+                      centerSpaceRadius: 46,
                       sections: [
-                        PieChartSectionData(value: 35, color: AppTheme.dryWaste, radius: 20, showTitle: false),
-                        PieChartSectionData(value: 25, color: AppTheme.wetWaste, radius: 22, showTitle: false),
-                        PieChartSectionData(value: 20, color: AppTheme.accentGreen, radius: 18, showTitle: false),
-                        PieChartSectionData(value: 20, color: AppTheme.ewaste, radius: 20, showTitle: false),
+                        PieChartSectionData(value: 35, color: AppTheme.dryWaste, radius: 24, showTitle: false),
+                        PieChartSectionData(value: 25, color: AppTheme.wetWaste, radius: 26, showTitle: false),
+                        PieChartSectionData(value: 20, color: AppTheme.accentGreen, radius: 22, showTitle: false),
+                        PieChartSectionData(value: 20, color: AppTheme.ewaste, radius: 24, showTitle: false),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 24),
+                const SizedBox(width: 32),
                 Expanded(
                   child: Column(
                     children: [
@@ -452,15 +480,15 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
 
   Widget _buildChartLegend(String label, String value, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Container(
-            width: 10, 
-            height: 10, 
+            width: 12, 
+            height: 12, 
             decoration: BoxDecoration(
               color: color, 
-              borderRadius: BorderRadius.circular(3),
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
           const SizedBox(width: 12),
@@ -477,7 +505,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
           Text(
             value, 
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 12, 
+              fontSize: 13, 
               fontWeight: FontWeight.w900, 
               color: AppTheme.grey900,
               letterSpacing: -0.5,
@@ -501,7 +529,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppTheme.warning.withValues(alpha: 0.08),
+                color: AppTheme.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.location_on_rounded, color: AppTheme.warning, size: 20),
@@ -510,35 +538,35 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
             Text(
               'Ward Performance',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 18, 
+                fontSize: 20, 
                 fontWeight: FontWeight.w900, 
                 color: AppTheme.grey900, 
-                letterSpacing: -0.5,
+                letterSpacing: -1,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: AppTheme.smoothShadow,
-            border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+            borderRadius: BorderRadius.circular(36),
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey100, width: 1.5),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(28),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (hasWardStats) ..._buildDynamicWards(stats['ward']['ward_wise_stats'] as List)
                 else ...const [
                   _WardItem('Ward 15 (Corporate)', '98%', 'Optimal', AppTheme.primaryEmerald),
-                  Divider(height: 32),
+                  Divider(height: 32, indent: 0, endIndent: 0, color: AppTheme.grey50),
                   _WardItem('Ward 12 (Residential)', '94%', 'Stable', AppTheme.primaryEmerald),
-                  Divider(height: 32),
+                  Divider(height: 32, indent: 0, endIndent: 0, color: AppTheme.grey50),
                   _WardItem('Ward 8 (Industrial)', '89%', 'Threshold', AppTheme.warning),
-                  Divider(height: 32),
+                  Divider(height: 32, indent: 0, endIndent: 0, color: AppTheme.grey50),
                   _WardItem('Ward 5 (Market Area)', '85%', 'Critical', AppTheme.error),
                 ],
               ],
@@ -566,7 +594,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
         else if (perf < 60) { status = 'Critical'; color = AppTheme.error; }
         
         widgets.add(_WardItem(wardName, '${perf.toStringAsFixed(0)}%', status, color));
-        if (i < dynamicWards.length - 1) widgets.add(const Divider(height: 32));
+        if (i < dynamicWards.length - 1) widgets.add(const Divider(height: 32, indent: 0, endIndent: 0, color: AppTheme.grey50));
     }
     return widgets;
   }
@@ -582,7 +610,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppTheme.error.withValues(alpha: 0.08),
+                color: AppTheme.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.emergency_rounded, color: AppTheme.error, size: 20),
@@ -591,31 +619,31 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
             Text(
               'System Compliance',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 18, 
+                fontSize: 20, 
                 fontWeight: FontWeight.w900, 
                 color: AppTheme.grey900, 
-                letterSpacing: -0.5,
+                letterSpacing: -1,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: AppTheme.smoothShadow,
-            border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+            borderRadius: BorderRadius.circular(36),
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey100, width: 1.5),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(28),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 _AlertItem('Capacity limit reached in Central Hub', 'JUST NOW', Icons.error_rounded, AppTheme.error),
-                Divider(height: 32),
+                Divider(height: 32, color: AppTheme.grey50),
                 _AlertItem('Ward 12 collection volume exceeds forecast', '2H AGO', Icons.info_rounded, AppTheme.info),
-                Divider(height: 32),
+                Divider(height: 32, color: AppTheme.grey50),
                 _AlertItem('Low worker check-in rate in Zone 5', '4H AGO', Icons.warning_rounded, AppTheme.warning),
               ],
             ),
@@ -649,17 +677,11 @@ class _MetricCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-          ),
-        ],
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -667,17 +689,17 @@ class _MetricCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Icon(icon, color: color, size: 22),
+                  child: Icon(icon, color: color, size: 20),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: isPositive ? AppTheme.primaryEmerald.withValues(alpha: 0.1) : AppTheme.error.withValues(alpha: 0.1),
+                    color: isPositive ? AppTheme.primaryEmerald.withValues(alpha: 0.05) : AppTheme.error.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -696,17 +718,17 @@ class _MetricCard extends StatelessWidget {
             Text(
               value,
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 24,
+                fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: AppTheme.grey900,
-                letterSpacing: -1,
+                letterSpacing: -1.2,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
               title,
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 9,
+                fontSize: 8,
                 fontWeight: FontWeight.w900,
                 color: AppTheme.grey400,
                 letterSpacing: 1.5,
@@ -738,20 +760,27 @@ class _WardItem extends StatelessWidget {
               Text(
                 ward,
                 style: GoogleFonts.plusJakartaSans(
-                  fontWeight: FontWeight.w800, 
+                  fontWeight: FontWeight.w900, 
                   fontSize: 16,
                   color: AppTheme.grey900,
                   letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                status.toUpperCase(), 
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 9, 
-                  fontWeight: FontWeight.w900, 
-                  color: color, 
-                  letterSpacing: 1.5,
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                   color: color.withValues(alpha: 0.05),
+                   borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  status.toUpperCase(), 
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 8, 
+                    fontWeight: FontWeight.w900, 
+                    color: color, 
+                    letterSpacing: 1.5,
+                  ),
                 ),
               ),
             ],
@@ -764,20 +793,20 @@ class _WardItem extends StatelessWidget {
               percent,
               style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.w900,
-                fontSize: 20,
+                fontSize: 22,
                 color: AppTheme.grey900,
                 letterSpacing: -1,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             SizedBox(
-              width: 80,
+              width: 90,
               height: 6,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
                   value: value / 100,
-                  backgroundColor: color.withValues(alpha: 0.1),
+                  backgroundColor: color.withValues(alpha: 0.05),
                   valueColor: AlwaysStoppedAnimation(color),
                 ),
               ),
@@ -803,10 +832,10 @@ class _AlertItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(16),
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: color, size: 22),
+          child: Icon(icon, color: color, size: 20),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -815,20 +844,21 @@ class _AlertItem extends StatelessWidget {
             children: [
               Text(
                 text,
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.grey800,
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w800,
                   fontSize: 14,
+                  color: AppTheme.grey900,
+                  letterSpacing: -0.3,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 time,
                 style: GoogleFonts.plusJakartaSans(
-                  color: AppTheme.grey400,
-                  fontWeight: FontWeight.w900,
                   fontSize: 9,
-                  letterSpacing: 1,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.grey400,
+                  letterSpacing: 1.5,
                 ),
               ),
             ],

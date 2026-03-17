@@ -106,64 +106,6 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<bool> adminLogin(String username, String password) async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final response = await http.post(
-        Uri.parse(ApiConstants.login),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'username': username.trim(),
-          'password': password,
-        }),
-      );
-
-      debugPrint('[AuthService] Admin Login status: ${response.statusCode}');
-      debugPrint('[AuthService] Admin Login body: ${response.body}');
-
-      _isLoading = false;
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        // Token may be nested: { tokens: { access: '...' } } or at root level
-        String? token;
-        if (data['tokens'] != null) {
-          token = data['tokens']['access'];
-        }
-        token ??= data['access'] ?? data['token'];
-
-        if (token == null) {
-          debugPrint('[AuthService] No token found in response');
-          notifyListeners();
-          return false;
-        }
-        await _saveToken(token);
-
-        // Try to build user from login response directly (avoids extra profile call)
-        try {
-          _currentUser = User.fromJson(data);
-          debugPrint('[AuthService] User from admin login: ${_currentUser?.name}, role: ${_currentUser?.userType}');
-          notifyListeners();
-        } catch (e) {
-          debugPrint('[AuthService] Could not parse user from admin login response: $e');
-          // Fall back to separate profile fetch
-          await getProfile();
-        }
-
-        return true;
-      }
-      notifyListeners();
-      return false;
-    } catch (e) {
-      debugPrint('[AuthService] Admin Login error: $e');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
   Future<bool> register({
     required String name,
     required String email,

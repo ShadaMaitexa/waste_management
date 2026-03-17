@@ -31,54 +31,60 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
         return Scaffold(
           backgroundColor: AppTheme.bgSurface,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(100),
+            preferredSize: const Size.fromHeight(120),
             child: Container(
               padding: const EdgeInsets.only(top: 20),
               decoration: const BoxDecoration(
-                color: AppTheme.bgDark,
-                gradient: AppTheme.slateGradient,
+                color: AppTheme.bgSurface,
               ),
               child: AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 scrolledUnderElevation: 0,
+                centerTitle: false,
                 title: Padding(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.only(top: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Incident Resolution',
+                        'Resolution Center',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
-                          fontSize: 24,
-                          color: Colors.white,
-                          letterSpacing: -1,
+                          fontSize: 28,
+                          color: AppTheme.grey900,
+                          letterSpacing: -1.5,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
-                        'Citizen grievance and system health monitoring',
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: Colors.white.withValues(alpha: 0.6),
-                          fontWeight: FontWeight.w500,
+                        'INCIDENT MONITORING & SYSTEM HEALTH',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 8,
+                          color: AppTheme.grey400,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-                foregroundColor: Colors.white,
+                foregroundColor: AppTheme.grey900,
                 actions: [
                   Container(
-                    margin: const EdgeInsets.only(right: 16),
+                    margin: const EdgeInsets.only(right: 20, top: 12),
+                    height: 44,
+                    width: 44,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppTheme.grey100),
+                      boxShadow: AppTheme.cardShadow,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 20),
+                      icon: const Icon(Icons.tune_rounded, color: AppTheme.grey900, size: 18),
                       onPressed: () {},
+                      padding: EdgeInsets.zero,
                     ),
                   ),
                 ],
@@ -86,14 +92,14 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
             ),
           ),
           body: adminService.isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator(color: AppTheme.primaryEmerald))
               : RefreshIndicator(
                   onRefresh: () => adminService.fetchComplaints(),
                   color: AppTheme.primaryEmerald,
                   child: complaints.isEmpty
                       ? _buildEmptyState()
                       : ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
                           physics: const BouncingScrollPhysics(),
                           itemCount: complaints.length,
                           itemBuilder: (context, index) => _buildComplaintCard(complaints[index]),
@@ -113,7 +119,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
             padding: const EdgeInsets.all(40),
             decoration: BoxDecoration(
               color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
-              shape: BoxShape.circle,
+              borderRadius: BorderRadius.circular(40),
             ),
             child: Icon(Icons.verified_user_rounded, size: 80, color: AppTheme.primaryEmerald.withValues(alpha: 0.2)),
           ),
@@ -123,11 +129,11 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
             style: GoogleFonts.plusJakartaSans(
               color: AppTheme.grey900, 
               fontWeight: FontWeight.w900,
-              fontSize: 22,
-              letterSpacing: -0.5,
+              fontSize: 24,
+              letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             'No active incidents or grievances reported.', 
             style: GoogleFonts.inter(
@@ -145,18 +151,16 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
     final statusColor = _getStatusColor(complaint.status);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
           dividerColor: Colors.transparent,
-          splashColor: statusColor.withValues(alpha: 0.05),
-          highlightColor: statusColor.withValues(alpha: 0.02),
         ),
         child: ExpansionTile(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
@@ -164,10 +168,10 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
           tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           childrenPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           leading: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(20),
+              color: statusColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(_getStatusIcon(complaint.status), color: statusColor, size: 24),
           ),
@@ -175,7 +179,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
             complaint.title,
             style: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w900, 
-              fontSize: 17, 
+              fontSize: 16, 
               color: AppTheme.grey900, 
               letterSpacing: -0.5,
             ),
@@ -187,7 +191,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                 Text(
                   'CASE #${complaint.id.hashCode.toString().toUpperCase().take(6)}', 
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 9, 
+                    fontSize: 8, 
                     fontWeight: FontWeight.w900, 
                     color: AppTheme.grey400, 
                     letterSpacing: 1.5,
@@ -219,10 +223,10 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
               Text(
                 'EVIDENCE PHOTOGRAPHY', 
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 9, 
+                  fontSize: 8, 
                   fontWeight: FontWeight.w900, 
                   color: AppTheme.grey400, 
-                  letterSpacing: 1.5,
+                  letterSpacing: 2,
                 ),
               ),
               const SizedBox(height: 16),
@@ -248,9 +252,9 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                   child: OutlinedButton(
                     onPressed: () => _showActionDialog(complaint),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 22),
-                      side: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.8), width: 1.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      side: const BorderSide(color: AppTheme.grey200, width: 1.5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       foregroundColor: AppTheme.grey900,
                     ),
                     child: Text(
@@ -263,20 +267,19 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: ElevatedButton.icon(
+                  child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.bgDark,
                       foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
                       elevation: 4,
                       shadowColor: AppTheme.bgDark.withValues(alpha: 0.3),
-                      padding: const EdgeInsets.symmetric(vertical: 22),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     ),
-                    icon: const Icon(Icons.support_agent_rounded, size: 18),
-                    label: Text(
+                    child: Text(
                       'ENGAGE AGENT', 
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w900, 
@@ -301,7 +304,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
         Text(
           label.toUpperCase(), 
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 9, 
+            fontSize: 8, 
             fontWeight: FontWeight.w900, 
             color: AppTheme.grey400, 
             letterSpacing: 1.5,
@@ -312,7 +315,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
           value, 
           style: GoogleFonts.inter(
             fontWeight: FontWeight.w600, 
-            fontSize: 14, 
+            fontSize: 13, 
             color: AppTheme.grey700,
             height: 1.5,
           ),
@@ -367,8 +370,8 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                 'Resolve Incident', 
                 style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w900, 
-                  fontSize: 24, 
-                  letterSpacing: -1,
+                  fontSize: 26, 
+                  letterSpacing: -1.5,
                   color: AppTheme.grey900,
                 ),
               ),
@@ -385,41 +388,44 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
               Text(
                 'SELECT RESOLUTION STATUS', 
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 9, 
+                  fontSize: 8, 
                   fontWeight: FontWeight.w900, 
                   color: AppTheme.grey400, 
-                  letterSpacing: 1.5,
+                  letterSpacing: 2,
                 ),
               ),
               const SizedBox(height: 16),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
                 child: Row(
                   children: ComplaintStatus.values.map((status) {
                     final isSelected = selectedStatus == status.name;
                     return Padding(
                       padding: const EdgeInsets.only(right: 12),
-                      child: ChoiceChip(
-                        label: Text(status.name.toUpperCase()),
-                        selected: isSelected,
-                        onSelected: (_) => setModalState(() => selectedStatus = status.name),
-                        backgroundColor: AppTheme.grey50,
-                        selectedColor: _getStatusColor(status).withValues(alpha: 0.1),
-                        labelStyle: GoogleFonts.plusJakartaSans(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          color: isSelected ? _getStatusColor(status) : AppTheme.grey400,
-                          letterSpacing: 1.2,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16), 
-                          side: BorderSide(
-                            color: isSelected ? _getStatusColor(status) : Colors.transparent,
-                            width: 1.5,
+                      child: GestureDetector(
+                        onTap: () => setModalState(() => selectedStatus = status.name),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: isSelected ? _getStatusColor(status) : AppTheme.grey50,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isSelected ? _getStatusColor(status) : Colors.transparent,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text(
+                            status.name.toUpperCase(),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: isSelected ? Colors.white : AppTheme.grey400,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         ),
-                        showCheckmark: false,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       ),
                     );
                   }).toList(),
@@ -429,29 +435,29 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
               Text(
                 'RESOLUTION CLOSURE NOTE', 
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 9, 
+                  fontSize: 8, 
                   fontWeight: FontWeight.w900, 
                   color: AppTheme.grey400, 
-                  letterSpacing: 1.5,
+                  letterSpacing: 2,
                 ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: responseController,
                 maxLines: 4,
-                style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.grey900),
+                style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w500, color: AppTheme.grey900),
                 decoration: InputDecoration(
                   hintText: 'Document the actions taken to resolve this case...',
-                  hintStyle: GoogleFonts.inter(color: AppTheme.grey300),
+                  hintStyle: GoogleFonts.inter(color: AppTheme.grey300, fontSize: 13),
                   filled: true,
                   fillColor: AppTheme.grey50,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24), 
-                    borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+                    borderSide: BorderSide.none,
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24), 
-                    borderSide: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5)),
+                    borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24), 
@@ -500,8 +506,8 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                     'CONFIRM RESOLUTION', 
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w900, 
-                      letterSpacing: 1,
-                      fontSize: 14,
+                      letterSpacing: 2,
+                      fontSize: 13,
                     ),
                   ),
                 ),

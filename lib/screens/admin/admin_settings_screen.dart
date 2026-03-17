@@ -24,8 +24,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
         child: Container(
           padding: const EdgeInsets.only(top: 20),
           decoration: const BoxDecoration(
-            color: AppTheme.bgDark,
-            gradient: AppTheme.slateGradient,
+            color: AppTheme.bgSurface,
           ),
           child: AppBar(
             backgroundColor: Colors.transparent,
@@ -37,30 +36,40 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                 'System Configuration',
                 style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w900,
-                  fontSize: 24,
-                  color: Colors.white,
-                  letterSpacing: -1,
+                  fontSize: 22,
+                  color: AppTheme.grey900,
+                  letterSpacing: -1.2,
                 ),
               ),
             ),
             centerTitle: true,
-            foregroundColor: Colors.white,
+            foregroundColor: AppTheme.grey900,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 20),
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.help_outline_rounded, color: Colors.white70),
-                onPressed: () {},
+              Container(
+                margin: const EdgeInsets.only(right: 16),
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppTheme.grey100),
+                  boxShadow: AppTheme.cardShadow,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.help_outline_rounded, color: AppTheme.grey900, size: 18),
+                  onPressed: () {},
+                ),
               ),
-              const SizedBox(width: 8),
             ],
           ),
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
         physics: const BouncingScrollPhysics(),
         children: [
           _buildProfileSection(),
@@ -68,7 +77,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           _buildSection('Operational Core', [
             _buildSwitchTile(
               'Autonomous Dispatch',
-              'Al-driven route optimization and assignment',
+              'AI-driven route optimization and assignment',
               _autoDispatchEnabled,
               (v) => setState(() => _autoDispatchEnabled = v),
             ),
@@ -138,8 +147,8 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(36),
-        boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
+        boxShadow: AppTheme.cardShadow,
+        border: Border.all(color: AppTheme.grey100, width: 1.5),
       ),
       child: Row(
         children: [
@@ -147,15 +156,8 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
             width: 76,
             height: 76,
             decoration: BoxDecoration(
-              gradient: AppTheme.emeraldGradient,
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
             ),
             alignment: Alignment.center,
             child: Text(
@@ -163,7 +165,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 26, 
                 fontWeight: FontWeight.w900, 
-                color: Colors.white,
+                color: AppTheme.primaryEmerald,
               ),
             ),
           ),
@@ -175,7 +177,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                 Text(
                   'Command Admin',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w900,
                     color: AppTheme.grey900,
                     letterSpacing: -1,
@@ -184,7 +186,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                 Text(
                   'hq.operations@kozhikode.gov.in',
                   style: GoogleFonts.inter(
-                    color: AppTheme.grey500, 
+                    color: AppTheme.grey400, 
                     fontSize: 13, 
                     fontWeight: FontWeight.w500,
                   ),
@@ -195,7 +197,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppTheme.success.withValues(alpha: 0.1),
+              color: AppTheme.success.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(Icons.verified_rounded, color: AppTheme.success, size: 20),
@@ -217,16 +219,16 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: AppTheme.grey500,
-              letterSpacing: 2,
+              letterSpacing: 2.5,
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: AppTheme.smoothShadow,
-            border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
+            borderRadius: BorderRadius.circular(36),
+            boxShadow: AppTheme.cardShadow,
+            border: Border.all(color: AppTheme.grey100, width: 1.5),
           ),
           child: Column(
             children: children.asMap().entries.map((entry) {
@@ -234,9 +236,9 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
               final widget = entry.value;
               return Column(
                 children: [
-                  widget,
-                  if (index != children.length - 1)
-                    Divider(height: 1, color: AppTheme.grey100, indent: 20, endIndent: 20),
+                   widget,
+                   if (index != children.length - 1)
+                     Divider(height: 1, color: AppTheme.grey100, indent: 24, endIndent: 24),
                 ],
               );
             }).toList(),
@@ -257,19 +259,24 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           letterSpacing: -0.5,
         ),
       ),
-      subtitle: Text(
-        subtitle, 
-        style: GoogleFonts.inter(
-          fontSize: 12, 
-          color: AppTheme.grey400, 
-          fontWeight: FontWeight.w500,
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          subtitle, 
+          style: GoogleFonts.inter(
+            fontSize: 12, 
+            color: AppTheme.grey400, 
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
       value: value,
       onChanged: onChanged,
-      activeTrackColor: AppTheme.primaryEmerald.withValues(alpha: 0.15),
-      thumbColor: WidgetStateProperty.all(AppTheme.primaryEmerald),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      activeColor: AppTheme.primaryEmerald,
+      activeTrackColor: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+      inactiveThumbColor: Colors.white,
+      inactiveTrackColor: AppTheme.grey100,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
     );
   }
 
@@ -279,10 +286,10 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       leading: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppTheme.grey50,
+          color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(icon, size: 22, color: AppTheme.primaryEmerald.withValues(alpha: 0.6)),
+        child: Icon(icon, size: 20, color: AppTheme.primaryEmerald),
       ),
       title: Text(
         title, 
@@ -293,16 +300,19 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           letterSpacing: -0.5,
         ),
       ),
-      subtitle: Text(
-        subtitle, 
-        style: GoogleFonts.inter(
-          fontSize: 12, 
-          color: AppTheme.grey400, 
-          fontWeight: FontWeight.w500,
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          subtitle, 
+          style: GoogleFonts.inter(
+            fontSize: 12, 
+            color: AppTheme.grey400, 
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
-      trailing: Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.grey300),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.grey200),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
     );
   }
 
@@ -319,14 +329,14 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           padding: const EdgeInsets.symmetric(vertical: 22),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: BorderSide(color: AppTheme.error.withValues(alpha: 0.15), width: 1.5),
+            side: BorderSide(color: AppTheme.error.withValues(alpha: 0.1), width: 1.5),
           ),
         ),
         child: Text(
           'TERMINATE SESSION',
           style: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w900, 
-            fontSize: 14, 
+            fontSize: 13, 
             letterSpacing: 2,
           ),
         ),

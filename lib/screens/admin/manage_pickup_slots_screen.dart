@@ -32,16 +32,13 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(36))),
       builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-          ),
+        builder: (context, setModalState) => Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom + 32,
-            top: 32,
+            top: 20,
             left: 32,
             right: 32,
           ),
@@ -58,12 +55,12 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               ),
               const SizedBox(height: 32),
               Text(
-                'Define Pickup Slot',
+                'Define Resource Slot',
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 24, 
+                  fontSize: 26, 
                   fontWeight: FontWeight.w900, 
                   color: AppTheme.grey900, 
-                  letterSpacing: -1,
+                  letterSpacing: -1.5,
                 ),
               ),
               const SizedBox(height: 4),
@@ -71,7 +68,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                 'Set operational capacity for this time window.', 
                 style: GoogleFonts.inter(color: AppTheme.grey500, fontSize: 14, fontWeight: FontWeight.w500),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 36),
               
               _buildTimeSelector('START TIME', startTime, (picked) => setModalState(() => startTime = picked)),
               const SizedBox(height: 20),
@@ -81,7 +78,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               Text(
                 'UNIT CAPACITY', 
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 9, 
+                  fontSize: 8, 
                   fontWeight: FontWeight.w900, 
                   color: AppTheme.grey400, 
                   letterSpacing: 2,
@@ -89,11 +86,10 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               ),
               const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 decoration: BoxDecoration(
                   color: AppTheme.grey50,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -101,11 +97,12 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.grey200),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppTheme.grey100),
+                        boxShadow: AppTheme.cardShadow,
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.remove_rounded, color: AppTheme.grey700),
+                        icon: const Icon(Icons.remove_rounded, color: AppTheme.grey700, size: 20),
                         onPressed: capacity > 1 ? () => setModalState(() => capacity--) : null,
                       ),
                     ),
@@ -115,15 +112,23 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                         fontSize: 16, 
                         fontWeight: FontWeight.w900, 
                         color: AppTheme.grey900,
+                        letterSpacing: -0.5,
                       ),
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppTheme.primaryEmerald,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.add_rounded, color: AppTheme.primaryEmerald),
+                        icon: const Icon(Icons.add_rounded, color: Colors.white, size: 20),
                         onPressed: () => setModalState(() => capacity++),
                       ),
                     ),
@@ -150,7 +155,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                     backgroundColor: AppTheme.primaryEmerald,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 22),
-                    elevation: 10,
+                    elevation: 8,
                     shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.3),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   ),
@@ -158,7 +163,8 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                     'INITIALIZE SLOT',
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w900,
-                      letterSpacing: 1.5,
+                      letterSpacing: 2,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -177,10 +183,10 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
         Text(
           label, 
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 9, 
+            fontSize: 8, 
             fontWeight: FontWeight.w900, 
             color: AppTheme.grey400, 
-            letterSpacing: 1.5,
+            letterSpacing: 2,
           ),
         ),
         const SizedBox(height: 10),
@@ -195,7 +201,6 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
             decoration: BoxDecoration(
               color: AppTheme.grey50,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -208,7 +213,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                     color: AppTheme.grey900,
                   ),
                 ),
-                Icon(Icons.access_time_filled_rounded, color: AppTheme.primaryEmerald.withValues(alpha: 0.5), size: 22),
+                Icon(Icons.access_time_filled_rounded, color: AppTheme.primaryEmerald, size: 20),
               ],
             ),
           ),
@@ -222,34 +227,46 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
     return Scaffold(
       backgroundColor: AppTheme.bgSurface,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
+        preferredSize: const Size.fromHeight(100),
         child: Container(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 20),
           decoration: const BoxDecoration(
-            color: AppTheme.bgDark,
-            gradient: AppTheme.slateGradient,
+            color: AppTheme.bgSurface,
           ),
           child: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            title: Text(
-              'Operational Scheduling',
-              style: GoogleFonts.plusJakartaSans(
-                fontWeight: FontWeight.w900, 
-                color: Colors.white, 
-                fontSize: 22,
-                letterSpacing: -1,
+            scrolledUnderElevation: 0,
+            centerTitle: true,
+            title: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                'Operational Scheduling',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w900, 
+                  color: AppTheme.grey900, 
+                  fontSize: 22,
+                  letterSpacing: -1.2,
+                ),
               ),
             ),
-            centerTitle: true,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 20),
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.analytics_outlined, color: Colors.white.withValues(alpha: 0.6)),
-                onPressed: () {},
+              Container(
+                margin: const EdgeInsets.only(right: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppTheme.grey100),
+                  boxShadow: AppTheme.cardShadow,
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.analytics_outlined, color: AppTheme.grey900, size: 20),
+                  onPressed: () {},
+                ),
               ),
             ],
           ),
@@ -268,8 +285,8 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.4),
-              blurRadius: 20,
+              color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+              blurRadius: 24,
               offset: const Offset(0, 8),
             ),
           ],
@@ -279,15 +296,15 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
           backgroundColor: AppTheme.primaryEmerald,
           elevation: 0,
           highlightElevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          icon: const Icon(Icons.add_task_rounded, color: Colors.white),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          icon: const Icon(Icons.add_task_rounded, color: Colors.white, size: 20),
           label: Text(
             'NEW SLOT', 
             style: GoogleFonts.plusJakartaSans(
               color: Colors.white, 
               fontWeight: FontWeight.w900, 
-              letterSpacing: 1.5,
-              fontSize: 13,
+              letterSpacing: 2,
+              fontSize: 12,
             ),
           ),
         ),
@@ -297,7 +314,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
 
   Widget _buildCalendarStrip() {
     return Container(
-      height: 120,
+      height: 130,
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(bottom: BorderSide(color: AppTheme.grey100, width: 1.5)),
@@ -305,7 +322,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         itemCount: 14,
         itemBuilder: (context, index) {
           final date = DateTime.now().add(Duration(days: index));
@@ -317,25 +334,25 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutCubic,
-              width: 68,
-              margin: const EdgeInsets.only(right: 14),
+              width: 72,
+              margin: const EdgeInsets.only(right: 16),
               decoration: BoxDecoration(
                 color: isSelected ? AppTheme.primaryEmerald : Colors.white,
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200.withValues(alpha: 0.8),
+                  color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey100,
                   width: 1.5,
                 ),
                 boxShadow: isSelected 
-                  ? [BoxShadow(color: AppTheme.primaryEmerald.withValues(alpha: 0.25), blurRadius: 12, offset: const Offset(0, 6))] 
+                  ? [BoxShadow(color: AppTheme.primaryEmerald.withValues(alpha: 0.2), blurRadius: 16, offset: const Offset(0, 8))] 
                   : [],
               ),
               child: Stack(
                 children: [
                   if (isToday && !isSelected)
                     Positioned(
-                      top: 6,
-                      right: 6,
+                      top: 10,
+                      right: 10,
                       child: Container(
                         width: 6,
                         height: 6,
@@ -349,20 +366,20 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                         Text(
                           DateFormat('EEE').format(date).toUpperCase(),
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 9,
+                            fontSize: 8,
                             fontWeight: FontWeight.w900,
-                            color: isSelected ? Colors.white.withValues(alpha: 0.8) : AppTheme.grey400,
-                            letterSpacing: 1.5,
+                            color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppTheme.grey400,
+                            letterSpacing: 2,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 8),
                         Text(
                           DateFormat('d').format(date),
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 22,
+                            fontSize: 24,
                             fontWeight: FontWeight.w900,
                             color: isSelected ? Colors.white : AppTheme.grey900,
-                            letterSpacing: -1,
+                            letterSpacing: -1.5,
                           ),
                         ),
                       ],
@@ -392,10 +409,10 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                 Container(
                   padding: const EdgeInsets.all(40),
                   decoration: BoxDecoration(
-                    color: AppTheme.grey100.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
+                    color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(40),
                   ),
-                  child: Icon(Icons.calendar_today_rounded, size: 64, color: AppTheme.grey300),
+                  child: Icon(Icons.calendar_today_rounded, size: 64, color: AppTheme.primaryEmerald.withValues(alpha: 0.2)),
                 ),
                 const SizedBox(height: 32),
                 Text(
@@ -403,8 +420,8 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                   style: GoogleFonts.plusJakartaSans(
                     color: AppTheme.grey900, 
                     fontWeight: FontWeight.w900, 
-                    fontSize: 20,
-                    letterSpacing: -0.5,
+                    fontSize: 22,
+                    letterSpacing: -1,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -418,7 +435,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
           physics: const BouncingScrollPhysics(),
           itemCount: slots.length,
           itemBuilder: (context, index) {
@@ -426,12 +443,12 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
             final utilPercent = slot.bookedCount / slot.capacity;
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 24),
+              margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(32),
-                boxShadow: AppTheme.smoothShadow,
-                border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
+                boxShadow: AppTheme.cardShadow,
+                border: Border.all(color: AppTheme.grey100, width: 1.5),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(32),
@@ -444,7 +461,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(24),
+                          padding: const EdgeInsets.all(28),
                           child: Row(
                             children: [
                               Container(
@@ -469,26 +486,26 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                                         fontWeight: FontWeight.w900, 
                                         fontSize: 18, 
                                         color: AppTheme.grey900, 
-                                        letterSpacing: -0.5,
+                                        letterSpacing: -1,
                                       ),
                                     ),
-                                    const SizedBox(height: 6),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
                                         Text(
                                           'LOAD FACTOR: ', 
                                           style: GoogleFonts.plusJakartaSans(
                                             color: AppTheme.grey400, 
-                                            fontSize: 9, 
+                                            fontSize: 8, 
                                             fontWeight: FontWeight.w900, 
-                                            letterSpacing: 1.5,
+                                            letterSpacing: 2,
                                           ),
                                         ),
                                         Text(
                                           '${(utilPercent * 100).toInt()}%', 
                                           style: GoogleFonts.plusJakartaSans(
                                             color: utilPercent > 0.8 ? AppTheme.error : AppTheme.primaryEmerald, 
-                                            fontSize: 9, 
+                                            fontSize: 8, 
                                             fontWeight: FontWeight.w900,
                                           ),
                                         ),
@@ -496,14 +513,14 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                                         Text(
                                           '${slot.bookedCount}/${slot.capacity} UN', 
                                           style: GoogleFonts.inter(
-                                            color: AppTheme.grey700, 
+                                            color: AppTheme.grey900, 
                                             fontSize: 11, 
                                             fontWeight: FontWeight.w800,
                                           ),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: 14),
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(6),
                                       child: LinearProgressIndicator(
