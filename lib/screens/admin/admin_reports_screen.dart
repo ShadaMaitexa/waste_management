@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,11 +18,24 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   final List<String> _reportTypes = ['All', 'Collection', 'Financial', 'Performance', 'Audit'];
   Map<String, dynamic> _revenueStats = {};
   bool _isLoading = false;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
     super.initState();
     _fetchStats();
+    
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (mounted) {
+        _fetchStats();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _fetchStats() async {
@@ -50,6 +64,10 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             scrolledUnderElevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.grey900),
+              onPressed: () => Navigator.pushReplacementNamed(context, '/splash'),
+            ),
             centerTitle: false,
             title: Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -108,11 +126,12 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
               ],
             ),
       floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 96), // Lift up more to avoid bottom nav bar
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.4),
+              color: AppTheme.primaryEmerald.withOpacity(0.4),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -140,8 +159,8 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   }
 
   Widget _buildRevenueOverview() {
-    final total = _revenueStats['total_revenue'] ?? _revenueStats['total_fees'] ?? '3,450.00';
-    final growth = _revenueStats['revenue_growth'] ?? '+18.2%';
+    final total = _revenueStats['total_revenue'] ?? _revenueStats['total_fees'] ?? '0.00';
+    final growth = _revenueStats['revenue_growth'] ?? '0%';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -156,7 +175,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.bgDark.withValues(alpha: 0.3),
+            color: AppTheme.bgDark.withOpacity(0.3),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -171,14 +190,14 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
                 ),
                 child: Text(
                   'SYSTEM REVENUE',
                   style: GoogleFonts.plusJakartaSans(
-                    color: Colors.white.withValues(alpha: 0.4), 
+                    color: Colors.white.withOpacity(0.4), 
                     fontWeight: FontWeight.w900, 
                     fontSize: 8, 
                     letterSpacing: 2,
@@ -188,7 +207,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
+                  color: AppTheme.primaryEmerald.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -218,17 +237,17 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.03),
+              color: Colors.white.withOpacity(0.03),
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1.5),
+              border: Border.all(color: Colors.white.withOpacity(0.05), width: 1.5),
             ),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _revenueSubStat('Fees Collected', '₹${_revenueStats['fees_collected'] ?? '2,140'}'),
+                  _revenueSubStat('Fees Collected', '₹${_revenueStats['fees_collected'] ?? '0'}'),
                   _buildSubStatDivider(),
-                  _revenueSubStat('Pending Dues', '₹${_revenueStats['pending_dues'] ?? '430'}'),
+                  _revenueSubStat('Pending Dues', '₹${_revenueStats['pending_dues'] ?? '0'}'),
                   _buildSubStatDivider(),
                   _revenueSubStat('Growth Index', growth),
                 ],
@@ -245,7 +264,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
       width: 1.5,
       height: 32,
       margin: const EdgeInsets.symmetric(horizontal: 24),
-      color: Colors.white.withValues(alpha: 0.08),
+      color: Colors.white.withOpacity(0.08),
     );
   }
 
@@ -256,7 +275,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
         Text(
           label.toUpperCase(), 
           style: GoogleFonts.plusJakartaSans(
-            color: Colors.white.withValues(alpha: 0.4), 
+            color: Colors.white.withOpacity(0.4), 
             fontSize: 8, 
             fontWeight: FontWeight.w900,
             letterSpacing: 1,
@@ -303,7 +322,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                   ),
                   boxShadow: isSelected ? [
                     BoxShadow(
-                      color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                      color: AppTheme.primaryEmerald.withOpacity(0.2),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     )
@@ -354,7 +373,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (isFinancial ? AppTheme.accentIndigo : AppTheme.primaryEmerald).withValues(alpha: 0.08),
+                    color: (isFinancial ? AppTheme.accentIndigo : AppTheme.primaryEmerald).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
@@ -423,6 +442,63 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   }
 
   void _showGenerateReportDialog() {
-    // Dialog implementation...
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(36))),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 32, right: 32, top: 20),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(child: Container(width: 48, height: 5, decoration: BoxDecoration(color: AppTheme.grey200, borderRadius: BorderRadius.circular(10)))),
+              const SizedBox(height: 32),
+              Text('Generate Dataset', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 26, letterSpacing: -1.5)),
+              Text('Select parameters for the engine to process.', style: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 14)),
+              const SizedBox(height: 32),
+              _buildReportTypeSelector(),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryEmerald,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 22),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                  ),
+                  child: const Text('START COMPILATION', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2)),
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReportTypeSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _reportTypes.map((type) => Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: AppTheme.grey50,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: RadioListTile<String>(
+          title: Text(type, style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 14)),
+          value: type,
+          groupValue: _selectedType,
+          onChanged: (val) => setState(() => _selectedType = val!),
+          activeColor: AppTheme.primaryEmerald,
+        ),
+      )).toList(),
+    );
   }
 }

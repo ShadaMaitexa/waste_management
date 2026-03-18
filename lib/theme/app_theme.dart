@@ -9,6 +9,8 @@ class AppTheme {
   static const Color secondarySlate = Color(0xFF2C3E50);
   static const Color accentIndigo = Color(0xFF5D6D7E);
   static const Color accentGreen = Color(0xFF2ECC71);
+  static const Color accentPurple = Color(0xFF6C5CE7);
+  static const Color accentBlue = Color(0xFF0984E3);
 
   // Waste Categories
   static const Color dryWaste = Color(0xFF3498DB);
@@ -56,12 +58,12 @@ class AppTheme {
   // Soft Premium Shadows
   static List<BoxShadow> get cardShadow => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.04),
+      color: Colors.black.withOpacity(0.04),
       blurRadius: 24,
       offset: const Offset(0, 12),
     ),
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.02),
+      color: Colors.black.withOpacity(0.02),
       blurRadius: 6,
       offset: const Offset(0, 2),
     ),
@@ -69,7 +71,7 @@ class AppTheme {
 
   static List<BoxShadow> get intenseShadow => [
     BoxShadow(
-      color: primaryEmerald.withValues(alpha: 0.2),
+      color: primaryEmerald.withOpacity(0.2),
       blurRadius: 40,
       offset: const Offset(0, 20),
     ),
@@ -77,7 +79,7 @@ class AppTheme {
 
   static List<BoxShadow> get smoothShadow => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.03),
+      color: Colors.black.withOpacity(0.03),
       blurRadius: 15,
       offset: const Offset(0, 5),
     ),
@@ -213,7 +215,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: bgCanvas,
         elevation: 0,
-        indicatorColor: primaryEmerald.withValues(alpha: 0.1),
+        indicatorColor: primaryEmerald.withOpacity(0.1),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w800, color: primaryEmerald);
@@ -234,9 +236,9 @@ class AppTheme {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
+        border: Border.all(color: color.withOpacity(0.1), width: 1),
       ),
       child: Text(
         label.toUpperCase(),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../services/auth_service.dart';
 import 'manage_pickup_slots_screen.dart';
 
 class AdminSettingsScreen extends StatefulWidget {
@@ -321,7 +323,10 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          Provider.of<AuthService>(context, listen: false).logout();
+          Navigator.of(context).pushReplacementNamed('/login');
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.error.withValues(alpha: 0.05),
           foregroundColor: AppTheme.error,
@@ -333,7 +338,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           ),
         ),
         child: Text(
-          'TERMINATE SESSION',
+          'LOGOUT',
           style: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w900, 
             fontSize: 13, 

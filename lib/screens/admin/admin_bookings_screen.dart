@@ -121,10 +121,10 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
           Container(
             padding: const EdgeInsets.all(40),
             decoration: BoxDecoration(
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+              color: AppTheme.primaryEmerald.withOpacity(0.05),
               borderRadius: BorderRadius.circular(40),
             ),
-            child: Icon(Icons.local_shipping_rounded, size: 80, color: AppTheme.primaryEmerald.withValues(alpha: 0.2)),
+            child: Icon(Icons.local_shipping_rounded, size: 80, color: AppTheme.primaryEmerald.withOpacity(0.2)),
           ),
           const SizedBox(height: 32),
           Text(
@@ -158,7 +158,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
     if (assignedWorkerName == null && pickup.assignedWorkerId != null) {
       final worker = workers.firstWhere(
         (w) => w.id == pickup.assignedWorkerId,
-        orElse: () => User(id: '', name: 'Inactive Resource', email: '', phoneNumber: '', userType: UserType.worker, createdAt: DateTime.now(), address: 'N/A')
+        orElse: () => User(id: '', username: 'Inactive Resource', email: '', phone: '', userType: UserType.worker, ward: 'N/A')
       );
       assignedWorkerName = worker.name;
     }
@@ -181,7 +181,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
+                    color: statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(Icons.inventory_2_rounded, color: statusColor, size: 24),
@@ -228,7 +228,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
             decoration: BoxDecoration(
-              color: AppTheme.grey50.withValues(alpha: 0.3),
+              color: AppTheme.grey50.withOpacity(0.3),
               border: Border(top: BorderSide(color: AppTheme.grey100, width: 1)),
             ),
             child: Row(
@@ -248,9 +248,9 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+                        color: AppTheme.primaryEmerald.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.15)),
+                        border: Border.all(color: AppTheme.primaryEmerald.withOpacity(0.15)),
                       ),
                       child: Row(
                         children: [
@@ -296,7 +296,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                               backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               elevation: 2,
-                              shadowColor: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                              shadowColor: AppTheme.primaryEmerald.withOpacity(0.1),
                             ),
                             onPressed: () => _showAssignWorkerDialog(pickup, workers),
                           ),
@@ -313,7 +313,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         elevation: 4,
-                        shadowColor: AppTheme.bgDark.withValues(alpha: 0.3),
+                        shadowColor: AppTheme.bgDark.withOpacity(0.3),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
                       child: Text(
@@ -354,6 +354,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
   Color _getStatusColor(PickupStatus status) {
     switch (status) {
       case PickupStatus.scheduled: return AppTheme.warning;
+      case PickupStatus.assigned: return AppTheme.accentPurple;
       case PickupStatus.inProgress: return AppTheme.info;
       case PickupStatus.completed: return AppTheme.success;
       case PickupStatus.cancelled:
@@ -421,7 +422,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                         width: 52,
                         height: 52,
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                          color: AppTheme.primaryEmerald.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Center(
@@ -459,7 +460,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
+                                color: AppTheme.primaryEmerald.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(

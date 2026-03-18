@@ -45,14 +45,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      
-      final success = await authService.register(
+            final success = await authService.register(
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text,
         phoneNumber: _phoneController.text.trim(),
-        address: _addressController.text.trim(),
-        ward: _selectedUserType == UserType.resident ? _wardController.text.trim() : null, // Pass ward if resident
+        ward: _selectedUserType == UserType.resident ? _wardController.text.trim() : null,
         userType: _selectedUserType,
       );
 
@@ -128,7 +126,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Icon(
               Icons.spa_rounded,
               size: 300,
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.05),
+              color: AppTheme.primaryEmerald.withOpacity(0.05),
             ),
           ),
           Positioned(
@@ -137,7 +135,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Icon(
               Icons.blur_on_rounded,
               size: 400,
-              color: AppTheme.primaryEmerald.withValues(alpha: 0.03),
+              color: AppTheme.primaryEmerald.withOpacity(0.03),
             ),
           ),
           Center(
@@ -208,7 +206,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryEmerald.withValues(alpha: 0.3),
+                  color: AppTheme.primaryEmerald.withOpacity(0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 ),
@@ -403,7 +401,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.bgDark.withValues(alpha: 0.3),
+                color: AppTheme.bgDark.withOpacity(0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               )

@@ -21,7 +21,17 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   final _addressController = TextEditingController(text: '123 Smart Residences, Ward 15');
   final _notesController = TextEditingController();
 
-  final List<WasteType> _selectedWasteTypes = [];
+  // Waste type options matching the backend 'waste_type' field values
+  static const _wasteOptions = [
+    {'key': 'dry', 'label': 'Dry Waste', 'icon': Icons.feed_rounded},
+    {'key': 'wet', 'label': 'Wet Waste', 'icon': Icons.water_drop_rounded},
+    {'key': 'organic', 'label': 'Organic', 'icon': Icons.eco_rounded},
+    {'key': 'recyclable', 'label': 'Recyclable', 'icon': Icons.recycling_rounded},
+    {'key': 'e-waste', 'label': 'E-Waste', 'icon': Icons.memory_rounded},
+    {'key': 'hazardous', 'label': 'Hazardous', 'icon': Icons.warning_rounded},
+    {'key': 'mixed', 'label': 'Mixed', 'icon': Icons.delete_sweep_rounded},
+  ];
+  String? _selectedWasteType;
   PickupSlot? _selectedSlot;
   bool _isLoading = false;
 
@@ -40,22 +50,16 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     super.dispose();
   }
 
-  void _toggleWasteType(WasteType type) {
-    setState(() {
-      if (_selectedWasteTypes.contains(type)) {
-        _selectedWasteTypes.remove(type);
-      } else {
-        _selectedWasteTypes.add(type);
-      }
-    });
+  void _selectWasteType(String key) {
+    setState(() => _selectedWasteType = key);
   }
 
   Future<void> _submitPickup() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedWasteTypes.isEmpty) {
+    if (_selectedWasteType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please select at least one waste type'),
+          content: Text('Please select a waste type'),
           backgroundColor: AppTheme.error,
         ),
       );
@@ -76,28 +80,15 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
     try {
       final pickupService = Provider.of<PickupService>(context, listen: false);
+      final slotId = int.tryParse(_selectedSlot!.id) ?? 0;
 
-      final authService = Provider.of<AuthService>(context, listen: false);
-      final user = authService.currentUser;
-
-      final pickup = Pickup(
-        id: pickupService.generatePickupId(),
-        userId: user?.id ?? 'user_anonymous',
-        userName: user?.name ?? 'Guest User',
-        userPhone: user?.phoneNumber ?? '+91 0000000000',
+      final success = await pickupService.createPickup(
+        item: _selectedWasteType!,
         address: _addressController.text.trim(),
-        wardNumber: user?.wardNumber ?? '15',
-        type: PickupType.regular,
-        status: PickupStatus.scheduled,
-        scheduledDate: _selectedSlot!.date, 
-        scheduledTime: _selectedSlot!.startTime, 
-        notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
-        createdAt: DateTime.now(),
-        wasteTypes: _selectedWasteTypes,
-        estimatedDuration: 30.0,
+        date: _selectedSlot!.date,
+        slotId: slotId,
+        wasteType: _selectedWasteType!,
       );
-
-      final success = await pickupService.createPickup(pickup);
 
       if (success) {
         if (mounted) {
@@ -325,24 +316,27 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 1.4, // Adjusted for mobile
+        childAspectRatio: 1.4,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
-      itemCount: WasteType.values.length,
+      itemCount: _wasteOptions.length,
       itemBuilder: (context, index) {
-        final type = WasteType.values[index];
-        final isSelected = _selectedWasteTypes.contains(type);
+        final option = _wasteOptions[index];
+        final key = option['key'] as String;
+        final label = option['label'] as String;
+        final icon = option['icon'] as IconData;
+        final isSelected = _selectedWasteType == key;
         return GestureDetector(
-          onTap: () => _toggleWasteType(type),
+          onTap: () => _selectWasteType(key),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             decoration: BoxDecoration(
               color: isSelected ? AppTheme.primaryEmerald : Colors.white,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: isSelected 
-                ? [BoxShadow(color: AppTheme.primaryEmerald.withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 8))]
-                : AppTheme.cardShadow,
+              boxShadow: isSelected
+                  ? [BoxShadow(color: AppTheme.primaryEmerald.withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 8))]
+                  : AppTheme.cardShadow,
               border: Border.all(
                 color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey100,
                 width: 1.2,
@@ -351,16 +345,12 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  _getWasteIcon(type),
-                  size: 24, // Reduced from 28
-                  color: isSelected ? Colors.white : AppTheme.grey900,
-                ),
+                Icon(icon, size: 24, color: isSelected ? Colors.white : AppTheme.grey900),
                 const SizedBox(height: 8),
                 Text(
-                  _getWasteTypeTitle(type),
+                  label,
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13, // Reduced from 14
+                    fontSize: 13,
                     fontWeight: FontWeight.w800,
                     color: isSelected ? Colors.white : AppTheme.grey900,
                     letterSpacing: -0.2,
@@ -582,20 +572,4 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     );
   }
 
-  IconData _getWasteIcon(WasteType type) {
-     switch (type) {
-      case WasteType.mixed: return Icons.delete_sweep_rounded;
-      case WasteType.dry: return Icons.feed_rounded; 
-      case WasteType.wet: return Icons.water_drop_rounded;
-      case WasteType.organic: return Icons.eco_rounded;
-      case WasteType.recyclable: return Icons.recycling_rounded;
-      case WasteType.electronic: return Icons.memory_rounded;
-      case WasteType.hazardous: return Icons.warning_rounded;
-    }
-  }
-
-  String _getWasteTypeTitle(WasteType type) {
-     final str = type.toString().split('.').last;
-     return str[0].toUpperCase() + str.substring(1);
-  }
 }

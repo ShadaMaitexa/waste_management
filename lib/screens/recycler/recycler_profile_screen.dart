@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../services/auth_service.dart';
 
 class RecyclerProfileScreen extends StatelessWidget {
   const RecyclerProfileScreen({super.key});
@@ -106,7 +108,7 @@ class RecyclerProfileScreen extends StatelessWidget {
                   _buildSection('Settings', [
                     _buildActionTile('Notifications', 'Alerts & Reminders', Icons.notifications),
                     _buildActionTile('Account Security', 'Password & 2FA', Icons.security),
-                    _buildLogoutTile(),
+                    _buildLogoutTile(context),
                   ]),
                   const SizedBox(height: 40),
                 ],
@@ -279,10 +281,11 @@ class RecyclerProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLogoutTile() {
+  Widget _buildLogoutTile(BuildContext context) {
     return ListTile(
       onTap: () {
-        // Implement logout logic here or trigger a dialog
+        Provider.of<AuthService>(context, listen: false).logout();
+        Navigator.of(context).pushReplacementNamed('/login');
       },
       leading: Container(
         padding: const EdgeInsets.all(8), // Reduced from 12
@@ -293,7 +296,7 @@ class RecyclerProfileScreen extends StatelessWidget {
         child: const Icon(Icons.logout_rounded, color: AppTheme.error, size: 18), // Reduced
       ),
       title: Text(
-        'Terminate Session', 
+        'Logout', 
         style: GoogleFonts.plusJakartaSans(
           fontWeight: FontWeight.w900, 
           color: AppTheme.error, 

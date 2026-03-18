@@ -1,133 +1,115 @@
 import 'package:flutter/material.dart';
 
+/// Matches the backend API for /api/pickups/
+/// Fields: id, resident, resident_name, item, item_display, address, date,
+///         slot, slot_display, status, assigned_worker, assigned_worker_name,
+///         fee_amount, fee_paid, waste_type, weight_kg, created_at
+
 class Pickup {
   final String id;
-  final String userId;
-  final String userName;
-  final String userPhone;
+  final String userId;       // resident (int from backend, stored as String)
+  final String userName;     // resident_name
   final String address;
-  final String wardNumber;
-  final PickupType type;
+  final String item;         // e.g. "ampoules", "dry", "wet" — the item enum key
+  final String itemDisplay;  // human-readable label from backend
+  final String wasteType;    // "dry", "wet", "e-waste", etc.
+  final String? ward;        // ward
   final PickupStatus status;
-  final DateTime scheduledDate;
-  final TimeOfDay scheduledTime;
-  final String? notes;
-  final String? assignedWorkerId;
+  final DateTime scheduledDate;    // date
+  final int? slotId;               // slot (int FK)
+  final String slotDisplay;        // slot_display e.g. "8:00 AM - 9:00 AM"
+  final String? assignedWorkerId;  // assigned_worker
   final String? assignedWorkerName;
-  final DateTime? completedAt;
+  final String feeAmount;          // fee_amount (string decimal from API)
+  final bool feePaid;              // fee_paid
+  final double? weightKg;          // weight_kg
+  final String? specialInstructions; // special_instructions
   final DateTime createdAt;
-  final DateTime? updatedAt;
-  final double? weight;
-  final List<WasteType> wasteTypes;
-  final double? estimatedDuration; // in minutes
-  final String? specialInstructions;
 
   Pickup({
     required this.id,
     required this.userId,
     required this.userName,
-    required this.userPhone,
     required this.address,
-    required this.wardNumber,
-    required this.type,
+    required this.item,
+    required this.itemDisplay,
+    required this.wasteType,
+    this.ward,
     required this.status,
     required this.scheduledDate,
-    required this.scheduledTime,
-    this.notes,
+    this.slotId,
+    required this.slotDisplay,
     this.assignedWorkerId,
     this.assignedWorkerName,
-    this.completedAt,
-    required this.createdAt,
-    this.updatedAt,
-    this.weight,
-    required this.wasteTypes,
-    this.estimatedDuration,
+    required this.feeAmount,
+    required this.feePaid,
+    this.weightKg,
     this.specialInstructions,
+    required this.createdAt,
   });
 
   factory Pickup.fromJson(Map<String, dynamic> json) {
-    // Status parsing: Django might return 'pending', 'in_progress', 'completed'
-    final rawStatus = json['status']?.toString().toLowerCase() ?? 'pending';
+    final rawStatus = (json['status'] ?? 'pending').toString().toLowerCase();
     PickupStatus parsedStatus;
-    
-    // Map Django status to Flutter enum
-    if (rawStatus == 'pending' || rawStatus == 'scheduled') {
-      parsedStatus = PickupStatus.scheduled;
-    } else if (rawStatus == 'in_progress') {
-      parsedStatus = PickupStatus.inProgress;
-    } else {
-      parsedStatus = PickupStatus.values.firstWhere(
-        (e) => e.toString().split('.').last == rawStatus,
-        orElse: () => PickupStatus.scheduled,
-      );
-    }
-
-    // Waste Types parsing: can be list of strings in Django
-    List<WasteType> wasteTypesList = [];
-    if (json['waste_types'] != null) {
-      final List<dynamic> wt = json['waste_types'];
-      wasteTypesList = wt.map((val) {
-        final str = val.toString().toLowerCase();
-        return WasteType.values.firstWhere(
-          (e) => e.toString().split('.').last == str,
-          orElse: () => WasteType.mixed,
-        );
-      }).toList();
-    } else if (json['item'] != null) {
-      // Fallback for older mock or single item field
-      wasteTypesList = [WasteType.mixed];
+    switch (rawStatus) {
+      case 'in_progress':
+        parsedStatus = PickupStatus.inProgress;
+        break;
+      case 'assigned':
+        parsedStatus = PickupStatus.assigned;
+        break;
+      case 'completed':
+        parsedStatus = PickupStatus.completed;
+        break;
+      case 'cancelled':
+        parsedStatus = PickupStatus.cancelled;
+        break;
+      case 'failed':
+        parsedStatus = PickupStatus.failed;
+        break;
+      default:
+        parsedStatus = PickupStatus.scheduled;
     }
 
     return Pickup(
       id: (json['id'] ?? '').toString(),
-      userId: (json['resident'] ?? json['user_id'] ?? json['userId'] ?? '').toString(),
-      userName: json['resident_name'] ?? json['user_name'] ?? json['userName'] ?? '',
-      userPhone: json['resident_phone'] ?? json['phone_number'] ?? json['userPhone'] ?? '',
+      userId: (json['resident'] ?? '').toString(),
+      userName: json['resident_name'] ?? '',
       address: json['address'] ?? '',
-      wardNumber: (json['ward'] ?? json['ward_number'] ?? json['wardNumber'] ?? '').toString(),
-      type: PickupType.values.firstWhere(
-        (e) => e.toString().split('.').last == (json['type'] ?? 'regular'),
-        orElse: () => PickupType.regular,
-      ),
+      item: json['item'] ?? '',
+      itemDisplay: json['item_display'] ?? json['item'] ?? '',
+      wasteType: json['waste_type'] ?? 'dry',
+      ward: (json['ward'] ?? '').toString(),
       status: parsedStatus,
-      scheduledDate: json['date'] != null 
+      scheduledDate: json['date'] != null
           ? DateTime.tryParse(json['date']) ?? DateTime.now()
-          : (json['scheduled_date'] != null ? DateTime.parse(json['scheduled_date']) : DateTime.now()),
-      scheduledTime: json['scheduled_time'] != null 
-          ? _parseTime(json['scheduled_time']) 
-          : const TimeOfDay(hour: 8, minute: 0),
-      notes: json['notes'] ?? json['special_instructions'],
-      assignedWorkerId: json['assigned_worker']?.toString() ?? json['assignedWorkerId'],
-      assignedWorkerName: json['worker_name'] ?? json['assignedWorkerName'],
-      completedAt: json['completed_at'] != null ? DateTime.parse(json['completed_at']) : null,
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at']) 
           : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
-      weight: json['weight_kg']?.toDouble() ?? json['weight']?.toDouble(),
-      wasteTypes: wasteTypesList,
-      specialInstructions: json['item_display'] ?? json['item'] ?? json['special_instructions'],
+      slotId: json['slot'] is int ? json['slot'] : int.tryParse(json['slot']?.toString() ?? ''),
+      slotDisplay: json['slot_display'] ?? '',
+      assignedWorkerId: json['assigned_worker']?.toString(),
+      assignedWorkerName: json['assigned_worker_name'],
+      feeAmount: (json['fee_amount'] ?? '0').toString(),
+      feePaid: json['fee_paid'] ?? false,
+      weightKg: double.tryParse((json['weight_kg'] ?? '').toString()),
+      specialInstructions: json['special_instructions'] ?? json['notes'],
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at']) ?? DateTime.now()
+          : DateTime.now(),
     );
   }
 
-  static TimeOfDay _parseTime(String timeStr) {
-    try {
-      final parts = timeStr.split(':');
-      return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
-    } catch (e) {
-      return const TimeOfDay(hour: 8, minute: 0);
-    }
-  }
-
   Map<String, dynamic> toJson() {
+    final dateStr =
+        '${scheduledDate.year}-${scheduledDate.month.toString().padLeft(2, '0')}-${scheduledDate.day.toString().padLeft(2, '0')}';
     return {
+      'item': item,
       'address': address,
-      'date': "${scheduledDate.year}-${scheduledDate.month.toString().padLeft(2, '0')}-${scheduledDate.day.toString().padLeft(2, '0')}",
-      'scheduled_time': "${scheduledTime.hour.toString().padLeft(2, '0')}:${scheduledTime.minute.toString().padLeft(2, '0')}",
-      'status': status == PickupStatus.scheduled ? 'pending' : status.toString().split('.').last,
-      'waste_types': wasteTypes.map((e) => e.toString().split('.').last).toList(),
-      'notes': notes,
-      'ward_number': wardNumber,
+      'date': dateStr,
+      if (slotId != null) 'slot': slotId,
+      'status': status == PickupStatus.scheduled ? 'pending' : status.name,
+      'waste_type': wasteType,
+      'fee_amount': feeAmount,
+      'fee_paid': feePaid,
     };
   }
 
@@ -135,58 +117,55 @@ class Pickup {
     String? id,
     String? userId,
     String? userName,
-    String? userPhone,
     String? address,
-    String? wardNumber,
-    PickupType? type,
+    String? item,
+    String? itemDisplay,
+    String? wasteType,
     PickupStatus? status,
     DateTime? scheduledDate,
-    TimeOfDay? scheduledTime,
-    String? notes,
+    int? slotId,
+    String? slotDisplay,
     String? assignedWorkerId,
     String? assignedWorkerName,
-    DateTime? completedAt,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    double? weight,
-    List<WasteType>? wasteTypes,
-    double? estimatedDuration,
+    String? feeAmount,
+    bool? feePaid,
+    double? weightKg,
     String? specialInstructions,
+    DateTime? createdAt,
   }) {
     return Pickup(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
-      userPhone: userPhone ?? this.userPhone,
       address: address ?? this.address,
-      wardNumber: wardNumber ?? this.wardNumber,
-      type: type ?? this.type,
+      item: item ?? this.item,
+      itemDisplay: itemDisplay ?? this.itemDisplay,
+      wasteType: wasteType ?? this.wasteType,
       status: status ?? this.status,
       scheduledDate: scheduledDate ?? this.scheduledDate,
-      scheduledTime: scheduledTime ?? this.scheduledTime,
-      notes: notes ?? this.notes,
+      slotId: slotId ?? this.slotId,
+      slotDisplay: slotDisplay ?? this.slotDisplay,
       assignedWorkerId: assignedWorkerId ?? this.assignedWorkerId,
       assignedWorkerName: assignedWorkerName ?? this.assignedWorkerName,
-      completedAt: completedAt ?? this.completedAt,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      weight: weight ?? this.weight,
-      wasteTypes: wasteTypes ?? this.wasteTypes,
-      estimatedDuration: estimatedDuration ?? this.estimatedDuration,
+      feeAmount: feeAmount ?? this.feeAmount,
+      feePaid: feePaid ?? this.feePaid,
+      weightKg: weightKg ?? this.weightKg,
       specialInstructions: specialInstructions ?? this.specialInstructions,
+      createdAt: createdAt ?? this.createdAt,
     );
-  }
-
-  String get formattedTime {
-    return '${scheduledTime.hourOfPeriod == 0 ? 12 : scheduledTime.hourOfPeriod}:${scheduledTime.minute.toString().padLeft(2, '0')} ${scheduledTime.period == DayPeriod.am ? 'AM' : 'PM'}';
   }
 
   bool get isCompleted => status == PickupStatus.completed;
   bool get isScheduled => status == PickupStatus.scheduled;
+  bool get isAssigned => status == PickupStatus.assigned;
   bool get isInProgress => status == PickupStatus.inProgress;
   bool get isCancelled => status == PickupStatus.cancelled;
+
+  // Legacy compatibility
+  String get wardNumber => ward ?? '';
+  TimeOfDay get scheduledTime => const TimeOfDay(hour: 8, minute: 0);
+  String get formattedTime => slotDisplay;
+  List<String> get wasteTypes => [wasteType];
 }
 
-enum PickupType { regular, emergency, instant }
-enum PickupStatus { scheduled, inProgress, completed, cancelled, failed }
-enum WasteType { mixed, dry, wet, organic, recyclable, electronic, hazardous }
+enum PickupStatus { scheduled, assigned, inProgress, completed, cancelled, failed }

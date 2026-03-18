@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -21,12 +22,27 @@ class AdminDashboardTab extends StatefulWidget {
 }
 
 class _AdminDashboardTabState extends State<AdminDashboardTab> {
+  Timer? _refreshTimer;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AdminService>().fetchDashboardStats();
     });
+    
+    // Auto-refresh every 30 seconds for "live" feel
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (mounted) {
+        context.read<AdminService>().fetchDashboardStats();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -63,23 +79,8 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                             const SizedBox(height: 16),
                             _buildManagementHub(constraints),
                             const SizedBox(height: 32),
-                            if (constraints.maxWidth < 800)
-                              Column(
-                                children: [
-                                  _buildWardPerformance(stats),
-                                  const SizedBox(height: 20),
-                                  _buildRecentAlerts(adminService),
-                                ],
-                              )
-                            else
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(child: _buildWardPerformance(stats)),
-                                  const SizedBox(width: 20),
-                                  Expanded(child: _buildRecentAlerts(adminService)),
-                                ],
-                              ),
+                            if (adminService.getSystemAlerts().isNotEmpty)
+                              _buildRecentAlerts(adminService),
                             const SizedBox(height: 100),
                           ],
                         );
@@ -143,7 +144,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Command Center',
+              'Dashboard',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 24, // Reduced from 28
                 fontWeight: FontWeight.w900, 
@@ -154,6 +155,10 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
             ),
           ],
         ),
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.grey900),
+        onPressed: () => Navigator.pushReplacementNamed(context, '/splash'),
       ),
       actions: [
         Container(
@@ -263,10 +268,10 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               ),
               const SizedBox(height: 24), // Reduced from 36
               Text(
-                'Intelligence\nCommand Engine',
+                'Waste Management',
                 style: GoogleFonts.plusJakartaSans(
                   color: Colors.white, 
-                  fontSize: 28, // Reduced from 34
+                  fontSize: 28, 
                   fontWeight: FontWeight.w900, 
                   letterSpacing: -1.5, 
                   height: 1.0,
@@ -274,37 +279,16 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Monitoring 1,248 active service nodes across the district network.',
+                'System dashboard for managing collections and grievances.',
                 style: GoogleFonts.inter(
                   color: Colors.white.withValues(alpha: 0.5), 
-                  fontSize: 13, // Reduced from 14
+                  fontSize: 13, 
                   fontWeight: FontWeight.w500, 
                   height: 1.5,
                 ),
               ),
               const SizedBox(height: 28), // Reduced from 40
-              Container(
-                padding: const EdgeInsets.all(20), // Reduced from 24
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.04),
-                  borderRadius: BorderRadius.circular(20), // Reduced from 28
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1.5),
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildQuickStat('CORE UPTIME', '99.98%'),
-                      _buildDivider(),
-                      _buildQuickStat('LATENCY', '18ms'),
-                      _buildDivider(),
-                      _buildQuickStat('NODES', 'Healthy'),
-                      _buildDivider(),
-                      _buildQuickStat('SYNC', 'Active'),
-                    ],
-                  ),
-                ),
-              ),
+
             ],
           ),
         ],
@@ -312,25 +296,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildDivider() {
-    return Container(
-      width: 1, 
-      height: 32, 
-      color: Colors.white.withValues(alpha: 0.08), 
-      margin: const EdgeInsets.symmetric(horizontal: 24)
-    );
-  }
 
-  Widget _buildQuickStat(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: GoogleFonts.plusJakartaSans(color: Colors.white.withValues(alpha: 0.4), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-        const SizedBox(height: 4),
-        Text(value, style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
-      ],
-    );
-  }
 
   Widget _buildSectionHeader(String title, String subtitle) {
     return Row(
@@ -386,10 +352,34 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
   Widget _buildKeyMetrics(Map<String, dynamic> stats, BoxConstraints constraints) {
     bool isSmall = constraints.maxWidth < 450;
     final metrics = [
-      {'label': 'Revenue Stream', 'value': '₹${stats['total_revenue'] ?? '5.2L'}', 'growth': '+14%', 'icon': Icons.account_balance_wallet_rounded, 'color': AppTheme.success},
-      {'label': 'Extraction Volume', 'value': '${stats['total_pickups'] ?? '1,842'}', 'growth': '+8%', 'icon': Icons.token_rounded, 'color': AppTheme.primaryEmerald},
-      {'label': 'Active Units', 'value': '${stats['active_routes'] ?? '32'}', 'growth': '+3', 'icon': Icons.engineering_rounded, 'color': AppTheme.info},
-      {'label': 'Alert Logs', 'value': '${stats['complaints_count'] ?? '08'}', 'growth': '-12%', 'icon': Icons.emergency_share_rounded, 'color': AppTheme.error},
+      {
+        'label': 'Revenue', 
+        'value': '₹${stats['total_revenue'] ?? '0'}', 
+        'growth': stats['revenue_growth'] ?? '+0%', 
+        'icon': Icons.account_balance_wallet_rounded, 
+        'color': AppTheme.success
+      },
+      {
+        'label': 'Pickups', 
+        'value': '${stats['total_pickups'] ?? '0'}', 
+        'growth': stats['pickup_growth'] ?? '+0%', 
+        'icon': Icons.token_rounded, 
+        'color': AppTheme.primaryEmerald
+      },
+      {
+        'label': 'Routes', 
+        'value': '${stats['active_routes'] ?? '0'}', 
+        'growth': stats['route_growth'] ?? 'Active', 
+        'icon': Icons.engineering_rounded, 
+        'color': AppTheme.info
+      },
+      {
+        'label': 'Complaints', 
+        'value': '${stats['complaints_count'] ?? '0'}', 
+        'growth': stats['complaints_growth'] ?? 'Pending', 
+        'icon': Icons.emergency_share_rounded, 
+        'color': AppTheme.error
+      },
     ];
 
     return GridView.builder(
@@ -486,13 +476,15 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
         mainAxisSpacing: 16,
         mainAxisExtent: 165,
       ),
-      itemCount: 4,
+      itemCount: 6,
       itemBuilder: (context, index) {
         switch (index) {
-          case 0: return _buildHubCard('Incident Center', 'Manage grievances', Icons.report_problem_rounded, AppTheme.error, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen())));
-          case 1: return _buildHubCard('Service Queue', 'Dispatch operations', Icons.auto_graph_rounded, AppTheme.accentIndigo, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen())));
-          case 2: return _buildHubCard('Field Force', 'User & Worker registry', Icons.supervised_user_circle_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen())));
-          case 3: default: return _buildHubCard('Scheduling', 'Slot & route engine', Icons.timer_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen())));
+          case 0: return _buildHubCard('Complaints', 'Manage grievances', Icons.report_problem_rounded, AppTheme.error, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminComplaintsScreen())));
+          case 1: return _buildHubCard('Bookings', 'Collection list', Icons.auto_graph_rounded, AppTheme.accentIndigo, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen())));
+          case 2: return _buildHubCard('Workers', 'Worker management', Icons.supervised_user_circle_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen())));
+          case 3: return _buildHubCard('Slots', 'Manage timings', Icons.timer_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen())));
+          case 4: return _buildHubCard('Live Map', 'Real-time tracking', Icons.map_rounded, AppTheme.info, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Live Map integration in progress...'))));
+          case 5: default: return _buildHubCard('Ward Stats', 'Performance by ward', Icons.area_chart_rounded, AppTheme.accentPurple, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ward Monitoring integration in progress...'))));
         }
       },
     );
@@ -552,89 +544,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
     );
   }
 
-  Widget _buildWardPerformance(Map<String, dynamic> stats) {
-    return Container(
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(36),
-        border: Border.all(color: AppTheme.grey100, width: 1),
-        boxShadow: AppTheme.cardShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Ward Status', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 18, color: AppTheme.grey900, letterSpacing: -0.5)),
-                  const SizedBox(height: 2),
-                  Text('Collection efficiency', style: GoogleFonts.inter(fontSize: 12, color: AppTheme.grey500, fontWeight: FontWeight.w500)),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: AppTheme.primaryEmerald.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-                child: const Icon(Icons.map_rounded, color: AppTheme.primaryEmerald, size: 20),
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-          _buildWardItem('Ward North-15', 0.98, AppTheme.success),
-          const SizedBox(height: 24),
-          _buildWardItem('Ward East-08', 0.82, AppTheme.warning),
-          const SizedBox(height: 24),
-          _buildWardItem('Industrial-12', 0.94, AppTheme.success),
-          const SizedBox(height: 24),
-          _buildWardItem('Central-05', 0.45, AppTheme.error),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildWardItem(String ward, double progress, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-           children: [
-             Text(ward, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 13, color: AppTheme.grey800)),
-             Text('${(progress * 100).toInt()}%', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13, color: color)),
-           ],
-        ),
-        const SizedBox(height: 12),
-        Stack(
-          children: [
-            Container(
-              height: 8,
-              decoration: BoxDecoration(
-                color: AppTheme.grey100,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 1200),
-              curve: Curves.fastOutSlowIn,
-              height: 8,
-              width: MediaQuery.of(context).size.width * 0.4 * progress, 
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [color, color.withValues(alpha: 0.7)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 
   Widget _buildRecentAlerts(AdminService adminService) {
     final alerts = adminService.getSystemAlerts();

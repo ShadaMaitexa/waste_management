@@ -57,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   });
                 },
                 activeThumbColor: AppTheme.primaryGreen,
-                activeTrackColor: AppTheme.primaryGreen.withValues(alpha: 0.5),
+                activeTrackColor: AppTheme.primaryGreen.withOpacity(0.5),
               ),
             ),
             _buildSettingTile(
@@ -73,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   });
                 },
                 activeThumbColor: AppTheme.primaryGreen,
-                activeTrackColor: AppTheme.primaryGreen.withValues(alpha: 0.5),
+                activeTrackColor: AppTheme.primaryGreen.withOpacity(0.5),
               ),
             ),
             _buildDropdownTile(
@@ -187,7 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildProfileCard() {
     final user = Provider.of<AuthService>(context).currentUser;
-    if (user == null) return const SizedBox.shrink();
+    if (user == null || user.userType == UserType.admin) return const SizedBox.shrink();
 
     return Card(
       elevation: 0,
@@ -207,7 +207,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryEmerald.withValues(alpha: 0.2),
+                    color: AppTheme.primaryEmerald.withOpacity(0.2),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -246,11 +246,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryEmerald.withValues(alpha: 0.08),
+                      color: AppTheme.primaryEmerald.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      'WARD ${user.wardNumber ?? "NA"} • ${user.userType.toString().split('.').last.toUpperCase()}',
+                      'WARD ${user.wardNumber} • ${user.userType.toString().split('.').last.toUpperCase()}',
                       style: GoogleFonts.plusJakartaSans(
                         color: AppTheme.primaryEmerald,
                         fontSize: 9,
@@ -263,7 +263,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             IconButton(
-              onPressed: () => _showEditProfileDialog(user.name, user.address),
+              onPressed: () => _showEditProfileDialog(user.name, user.ward),
               icon: const Icon(Icons.edit_note_rounded),
               color: AppTheme.primaryEmerald,
               iconSize: 28,
@@ -274,9 +274,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showEditProfileDialog(String currentName, String currentAddress) {
+  void _showEditProfileDialog(String currentName, String currentWard) {
     final nameController = TextEditingController(text: currentName);
-    final addressController = TextEditingController(text: currentAddress);
+    final wardController = TextEditingController(text: currentWard);
 
     showModalBottomSheet(
       context: context,
@@ -295,7 +295,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 36),
             _buildDialogField('NAME', nameController, Icons.person_rounded),
             const SizedBox(height: 20),
-            _buildDialogField('ADDRESS', addressController, Icons.location_on_rounded),
+            _buildDialogField('WARD NUMBER', wardController, Icons.location_on_rounded),
             const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
@@ -303,7 +303,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: () async {
                   final success = await context.read<AuthService>().updateProfile(
                     name: nameController.text.trim(),
-                    address: addressController.text.trim(),
+                    ward: wardController.text.trim(),
                   );
                   if (context.mounted) {
                     Navigator.pop(context);

@@ -1,67 +1,57 @@
+/// Matches the backend API response for /api/auth/profile/ and /api/auth/login/
+/// API fields: id, username, email, phone, ward, role, latitude, longitude
 
 class User {
   final String id;
   final String email;
-  final String name;
+  final String username; // The display name (may equal email if not set)
   final UserType userType;
-  final String phoneNumber;
-  final String address;
-  final DateTime createdAt;
+  final String phone;
+  final String ward;
+  final String? latitude;
+  final String? longitude;
   final bool isActive;
-  
-  // Additional fields for specific user types
-  final String? wardNumber; // For residents
-  final String? employeeId; // For workers
-  final String? department; // For admin
-  final String? companyName; // For recyclers
-  final String? licenseNumber; // For recyclers
 
   User({
     required this.id,
     required this.email,
-    required this.name,
+    required this.username,
     required this.userType,
-    required this.phoneNumber,
-    required this.address,
-    required this.createdAt,
+    required this.phone,
+    required this.ward,
+    this.latitude,
+    this.longitude,
     this.isActive = true,
-    this.wardNumber,
-    this.employeeId,
-    this.department,
-    this.companyName,
-    this.licenseNumber,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    // Django REST typically uses 'role' or 'user_type' in snake_case
-    final userTypeStr = json['role'] ?? json['user_type'] ?? json['userType'] ?? 'resident';
-    final phoneNumber = json['phone'] ?? json['phone_number'] ?? json['phoneNumber'] ?? '';
-    final address = json['address'] ?? '';
-    final createdAtRaw = json['created_at'] ?? json['createdAt'];
-    final isActive = json['is_active'] ?? json['isActive'] ?? true;
-    final wardNumber = json['ward_number'] ?? json['wardNumber'] ?? json['ward'];
-    final employeeId = json['employee_id'] ?? json['employeeId'];
-    final department = json['department'];
-    final companyName = json['company_name'] ?? json['companyName'];
-    final licenseNumber = json['license_number'] ?? json['licenseNumber'];
+  /// Display name: prefer username if it doesn't look like an email/token
+  String get name {
+    if (username.isEmpty) return email.split('@').first;
+    // If username is email or a random token (contains @), use email prefix
+    if (username.contains('@')) return email.split('@').first;
+    return username;
+  }
 
+  /// Convenience getters for compatibility
+  String get phoneNumber => phone;
+  String get wardNumber => ward;
+  String get address => ward.isNotEmpty ? 'Ward $ward' : '';
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    final userTypeStr = (json['role'] ?? 'resident').toString().toLowerCase();
     return User(
       id: (json['id'] ?? '').toString(),
       email: json['email'] ?? '',
-      name: json['name'] ?? json['username'] ?? json['full_name'] ?? '',
+      username: json['username'] ?? json['email'] ?? '',
       userType: UserType.values.firstWhere(
-        (e) => e.toString().split('.').last.toLowerCase() == userTypeStr.toString().toLowerCase(),
+        (e) => e.name == userTypeStr,
         orElse: () => UserType.resident,
       ),
-      phoneNumber: phoneNumber,
-      address: address,
-      createdAt: createdAtRaw != null ? DateTime.tryParse(createdAtRaw.toString()) ?? DateTime.now() : DateTime.now(),
-      isActive: isActive is bool ? isActive : (isActive.toString() == 'true'),
-      wardNumber: wardNumber?.toString(),
-      employeeId: employeeId?.toString(),
-      department: department?.toString(),
-      companyName: companyName?.toString(),
-      licenseNumber: licenseNumber?.toString(),
+      phone: json['phone'] ?? '',
+      ward: json['ward'] ?? '',
+      latitude: json['latitude']?.toString(),
+      longitude: json['longitude']?.toString(),
+      isActive: json['is_active'] ?? json['isActive'] ?? true,
     );
   }
 
@@ -69,49 +59,37 @@ class User {
     return {
       'id': id,
       'email': email,
-      'name': name,
-      'role': userType.toString().split('.').last,
-      'phone_number': phoneNumber,
-      'address': address,
-      'created_at': createdAt.toIso8601String(),
+      'username': username,
+      'role': userType.name,
+      'phone': phone,
+      'ward': ward,
+      'latitude': latitude,
+      'longitude': longitude,
       'is_active': isActive,
-      'ward_number': wardNumber,
-      'employee_id': employeeId,
-      'department': department,
-      'company_name': companyName,
-      'license_number': licenseNumber,
     };
   }
 
   User copyWith({
     String? id,
     String? email,
-    String? name,
+    String? username,
     UserType? userType,
-    String? phoneNumber,
-    String? address,
-    DateTime? createdAt,
+    String? phone,
+    String? ward,
+    String? latitude,
+    String? longitude,
     bool? isActive,
-    String? wardNumber,
-    String? employeeId,
-    String? department,
-    String? companyName,
-    String? licenseNumber,
   }) {
     return User(
       id: id ?? this.id,
       email: email ?? this.email,
-      name: name ?? this.name,
+      username: username ?? this.username,
       userType: userType ?? this.userType,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      address: address ?? this.address,
-      createdAt: createdAt ?? this.createdAt,
+      phone: phone ?? this.phone,
+      ward: ward ?? this.ward,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       isActive: isActive ?? this.isActive,
-      wardNumber: wardNumber ?? this.wardNumber,
-      employeeId: employeeId ?? this.employeeId,
-      department: department ?? this.department,
-      companyName: companyName ?? this.companyName,
-      licenseNumber: licenseNumber ?? this.licenseNumber,
     );
   }
 }

@@ -52,16 +52,25 @@ class AdminService extends ChangeNotifier {
         }
       }
 
-      // Fetch additional dashboard info
-      final responses = await Future.wait([
-        http.get(Uri.parse(ApiConstants.wardMonitoring), headers: headers),
-        http.get(Uri.parse(ApiConstants.complaintsStats), headers: headers),
-        http.get(Uri.parse(ApiConstants.feesStats), headers: headers),
-      ]);
+      // Fetch all additional dashboard info in parallel
+      final endpoints = [
+        ApiConstants.wardMonitoring,
+        ApiConstants.complaintsStats,
+        ApiConstants.feesStats,
+        ApiConstants.liveMap,
+        ApiConstants.wasteReports,
+      ];
 
-      if (responses[0].statusCode == 200) _systemStats['ward'] = jsonDecode(responses[0].body);
-      if (responses[1].statusCode == 200) _systemStats['complaints_stats'] = jsonDecode(responses[1].body);
-      if (responses[2].statusCode == 200) _systemStats['fees'] = jsonDecode(responses[2].body);
+      final responses = await Future.wait(
+        endpoints.map((url) => http.get(Uri.parse(url), headers: headers))
+      );
+
+      final keys = ['ward', 'complaints_stats', 'fees', 'live_map', 'waste_reports'];
+      for (int i = 0; i < responses.length; i++) {
+        if (responses[i].statusCode == 200) {
+          _systemStats[keys[i]] = jsonDecode(responses[i].body);
+        }
+      }
       
     } catch (e) {
       debugPrint('Error fetching dashboard stats: $e');
@@ -116,12 +125,17 @@ class AdminService extends ChangeNotifier {
   // Delete user
   Future<bool> deleteUser(String userId) async {
     try {
-      final response = await http.delete(
-        Uri.parse('${ApiConstants.users}$userId/'),
-        headers: {'Authorization': 'Bearer ${_authService.token}'},
-      );
+      final request = http.Request('DELETE', Uri.parse(ApiConstants.users));
+      request.headers.addAll({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${_authService.token}',
+      });
+      request.body = jsonEncode({'user_id': userId});
+      
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
-      if (response.statusCode == 204) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
         _users.removeWhere((u) => u.id == userId);
         notifyListeners();
         return true;
@@ -261,6 +275,46 @@ class AdminService extends ChangeNotifier {
     }
   }
 
+  // ==================== SLOT & WARD MANAGEMENT ====================
+
+  Future<bool> createPickupSlot(Map<String, dynamic> slotData) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.pickupSlots),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+        body: jsonEncode(slotData),
+      );
+
+      return response.statusCode == 201;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateUserWard(String userId, String ward) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('${ApiConstants.users}$userId/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+        body: jsonEncode({'ward': ward}),
+      );
+
+      if (response.statusCode == 200) {
+        await fetchUsers(); // Refresh users list
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // ==================== REVENUE & ANALYTICS ====================
 
   Future<Map<String, dynamic>> fetchRevenueStats() async {
@@ -271,7 +325,10 @@ class AdminService extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+        _systemStats['fees'] = data;
+        notifyListeners();
+        return data;
       }
     } catch (e) {
       debugPrint('Error fetching revenue stats: $e');
@@ -279,38 +336,43 @@ class AdminService extends ChangeNotifier {
     return {};
   }
 
+  Future<void> fetchLiveMap() async {
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.liveMap),
+        headers: {'Authorization': 'Bearer ${_authService.token}'},
+      );
+
+      if (response.statusCode == 200) {
+        _systemStats['live_map'] = jsonDecode(response.body);
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error fetching live map: $e');
+    }
+  }
+
+  Future<void> fetchWasteReports() async {
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.wasteReports),
+        headers: {'Authorization': 'Bearer ${_authService.token}'},
+      );
+
+      if (response.statusCode == 200) {
+        _systemStats['waste_reports'] = jsonDecode(response.body);
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error fetching waste reports: $e');
+    }
+  }
+
   List<Map<String, dynamic>> getPickupTrends(int days) {
-    return [
-      {'day': 'Mon', 'value': 45},
-      {'day': 'Tue', 'value': 52},
-      {'day': 'Wed', 'value': 48},
-      {'day': 'Thu', 'value': 61},
-      {'day': 'Fri', 'value': 55},
-      {'day': 'Sat', 'value': 67},
-      {'day': 'Sun', 'value': 42},
-    ];
+    return [];
   }
 
   List<Map<String, dynamic>> getSystemAlerts() {
-    return [
-      {
-        'id': '1',
-        'message': 'Waste accumulation high in Ward 15',
-        'type': 'warning',
-        'time': '15 mins ago',
-      },
-      {
-        'id': '2',
-        'message': 'Driver Rahul Kumar reported delay due to traffic',
-        'type': 'info',
-        'time': '1 hour ago',
-      },
-      {
-        'id': '3',
-        'message': 'New recycler partnership request from "GreenRecycle Co."',
-        'type': 'success',
-        'time': '3 hours ago',
-      },
-    ];
+    return [];
   }
 }

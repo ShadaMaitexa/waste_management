@@ -139,7 +139,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
                 const Icon(Icons.power_settings_new_rounded, size: 20, color: Color(0xFFF43F5E)),
                 const SizedBox(width: 12),
                 Text(
-                  'TERMINATE SESSION',
+                  'LOGOUT',
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,

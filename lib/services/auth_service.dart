@@ -47,72 +47,89 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
+  // ==================== LOGIN ====================
+  // POST /api/auth/login/
+  // Body: { email, password }
+  // Returns: { username, email, role, tokens: { refresh, access } }
+
   Future<bool> login(String email, String password) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final payload = {
-        'username': email.trim(), // Most Django backends use 'username' as the key even for email login
-        'password': password,
-      };
-
-      debugPrint('[AuthService] Login payload: ${jsonEncode(payload)}');
-
       final response = await http.post(
         Uri.parse(ApiConstants.login),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(payload),
+        body: jsonEncode({
+          'email': email.trim(),
+          'password': password,
+        }),
       );
 
       debugPrint('[AuthService] Login status: ${response.statusCode}');
-      debugPrint('[AuthService] Login response body: ${response.body}');
-      
+      debugPrint('[AuthService] Login response: ${response.body}');
+
       _isLoading = false;
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
 
-        String? token;
-        if (data['tokens'] != null) {
-          token = data['tokens']['access'];
-        }
-        token ??= data['access'] ?? data['token'];
-
+        // Extract token — backend returns tokens.access
+        final String? token = data['tokens']?['access'] ?? data['access'];
         if (token == null) {
-          debugPrint('[AuthService] No token found in successful response');
+          debugPrint('[AuthService] No token in response');
+          notifyListeners();
           return false;
         }
-        
+
         await _saveToken(token);
 
-        try {
-          // If response has user data, parse it
-          _currentUser = User.fromJson(data);
-          notifyListeners();
-        } catch (e) {
-          // Otherwise, fetch profile
-          await getProfile();
-        }
+        // Build user from login response: {username, email, role}
+        // Note: login response has username/email/role but not phone/ward
+        _currentUser = User.fromJson(data);
+        notifyListeners();
 
+        // Fetch full profile to get phone, ward, id, etc.
+        await getProfile();
         return true;
       }
+
+      // Surface backend error messages
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        try {
+          final errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          final msgs = <String>[];
+          errorData.forEach((key, value) {
+            final msg = value is List ? value.join(', ') : value.toString();
+            msgs.add(msg);
+          });
+          if (msgs.isNotEmpty) throw Exception(msgs.join('\n'));
+        } catch (e) {
+          if (e is Exception && e.toString().contains('Exception:')) rethrow;
+        }
+      }
+
       notifyListeners();
       return false;
     } catch (e) {
       debugPrint('[AuthService] Login exception: $e');
       _isLoading = false;
       notifyListeners();
+      if (e is Exception && e.toString().contains('Exception:')) rethrow;
       return false;
     }
   }
+
+  // ==================== REGISTER ====================
+  // POST /api/auth/register/
+  // Body: { username, email, password, phone, ward, role }
+  // Returns 201 with tokens on success
 
   Future<bool> register({
     required String name,
     required String email,
     required String password,
     required String phoneNumber,
-    required String address,
     String? ward,
     required UserType userType,
   }) async {
@@ -121,60 +138,47 @@ class AuthService extends ChangeNotifier {
 
     try {
       final finalWard = (ward != null && ward.isNotEmpty) ? ward : '15';
-      
-      final body = jsonEncode({
-        'username': email.trim(),
-        'email': email.trim(),
-        'password': password,
-        'name': name.trim(),
-        'full_name': name.trim(),
-        'phone': phoneNumber.trim(), // Backend requires exactly 'phone'
-        'address': address.trim(),
-        'ward': finalWard, // Backend requires exactly 'ward'
-        'role': userType.toString().split('.').last,
-      });
-
-      debugPrint('[AuthService] Register payload: $body');
 
       final response = await http.post(
         Uri.parse(ApiConstants.register),
         headers: {'Content-Type': 'application/json'},
-        body: body,
+        body: jsonEncode({
+          'username': name.trim(),   // username = display name (not email)
+          'email': email.trim(),
+          'password': password,
+          'phone': phoneNumber.trim(),
+          'ward': finalWard,
+          'role': userType.name,     // 'resident' | 'recycler'
+        }),
       );
 
+      debugPrint('[AuthService] Register status: ${response.statusCode}');
+      debugPrint('[AuthService] Register response: ${response.body}');
+
       _isLoading = false;
+
       if (response.statusCode == 201 || response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        String? token;
-        if (data['tokens'] != null) {
-          token = data['tokens']['access'];
-        }
-        token ??= data['access'] ?? data['token'];
-
-        if (token != null) await _saveToken(token);
-
-        try {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final String? token = data['tokens']?['access'] ?? data['access'];
+        if (token != null) {
+          await _saveToken(token);
           _currentUser = User.fromJson(data);
           notifyListeners();
-        } catch (e) {
-          if (token != null) await getProfile();
+          await getProfile();
         }
-
         return true;
       }
 
+      // Surface backend validation errors
       if (response.statusCode >= 400 && response.statusCode < 500) {
         try {
           final errorData = jsonDecode(response.body) as Map<String, dynamic>;
-          final errorMessages = <String>[];
+          final msgs = <String>[];
           errorData.forEach((key, value) {
-            String msg = value is List ? value.join(', ') : value.toString();
-            errorMessages.add('$key: $msg');
+            final msg = value is List ? value.join(', ') : value.toString();
+            msgs.add(msg);
           });
-          if (errorMessages.isNotEmpty) {
-            throw Exception(errorMessages.join('\n'));
-          }
+          if (msgs.isNotEmpty) throw Exception(msgs.join('\n'));
         } catch (e) {
           if (e is Exception && e.toString().contains('Exception:')) rethrow;
         }
@@ -185,12 +189,14 @@ class AuthService extends ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      if (e is Exception && e.toString().contains('Exception:')) {
-        throw Exception(e.toString().replaceAll('Exception: ', ''));
-      }
+      if (e is Exception && e.toString().contains('Exception:')) rethrow;
       return false;
     }
   }
+
+  // ==================== PROFILE ====================
+  // GET /api/auth/profile/
+  // Returns: { id, username, email, phone, ward, role, latitude, longitude }
 
   Future<void> getProfile() async {
     if (_token == null) return;
@@ -198,10 +204,10 @@ class AuthService extends ChangeNotifier {
     try {
       final response = await http.get(
         Uri.parse(ApiConstants.profile),
-        headers: {
-          'Authorization': 'Bearer $_token',
-        },
+        headers: {'Authorization': 'Bearer $_token'},
       );
+
+      debugPrint('[AuthService] Profile status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         _currentUser = User.fromJson(jsonDecode(response.body));
@@ -214,7 +220,17 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateProfile({String? name, String? phone, String? address, String? ward}) async {
+  // ==================== UPDATE PROFILE ====================
+  // PATCH /api/auth/profile/
+  // Body: { username, phone, ward, latitude, longitude }
+
+  Future<bool> updateProfile({
+    String? name,
+    String? phone,
+    String? ward,
+    String? latitude,
+    String? longitude,
+  }) async {
     if (_token == null) return false;
 
     try {
@@ -226,10 +242,10 @@ class AuthService extends ChangeNotifier {
         },
         body: jsonEncode({
           if (name != null) 'username': name,
-          if (name != null) 'full_name': name,
-          if (phone != null) 'phone_number': phone,
-          if (address != null) 'address': address,
-          if (ward != null) 'ward_number': ward,
+          if (phone != null) 'phone': phone,
+          if (ward != null) 'ward': ward,
+          if (latitude != null) 'latitude': latitude,
+          if (longitude != null) 'longitude': longitude,
         }),
       );
 
@@ -245,6 +261,9 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  // ==================== FORGOT PASSWORD ====================
+  // POST /api/auth/forgot-password/   Body: { email }
+
   Future<bool> forgotPassword(String email) async {
     try {
       final response = await http.post(
@@ -258,18 +277,23 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  // ==================== RESET PASSWORD ====================
+  // POST /api/auth/reset-password/{uid}/{token}/  Body: { password }
+
   Future<bool> resetPassword(String uid, String token, String newPassword) async {
     try {
       final response = await http.post(
         Uri.parse('${ApiConstants.resetPassword}$uid/$token/'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'new_password': newPassword}),
+        body: jsonEncode({'password': newPassword}),
       );
       return response.statusCode == 200;
     } catch (e) {
       return false;
     }
   }
+
+  // ==================== LOGOUT ====================
 
   Future<void> logout() async {
     await _clearToken();

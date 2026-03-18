@@ -239,7 +239,7 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
                       child: Container(
                         alignment: Alignment.center,
                         child: Text(
-                          _isOnDuty ? 'TERMINATE SESSION' : 'INITIALIZE SHIFT',
+                          _isOnDuty ? 'END SHIFT' : 'INITIALIZE SHIFT',
                           style: GoogleFonts.plusJakartaSans(
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,

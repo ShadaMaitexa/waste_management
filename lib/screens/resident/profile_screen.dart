@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../services/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -29,11 +31,11 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24), // Reduced
                   child: Column(
                     children: [
-                      _buildProfileHeader(),
+                      _buildPersonalDetails(context),
                       const SizedBox(height: 32), // Reduced
                       _buildStatsSection(),
                       const SizedBox(height: 40), // Reduced
-                      _buildActionSection(),
+                      _buildActionSection(context),
                       const SizedBox(height: 80), // Reduced
                     ],
                   ),
@@ -83,7 +85,12 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildPersonalDetails(BuildContext context) {
+    final user = Provider.of<AuthService>(context).currentUser;
+    final userName = user?.name ?? 'Loading...';
+    final userEmail = user?.email ?? '';
+    final userWard = user?.wardNumber ?? 'Not Assigned';
+
     return Column(
       children: [
         Stack(
@@ -127,7 +134,7 @@ class ProfileScreen extends StatelessWidget {
         ),
         const SizedBox(height: 20), // Reduced from 24
         Text(
-          'John Doe',
+          userName,
           style: GoogleFonts.plusJakartaSans(
             fontSize: 26, // Reduced from 32
             fontWeight: FontWeight.w900,
@@ -174,7 +181,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionSection() {
+  Widget _buildActionSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -198,7 +205,10 @@ class ProfileScreen extends StatelessWidget {
           width: double.infinity,
           height: 56, // Reduced from 64
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Provider.of<AuthService>(context, listen: false).logout();
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.bgDark,
               foregroundColor: Colors.white,
@@ -217,7 +227,7 @@ class ProfileScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'TERMINATE SESSION',
+                      'LOGOUT',
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
