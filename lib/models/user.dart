@@ -38,7 +38,13 @@ class User {
   String get address => ward.isNotEmpty ? 'Ward $ward' : '';
 
   factory User.fromJson(Map<String, dynamic> json) {
-    final userTypeStr = (json['role'] ?? 'resident').toString().toLowerCase();
+    String userTypeStr = (json['role'] ?? 'resident').toString().toLowerCase();
+    
+    // Robust mapping for worker variations
+    if (userTypeStr == 'hks' || userTypeStr == 'staff' || userTypeStr == 'hks_worker') {
+      userTypeStr = 'worker';
+    }
+
     return User(
       id: (json['id'] ?? '').toString(),
       email: json['email'] ?? '',

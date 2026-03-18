@@ -536,8 +536,10 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
   void _showAddWorkerDialog() {
     final nameController = TextEditingController();
     final emailController = TextEditingController();
+    final passwordController = TextEditingController();
     final phoneController = TextEditingController();
     final wardController = TextEditingController();
+    bool obscurePassword = true;
 
     showModalBottomSheet(
       context: context,
@@ -578,9 +580,28 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                 ),
               ),
               const SizedBox(height: 36),
-              _buildDialogField('NAME', nameController, Icons.person_rounded),
+              _buildDialogField('USERNAME', nameController, Icons.person_rounded),
               const SizedBox(height: 20),
               _buildDialogField('EMAIL', emailController, Icons.alternate_email_rounded),
+              const SizedBox(height: 20),
+              StatefulBuilder(
+                builder: (context, setDialogState) {
+                  return _buildDialogField(
+                    'PASSWORD', 
+                    passwordController, 
+                    Icons.lock_rounded,
+                    obscureText: obscurePassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                        color: AppTheme.grey400,
+                        size: 20,
+                      ),
+                      onPressed: () => setDialogState(() => obscurePassword = !obscurePassword),
+                    ),
+                  );
+                }
+              ),
               const SizedBox(height: 20),
               _buildDialogField('PHONE', phoneController, Icons.phone_rounded),
               const SizedBox(height: 20),
@@ -590,11 +611,28 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
+                    if (nameController.text.isEmpty || 
+                        emailController.text.isEmpty || 
+                        passwordController.text.isEmpty ||
+                        phoneController.text.isEmpty ||
+                        wardController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Please fill all fields', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
+                          backgroundColor: AppTheme.error,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        )
+                      );
+                      return;
+                    }
+                    
                     final success = await context.read<AdminService>().createHksWorker({
-                      'name': nameController.text,
+                      'username': nameController.text,
                       'email': emailController.text,
-                      'phone_number': phoneController.text,
-                      'ward_number': wardController.text,
+                      'password': passwordController.text,
+                      'phone': phoneController.text,
+                      'ward': wardController.text,
                       'role': 'worker',
                     });
                     if (context.mounted) {
@@ -641,7 +679,13 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     );
   }
 
-  Widget _buildDialogField(String label, TextEditingController controller, IconData icon) {
+  Widget _buildDialogField(
+    String label, 
+    TextEditingController controller, 
+    IconData icon, {
+    bool obscureText = false,
+    Widget? suffixIcon,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -657,9 +701,11 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
         const SizedBox(height: 10),
         TextField(
           controller: controller,
+          obscureText: obscureText,
           style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15, color: AppTheme.grey900),
           decoration: InputDecoration(
             prefixIcon: Icon(icon, size: 20, color: AppTheme.grey400),
+            suffixIcon: suffixIcon,
             filled: true,
             fillColor: AppTheme.grey50,
             border: OutlineInputBorder(
