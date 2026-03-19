@@ -11,6 +11,8 @@ import 'admin_complaints_screen.dart';
 import 'admin_bookings_screen.dart';
 import 'admin_user_management_screen.dart';
 import 'manage_pickup_slots_screen.dart';
+import 'analytics_dashboard_screen.dart';
+import '../common/notifications_screen.dart';
 
 class AdminDashboardTab extends StatefulWidget {
   final Function(int) onNavigate;
@@ -172,7 +174,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           ),
           child: IconButton(
             icon: const Icon(Icons.notifications_active_rounded, color: AppTheme.grey900, size: 18),
-            onPressed: () {},
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationsScreen())),
             padding: EdgeInsets.zero,
           ),
         ),
@@ -310,7 +312,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           ],
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen())),
           style: TextButton.styleFrom(
             foregroundColor: AppTheme.primaryEmerald,
             textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 0.5),
@@ -484,7 +486,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           case 2: return _buildHubCard('Workers', 'Worker management', Icons.supervised_user_circle_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen())));
           case 3: return _buildHubCard('Slots', 'Manage timings', Icons.timer_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen())));
           case 4: return _buildHubCard('Live Map', 'Real-time tracking', Icons.map_rounded, AppTheme.info, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Live Map integration in progress...'))));
-          case 5: default: return _buildHubCard('Ward Stats', 'Performance by ward', Icons.area_chart_rounded, AppTheme.accentPurple, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ward Monitoring integration in progress...'))));
+          case 5: default: return _buildHubCard('Ward Stats', 'Performance by ward', Icons.area_chart_rounded, AppTheme.accentPurple, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen())));
         }
       },
     );

@@ -4,6 +4,8 @@ import '../../theme/app_theme.dart';
 import 'admin_dashboard_tab.dart';
 import 'admin_reports_screen.dart';
 import 'admin_user_management_screen.dart';
+import 'admin_settings_screen.dart';
+import '../common/help_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -112,9 +114,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _buildRailAction(Icons.settings_suggest_rounded, 'Settings'),
+              _buildRailAction(Icons.settings_suggest_rounded, 'Settings', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminSettingsScreen()))),
               const SizedBox(height: 8),
-              _buildRailAction(Icons.help_center_rounded, 'Help'),
+              _buildRailAction(Icons.help_center_rounded, 'Help', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpScreen()))),
               const SizedBox(height: 32),
             ],
           ),
@@ -131,10 +133,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     );
   }
 
-  Widget _buildRailAction(IconData icon, String tooltip) {
+  Widget _buildRailAction(IconData icon, String tooltip, VoidCallback onTap) {
     return IconButton(
       icon: Icon(icon, color: AppTheme.grey400, size: 22),
-      onPressed: () {},
+      onPressed: onTap,
       tooltip: tooltip,
     );
   }

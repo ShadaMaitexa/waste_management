@@ -3,7 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../services/auth_service.dart';
+import '../common/help_screen.dart';
+import '../common/notifications_screen.dart';
 import 'manage_pickup_slots_screen.dart';
+import 'admin_reports_screen.dart';
 
 class AdminSettingsScreen extends StatefulWidget {
   const AdminSettingsScreen({super.key});
@@ -63,7 +66,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.help_outline_rounded, color: AppTheme.grey900, size: 18),
-                  onPressed: () {},
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpScreen())),
                 ),
               ),
             ],
@@ -102,7 +105,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
               'Communication Hub',
               'Manage email, SMS, and broadcast gateways',
               Icons.sensors_rounded,
-              () {},
+              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationsScreen())),
             ),
           ]),
           const SizedBox(height: 24),
@@ -120,19 +123,19 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
               'Geospatial Zoning',
               'Modify ward boundaries and coverage areas',
               Icons.map_rounded,
-              () {},
+              () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Geospatial Zoning is under development.'))),
             ),
             _buildActionTile(
               'Cloud Data Integrity',
               'Last automated backup: 04:00 AM UTC',
               Icons.cloud_done_rounded,
-              () {},
+              () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Backup systems are active.'))),
             ),
             _buildActionTile(
               'Audit Intelligence',
               'Review high-level administrative logs',
               Icons.security_rounded,
-              () {},
+              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminReportsScreen())),
             ),
           ]),
           const SizedBox(height: 48),
