@@ -81,6 +81,8 @@ class PickupService extends ChangeNotifier {
     required DateTime date,
     required int slotId,
     required String wasteType,
+    bool isInstant = false,
+    String? driverId,
   }) async {
     try {
       final dateStr =
@@ -98,8 +100,10 @@ class PickupService extends ChangeNotifier {
           'date': dateStr,
           'slot': slotId,
           'waste_type': wasteType,
-          'status': 'pending',
+          'status': isInstant ? 'assigned' : 'pending',
           'fee_paid': false,
+          if (driverId != null) 'assigned_worker': driverId,
+          if (isInstant) 'is_instant': true,
         }),
       );
 

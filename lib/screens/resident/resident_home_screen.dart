@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../services/pickup_service.dart';
 import '../../services/referral_service.dart';
+import '../../models/pickup.dart';
 import '../../theme/app_theme.dart';
 import 'book_pickup_screen.dart';
 import 'referral_screen.dart';
@@ -145,7 +146,8 @@ class _DashboardTab extends StatelessWidget {
         final userId = authService.currentUser?.id ?? '';
         final userName = authService.currentUserName ?? 'Resident';
         
-        final pickups = pickupService.getUpcomingPickupsForUser(userId);
+        final pickups = pickupService.getPickupsForUser(userId)
+          ..sort((a, b) => b.scheduledDate.compareTo(a.scheduledDate));
         final totalWaste = pickupService.getTotalWasteCollectedForUser(userId);
         final wardNumber = authService.currentUser?.wardNumber;
         
@@ -175,10 +177,7 @@ class _DashboardTab extends StatelessWidget {
                         _buildNextPickupCard(context, pickups.isNotEmpty ? pickups.first : null),
                         const SizedBox(height: 20),
                         _buildStatsOverview(context, stats, wardNumber),
-                        const SizedBox(height: 28),
-                        _buildQuickActionsGrid(context),
-                        const SizedBox(height: 28),
-                        _buildRecentActivity(context, referralService),
+                        _buildRecentActivity(context, pickups),
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -623,79 +622,8 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionsGrid(BuildContext context) {
-    final actions = [
-      {'icon': Icons.add_task_rounded, 'label': 'BOOK', 'color': AppTheme.primaryEmerald, 'index': 1},
-      {'icon': Icons.history_edu_rounded, 'label': 'LOGS', 'color': const Color(0xFF6366F1), 'index': -1},
-      {'icon': Icons.support_rounded, 'label': 'HELP', 'color': const Color(0xFFEC4899), 'index': -1},
-      {'icon': Icons.token_rounded, 'label': 'POOL', 'color': const Color(0xFFF59E0B), 'index': 2},
-    ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'MENU',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 10,
-            fontWeight: FontWeight.w900,
-            color: AppTheme.grey400,
-            letterSpacing: 2,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: actions.map((action) {
-            final color = action['color'] as Color;
-            return Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  final navIndex = action['index'] as int;
-                  if (navIndex != -1) onNavigate(navIndex);
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4), // Reduced from 6
-                  padding: const EdgeInsets.symmetric(vertical: 16), // Reduced from 20
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(20), // Reduced from 24
-                    boxShadow: AppTheme.cardShadow,
-                    border: Border.all(color: AppTheme.grey100, width: 1),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10), // Reduced from 12
-                        decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(action['icon'] as IconData, color: color, size: 18), // Reduced from 20
-                      ),
-                      const SizedBox(height: 10), // Reduced from 12
-                      Text(
-                        action['label'] as String,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 9, // Reduced from 10
-                          fontWeight: FontWeight.w900,
-                          color: AppTheme.grey700,
-                          letterSpacing: 0.8, // Reduced from 1
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRecentActivity(BuildContext context, ReferralService referralService) {
-    final activities = referralService.getReferralHistory();
-
+  Widget _buildRecentActivity(BuildContext context, List<Pickup> activities) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -705,14 +633,14 @@ class _DashboardTab extends StatelessWidget {
             Text(
               'RECENT ACTIVITY',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
                 color: AppTheme.grey500,
                 letterSpacing: 1.5,
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () => Navigator.pushNamed(context, '/resident/my-pickups'),
               child: Text(
                 'VIEW ALL',
                 style: GoogleFonts.plusJakartaSans(
@@ -750,11 +678,10 @@ class _DashboardTab extends StatelessWidget {
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: activities.length,
+                  itemCount: activities.take(5).length,
                   separatorBuilder: (_, __) => Divider(color: AppTheme.grey200, height: 1, indent: 20, endIndent: 20),
                   itemBuilder: (context, index) {
-                    final item = activities[index];
-                    final isPaid = item.amount > 0;
+                    final pickup = activities[index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       child: Row(
@@ -766,26 +693,47 @@ class _DashboardTab extends StatelessWidget {
                               color: AppTheme.primaryEmerald.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(Icons.person_add_rounded, color: AppTheme.primaryEmerald, size: 20),
+                            child: const Icon(Icons.receipt_long_rounded, color: AppTheme.primaryEmerald, size: 20),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(item.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 14, color: AppTheme.grey900)),
-                                const SizedBox(height: 2),
-                                Text(item.date, style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppTheme.grey500, fontWeight: FontWeight.w600)),
+                                Text(
+                                  pickup.itemDisplay,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 14,
+                                    color: Theme.of(context).textTheme.titleLarge?.color ?? AppTheme.grey900,
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat('MMM dd, yyyy').format(pickup.scheduledDate),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 11,
+                                    color: AppTheme.grey400,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              if (isPaid) 
-                                Text('+₹${item.amount.toStringAsFixed(0)}', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13, color: AppTheme.success)),
-                              Text(item.status.toUpperCase(), style: GoogleFonts.plusJakartaSans(fontSize: 8, fontWeight: FontWeight.w900, color: isPaid ? AppTheme.success : AppTheme.grey500)),
-                            ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(pickup.status).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              pickup.status.name.toUpperCase(),
+                              style: GoogleFonts.plusJakartaSans(
+                                color: _getStatusColor(pickup.status),
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -795,5 +743,16 @@ class _DashboardTab extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Color _getStatusColor(PickupStatus status) {
+    switch (status) {
+      case PickupStatus.scheduled: return AppTheme.primaryEmerald;
+      case PickupStatus.assigned: return AppTheme.info;
+      case PickupStatus.inProgress: return AppTheme.warning;
+      case PickupStatus.completed: return AppTheme.success;
+      case PickupStatus.cancelled: return AppTheme.error;
+      case PickupStatus.failed: return AppTheme.error;
+    }
   }
 }

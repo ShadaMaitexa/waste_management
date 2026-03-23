@@ -13,6 +13,7 @@ import 'screens/resident/my_pickups_screen.dart';
 import 'screens/resident/pickup_history_screen.dart';
 import 'screens/resident/referral_screen.dart';
 import 'screens/resident/profile_screen.dart';
+import 'screens/resident/complaint_screen.dart';
 import 'screens/worker/worker_home_screen.dart';
 import 'screens/worker/worker_route_planner_screen.dart';
 import 'screens/worker/worker_attendance_screen.dart';
@@ -37,6 +38,7 @@ import 'services/worker_service.dart'; // Added WorkerService
 import 'services/notification_service.dart';
 
 import 'services/theme_service.dart';
+import 'services/location_service.dart';
 
 void main() {
   runApp(const GreenLoopApp());
@@ -78,6 +80,10 @@ class GreenLoopApp extends StatelessWidget {
         ChangeNotifierProxyProvider<AuthService, NotificationService>(
           create: (context) => NotificationService(context.read<AuthService>()),
           update: (_, auth, notification) => NotificationService(auth),
+        ),
+        ChangeNotifierProxyProvider<AuthService, LocationService>(
+          create: (context) => LocationService(context.read<AuthService>()),
+          update: (_, auth, location) => LocationService(auth),
         ),
       ],
       child: Consumer<ThemeService>(
@@ -128,6 +134,8 @@ class GreenLoopApp extends StatelessWidget {
               return MaterialPageRoute(builder: (_) => const ReferralScreen(), settings: settings);
             case '/resident/profile':
               return MaterialPageRoute(builder: (_) => const ProfileScreen(), settings: settings);
+            case '/resident/complaints':
+              return MaterialPageRoute(builder: (_) => const ComplaintScreen(), settings: settings);
             
             // Worker Routes
             case '/worker':

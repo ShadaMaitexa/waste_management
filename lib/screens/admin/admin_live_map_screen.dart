@@ -48,18 +48,22 @@ class _AdminLiveMapScreenState extends State<AdminLiveMapScreen> {
     
     final liveData = adminService.systemStats['live_map'];
     if (liveData is List) {
-      final newMarkers = liveData.map((worker) {
-        final lat = double.tryParse(worker['latitude']?.toString() ?? '0') ?? 0.0;
-        final lng = double.tryParse(worker['longitude']?.toString() ?? '0') ?? 0.0;
+      final newMarkers = liveData.map((person) {
+        final lat = double.tryParse(person['latitude']?.toString() ?? '0') ?? 0.0;
+        final lng = double.tryParse(person['longitude']?.toString() ?? '0') ?? 0.0;
+        final role = person['role']?.toString().toLowerCase() ?? 'worker';
+        final isDriver = role == 'driver';
         
         return Marker(
-          markerId: MarkerId(worker['id'].toString()),
+          markerId: MarkerId(person['id'].toString()),
           position: LatLng(lat, lng),
           infoWindow: InfoWindow(
-            title: worker['username'] ?? 'Worker',
-            snippet: 'Ward: ${worker['ward'] ?? "N/A"} • Last update: ${worker['last_location_update'] ?? "Just now"}',
+            title: '${isDriver ? "Driver" : "Worker"}: ${person['username'] ?? "Personnel"}',
+            snippet: 'Ward: ${person['ward'] ?? "N/A"} • ${isDriver ? "Fleet Active" : "On Foot"}',
           ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            isDriver ? BitmapDescriptor.hueViolet : BitmapDescriptor.hueAzure
+          ),
         );
       }).toSet();
 

@@ -105,4 +105,4 @@ class User {
   }
 }
 
-enum UserType { resident, worker, admin, recycler }
+enum UserType { resident, worker, driver, admin, recycler }

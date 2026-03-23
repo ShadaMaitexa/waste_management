@@ -56,6 +56,9 @@ class _LoginScreenState extends State<LoginScreen> {
           case UserType.recycler:
             route = '/recycler';
             break;
+          case UserType.driver:
+            route = '/worker';
+            break;
           case UserType.resident:
           default:
             route = '/resident';

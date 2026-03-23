@@ -168,6 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _SettingItem(Icons.person_outline_rounded, 'Personal Details', Icons.person_rounded, () => _showEditProfileDialog(context)),
           _SettingItem(Icons.help_outline_rounded, 'FAQs', Icons.help_rounded, () => _showFAQDialog(context)),
           _SettingItem(Icons.security_outlined, 'Privacy & Policy', Icons.security_rounded, () => _showPrivacyPolicyDialog(context)),
+          _SettingItem(Icons.help_outline_rounded, 'Help & Support', Icons.help_rounded, () => Navigator.pushNamed(context, '/resident/complaints')),
           _SettingItem(
             Icons.dark_mode_outlined,
             'Dark Mode',

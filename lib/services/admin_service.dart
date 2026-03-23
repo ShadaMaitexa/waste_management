@@ -14,6 +14,7 @@ class AdminService extends ChangeNotifier {
   List<User> _availableWorkers = [];
   List<Pickup> _pickups = [];
   List<Complaint> _complaints = [];
+  List<User> _nearbyDrivers = [];
   final Map<String, dynamic> _systemStats = {};
   bool _isLoading = false;
 
@@ -23,6 +24,7 @@ class AdminService extends ChangeNotifier {
   List<Pickup> get pickups => List.unmodifiable(_pickups);
   List<Complaint> get allComplaints => List.unmodifiable(_complaints);
   List<Complaint> get complaints => List.unmodifiable(_complaints);
+  List<User> get nearbyDrivers => List.unmodifiable(_nearbyDrivers);
   Map<String, dynamic> get systemStats => Map.unmodifiable(_systemStats);
   bool get isLoading => _isLoading;
 
@@ -288,6 +290,23 @@ class AdminService extends ChangeNotifier {
       return false;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<void> fetchNearbyDrivers(String lat, String lng) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConstants.users}?role=driver&lat=$lat&lng=$lng&radius=5'), // Assuming 5km radius
+        headers: {'Authorization': 'Bearer ${_authService.token}'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _nearbyDrivers = data.map((json) => User.fromJson(json)).toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error fetching nearby drivers: $e');
     }
   }
 

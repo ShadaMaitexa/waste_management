@@ -10,6 +10,8 @@ import 'worker_route_planner_screen.dart';
 import 'worker_attendance_screen.dart';
 import 'worker_profile_screen.dart';
 
+import '../../services/location_service.dart';
+
 class WorkerHomeScreen extends StatefulWidget {
   const WorkerHomeScreen({super.key});
 
@@ -20,6 +22,22 @@ class WorkerHomeScreen extends StatefulWidget {
 class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initLocation();
+    });
+  }
+
+  Future<void> _initLocation() async {
+    final locationService = Provider.of<LocationService>(context, listen: false);
+    final hasPermission = await locationService.requestPermission();
+    if (hasPermission) {
+      locationService.startTracking();
+    }
+  }
 
   @override
   void dispose() {

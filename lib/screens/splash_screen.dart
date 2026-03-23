@@ -70,6 +70,9 @@ class _SplashScreenState extends State<SplashScreen>
           case UserType.recycler:
             route = '/recycler';
             break;
+          case UserType.driver:
+            route = '/worker';
+            break;
         }
         Navigator.of(context).pushReplacementNamed(route);
       } else {

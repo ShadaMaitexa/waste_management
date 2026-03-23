@@ -226,7 +226,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> w
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Add New Worker', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 24)),
+              Text('Add New Account', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 24)),
               const SizedBox(height: 24),
               _buildDialogField('USERNAME', nameController, Icons.person_rounded),
               _buildDialogField('EMAIL', emailController, Icons.alternate_email_rounded),

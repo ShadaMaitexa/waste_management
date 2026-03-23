@@ -7,6 +7,7 @@ import '../../models/pickup.dart';
 import '../../models/pickup_slot.dart';
 import '../../services/pickup_service.dart';
 import '../../services/auth_service.dart';
+import '../../services/admin_service.dart';
 import '../../theme/app_theme.dart';
 
 class BookPickupScreen extends StatefulWidget {
@@ -54,7 +55,17 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<PickupService>(context, listen: false).fetchAvailableSlots();
+      _checkNearbyDrivers();
     });
+  }
+
+  Future<void> _checkNearbyDrivers() async {
+    final auth = Provider.of<AuthService>(context, listen: false);
+    final admin = Provider.of<AdminService>(context, listen: false);
+    final user = auth.currentUser;
+    if (user?.latitude != null && user?.longitude != null) {
+      await admin.fetchNearbyDrivers(user!.latitude!, user!.longitude!);
+    }
   }
 
   @override
@@ -153,6 +164,7 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                         _buildStepHeader('01', 'CATEGORY'),
                         const SizedBox(height: 12),
                         _buildWasteTypeGrid(),
+                        _buildQuickCollectionSection(),
                         
                         if (_selectedWasteType != null) ...[
                           const SizedBox(height: 32),
@@ -367,6 +379,92 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
         ),
       ],
     );
+  }
+
+  Widget _buildQuickCollectionSection() {
+    return Consumer<AdminService>(
+      builder: (context, adminService, _) {
+        if (adminService.nearbyDrivers.isEmpty) return const SizedBox.shrink();
+        
+        final driver = adminService.nearbyDrivers.first;
+        return Container(
+          margin: const EdgeInsets.only(top: 24),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryEmerald.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppTheme.primaryEmerald.withOpacity(0.2), width: 1.5),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.bolt_rounded, color: AppTheme.primaryEmerald, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    'INSTANT REQUEST AVAILABLE',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w900, fontSize: 10, color: AppTheme.primaryEmerald, letterSpacing: 1.2
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Driver ${driver.name} is just 200m away! You can skip the queue and request a quick collection right now.',
+                style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: AppTheme.grey700),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : () => _submitInstantPickup(driver.id),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryEmerald,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text('REQUEST EXPRESS COLLECTION'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _submitInstantPickup(String driverId) async {
+    if (_selectedWasteType == null) {
+      _showError('Please select a waste category first');
+      return;
+    }
+    
+    setState(() => _isLoading = true);
+    try {
+      final pickupService = Provider.of<PickupService>(context, listen: false);
+      final success = await pickupService.createPickup(
+        item: _selectedItem ?? 'General Waste',
+        address: _addressController.text.trim(),
+        date: DateTime.now(),
+        slotId: 0, // Slot 0 for instant
+        wasteType: _selectedWasteType!,
+        isInstant: true,
+        driverId: driverId,
+      );
+
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Express pickup request sent! Driver notified.'), backgroundColor: AppTheme.success),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) _showError('Quick Request Failed: $e');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Widget _buildSubmitButton() {

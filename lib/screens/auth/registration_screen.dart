@@ -79,6 +79,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           case UserType.recycler:
             route = '/recycler';
             break;
+          case UserType.driver:
+            route = '/worker'; // For now, directing drivers to worker dashboard or you can add /driver route
+            break;
         }
         
         Navigator.pushReplacementNamed(context, route);
@@ -255,6 +258,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         return 'Admin';
       case UserType.recycler:
         return 'Recycler';
+      case UserType.driver:
+        return 'Driver';
     }
   }
 
