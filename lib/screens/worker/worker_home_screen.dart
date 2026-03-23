@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../services/pickup_service.dart';
+import '../../services/worker_service.dart';
 import '../../models/pickup.dart';
 import '../../theme/app_theme.dart';
 import 'worker_route_planner_screen.dart';
@@ -473,7 +474,17 @@ class _DashboardTab extends StatelessWidget {
                 height: 52, // Reduced from 60
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final workerService = Provider.of<WorkerService>(context, listen: false);
+                    final success = await workerService.updatePickupStatus(pickup.id, 'completed');
+                    if (success && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Pickup completed successfully!')),
+                      );
+                      // Refresh pickups
+                      await Provider.of<PickupService>(context, listen: false).fetchPickups();
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: Colors.white,

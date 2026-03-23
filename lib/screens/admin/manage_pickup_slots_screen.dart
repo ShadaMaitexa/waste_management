@@ -55,7 +55,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               ),
               const SizedBox(height: 32),
               Text(
-                'Define Resource Slot',
+                'Create Time Slot',
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 26, 
                   fontWeight: FontWeight.w900, 
@@ -65,7 +65,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Set operational capacity for this time window.', 
+                'Set how many houses can book this slot.', 
                 style: GoogleFonts.inter(color: AppTheme.grey500, fontSize: 14, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 36),
@@ -76,7 +76,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               
               const SizedBox(height: 32),
               Text(
-                'UNIT CAPACITY', 
+                'MAXIMUM HOUSEHOLDS', 
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 8, 
                   fontWeight: FontWeight.w900, 
@@ -160,7 +160,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   ),
                   child: Text(
-                    'INITIALIZE SLOT',
+                    'CREATE SLOT',
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -241,7 +241,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
             title: Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                'Operational Scheduling',
+                'Manage Pickup Slots',
                 style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w900, 
                   color: AppTheme.grey900, 
@@ -493,7 +493,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          'LOAD FACTOR: ', 
+                                          'SLOT FULLNESS: ', 
                                           style: GoogleFonts.plusJakartaSans(
                                             color: AppTheme.grey400, 
                                             fontSize: 8, 

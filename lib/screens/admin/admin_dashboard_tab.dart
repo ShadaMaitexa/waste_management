@@ -13,6 +13,7 @@ import 'admin_user_management_screen.dart';
 import 'manage_pickup_slots_screen.dart';
 import 'analytics_dashboard_screen.dart';
 import '../common/notifications_screen.dart';
+import 'admin_live_map_screen.dart';
 
 class AdminDashboardTab extends StatefulWidget {
   final Function(int) onNavigate;
@@ -71,13 +72,13 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                           children: [
                             _buildWelcomeSection(constraints),
                             const SizedBox(height: 32),
-                            _buildSectionHeader('System Overview', 'Real-time performance metrics'),
+                            _buildSectionHeader('Live Updates', 'Real-time system stats'),
                             const SizedBox(height: 16),
                             adminService.isLoading
                                 ? _buildLoadingMetrics(constraints)
                                 : _buildKeyMetrics(stats, constraints),
                             const SizedBox(height: 32),
-                            _buildSectionHeader('Management Console', 'Core operational controls'),
+                            _buildSectionHeader('Admin Controls', 'Core system management'),
                             const SizedBox(height: 16),
                             _buildManagementHub(constraints),
                             const SizedBox(height: 32),
@@ -133,9 +134,9 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'SYSTEM OPERATIONAL',
+                    'SYSTEM ACTIVE',
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 7, // Reduced from 8
+                      fontSize: 7,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
                       color: AppTheme.primaryEmerald,
@@ -146,9 +147,9 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Dashboard',
+              'Admin Dashboard',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 24, // Reduced from 28
+                fontSize: 24, 
                 fontWeight: FontWeight.w900, 
                 color: AppTheme.grey900,
                 letterSpacing: -1.2,
@@ -246,7 +247,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
                         const Icon(Icons.shield_rounded, color: AppTheme.primaryEmerald, size: 12),
                         const SizedBox(width: 10),
                         Text(
-                          'SYSTEM SECURE', 
+                          'SYSTEM ACTIVE', 
                           style: GoogleFonts.plusJakartaSans(
                             color: AppTheme.primaryEmerald, 
                             fontSize: 10, 
@@ -270,7 +271,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
               ),
               const SizedBox(height: 24), // Reduced from 36
               Text(
-                'Waste Management',
+                'Admin Panel',
                 style: GoogleFonts.plusJakartaSans(
                   color: Colors.white, 
                   fontSize: 28, 
@@ -485,7 +486,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           case 1: return _buildHubCard('Bookings', 'Collection list', Icons.auto_graph_rounded, AppTheme.accentIndigo, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBookingsScreen())));
           case 2: return _buildHubCard('Workers', 'Worker management', Icons.supervised_user_circle_rounded, AppTheme.primaryEmerald, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminUserManagementScreen())));
           case 3: return _buildHubCard('Slots', 'Manage timings', Icons.timer_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePickupSlotsScreen())));
-          case 4: return _buildHubCard('Live Map', 'Real-time tracking', Icons.map_rounded, AppTheme.info, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Live Map integration in progress...'))));
+          case 4: return _buildHubCard('Live Map', 'Real-time tracking', Icons.map_rounded, AppTheme.info, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminLiveMapScreen())));
           case 5: default: return _buildHubCard('Ward Stats', 'Performance by ward', Icons.area_chart_rounded, AppTheme.accentPurple, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen())));
         }
       },

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../services/pickup_service.dart';
+import '../../services/auth_service.dart';
+import '../../models/pickup.dart';
 import '../../theme/app_theme.dart';
 
 class MyPickupsScreen extends StatefulWidget {
@@ -17,6 +21,9 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PickupService>(context, listen: false).fetchPickups();
+    });
   }
 
   @override
@@ -89,13 +96,29 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
           ),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildPickupList('upcoming'),
-          _buildPickupList('completed'),
-          _buildPickupList('cancelled'),
-        ],
+      body: Consumer2<AuthService, PickupService>(
+        builder: (context, authService, pickupService, child) {
+          final userId = authService.currentUser?.id ?? '';
+          final allUserPickups = pickupService.getPickupsForUser(userId);
+
+          return TabBarView(
+            controller: _tabController,
+            children: [
+              _buildPickupList(
+                allUserPickups.where((p) => p.status == PickupStatus.scheduled || p.status == PickupStatus.assigned || p.status == PickupStatus.inProgress).toList(),
+                'upcoming'
+              ),
+              _buildPickupList(
+                allUserPickups.where((p) => p.status == PickupStatus.completed).toList(),
+                'completed'
+              ),
+              _buildPickupList(
+                allUserPickups.where((p) => p.status == PickupStatus.cancelled || p.status == PickupStatus.failed).toList(),
+                'cancelled'
+              ),
+            ],
+          );
+        },
       ),
       floatingActionButton: Container(
         height: 72,
@@ -130,10 +153,8 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
     );
   }
 
-  Widget _buildPickupList(String status) {
-    final mockPickups = _getMockPickups(status);
-
-    if (mockPickups.isEmpty) {
+  Widget _buildPickupList(List<Pickup> pickups, String type) {
+    if (pickups.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -171,18 +192,21 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(AppTheme.spacingL),
-      itemCount: mockPickups.length,
-      itemBuilder: (context, index) {
-        return _buildPickupCard(mockPickups[index]);
-      },
+    return RefreshIndicator(
+      onRefresh: () => Provider.of<PickupService>(context, listen: false).fetchPickups(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(AppTheme.spacingL),
+        itemCount: pickups.length,
+        itemBuilder: (context, index) {
+          return _buildPickupCard(pickups[index]);
+        },
+      ),
     );
   }
 
-  Widget _buildPickupCard(Map<String, dynamic> pickup) {
-    final isUpcoming = pickup['status'] == 'upcoming';
-    final statusColor = _getStatusColor(pickup['status']);
+  Widget _buildPickupCard(Pickup pickup) {
+    final isUpcoming = pickup.status == PickupStatus.scheduled || pickup.status == PickupStatus.assigned || pickup.status == PickupStatus.inProgress;
+    final statusColor = _getStatusColor(pickup.status);
     
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -209,7 +233,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      DateFormat('dd').format(pickup['date']),
+                      DateFormat('dd').format(pickup.scheduledDate),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
@@ -220,7 +244,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      DateFormat('MMM').format(pickup['date']).toUpperCase(),
+                      DateFormat('MMM').format(pickup.scheduledDate).toUpperCase(),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
@@ -240,7 +264,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          DateFormat('h:mm a').format(pickup['date']),
+                          pickup.formattedTime,
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 18,
                             fontWeight: FontWeight.w900,
@@ -248,12 +272,12 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                             letterSpacing: -0.5,
                           ),
                         ),
-                        _buildStatusBadge(pickup['status'], statusColor),
+                        _buildStatusBadge(pickup.status, statusColor),
                       ],
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      pickup['address'],
+                      pickup.address,
                       style: GoogleFonts.inter(
                         color: AppTheme.grey500, 
                         fontSize: 14, 
@@ -266,8 +290,8 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: (pickup['wasteTypes'] as List<String>).map((type) {
-                        return Container(
+                      children: [
+                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
                             color: AppTheme.bgSurface,
@@ -275,7 +299,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                             border: Border.all(color: AppTheme.grey100),
                           ),
                           child: Text(
-                            type.toUpperCase(),
+                            pickup.itemDisplay.toUpperCase(),
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -283,15 +307,32 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                               letterSpacing: 1,
                             ),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: AppTheme.bgSurface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppTheme.grey100),
+                          ),
+                          child: Text(
+                            pickup.wasteType.toUpperCase(),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: AppTheme.grey700,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          if (isUpcoming) ...[
+          if (isUpcoming && pickup.status == PickupStatus.scheduled) ...[
             const SizedBox(height: 32),
             Row(
               children: [
@@ -321,7 +362,14 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                   child: SizedBox(
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final success = await Provider.of<PickupService>(context, listen: false).cancelPickup(pickup.id);
+                         if (success && mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Pickup cancelled successfully')),
+                          );
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.error.withValues(alpha: 0.1),
                         foregroundColor: AppTheme.error,
@@ -347,8 +395,8 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
     );
   }
 
-  Widget _buildStatusBadge(String status, Color color) {
-    String label = status == 'upcoming' ? 'Confirmed' : status == 'completed' ? 'Resolved' : 'Aborted';
+  Widget _buildStatusBadge(PickupStatus status, Color color) {
+    String label = status.name;
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -369,46 +417,14 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(PickupStatus status) {
     switch (status) {
-      case 'upcoming': return AppTheme.primaryEmerald;
-      case 'completed': return AppTheme.grey500;
-      case 'cancelled': return AppTheme.error;
-      default: return AppTheme.grey400;
+      case PickupStatus.scheduled: return AppTheme.primaryEmerald;
+      case PickupStatus.assigned: return AppTheme.info;
+      case PickupStatus.inProgress: return AppTheme.warning;
+      case PickupStatus.completed: return AppTheme.success;
+      case PickupStatus.cancelled: return AppTheme.error;
+      case PickupStatus.failed: return AppTheme.error;
     }
-  }
-
-  List<Map<String, dynamic>> _getMockPickups(String status) {
-     final allPickups = [
-      {
-        'id': 'PK2025001',
-        'date': DateTime.now().add(const Duration(hours: 2)),
-        'status': 'upcoming',
-        'wasteTypes': ['Dry', 'Wet'],
-        'address': '123 Smart Residences, Ward 15',
-      },
-      {
-        'id': 'PK2025005',
-        'date': DateTime.now().add(const Duration(days: 2)),
-        'status': 'upcoming',
-        'wasteTypes': ['E-Waste'],
-        'address': '123 Smart Residences, Ward 15',
-      },
-      {
-        'id': 'PK2025002',
-        'date': DateTime.now().subtract(const Duration(days: 1)),
-        'status': 'completed',
-        'wasteTypes': ['Plastic', 'Dry'],
-        'address': '456 Coastal Road, Ward 15',
-      },
-      {
-        'id': 'PK2025004',
-        'date': DateTime.now().subtract(const Duration(days: 7)),
-        'status': 'cancelled',
-        'wasteTypes': ['Bulk'],
-        'address': '321 Calicut Strip, Ward 15',
-      },
-    ];
-    return allPickups.where((p) => p['status'] == status).toList();
   }
 }

@@ -18,10 +18,9 @@ class BookPickupScreen extends StatefulWidget {
 
 class _BookPickupScreenState extends State<BookPickupScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _addressController = TextEditingController(text: '123 Smart Residences, Ward 15');
+  late TextEditingController _addressController;
   final _notesController = TextEditingController();
 
-  // Waste type options matching the backend 'waste_type' field values
   static const _wasteOptions = [
     {'key': 'dry', 'label': 'Dry Waste', 'icon': Icons.feed_rounded},
     {'key': 'wet', 'label': 'Wet Waste', 'icon': Icons.water_drop_rounded},
@@ -31,13 +30,28 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     {'key': 'hazardous', 'label': 'Hazardous', 'icon': Icons.warning_rounded},
     {'key': 'mixed', 'label': 'Mixed', 'icon': Icons.delete_sweep_rounded},
   ];
+
+  static const _itemOptionsMap = {
+    'dry': ['Paper', 'Cardboard', 'Plastic Wrapper', 'Glass Bottle', 'Metal Scrap', 'Textile'],
+    'wet': ['Food Scraps', 'Vegetable Peels', 'Fruit Waste', 'Meat/Dairy'],
+    'organic': ['Garden Waste', 'Leaves', 'Grass Clippings', 'Wood'],
+    'recyclable': ['Plastic Bottle (HDPE)', 'Aluminum Can', 'Glass Container', 'Newspaper'],
+    'e-waste': ['Battery', 'Smartphone', 'Laptop', 'Cables', 'Charger'],
+    'hazardous': ['Paint', 'Chemicals', 'Medicines', 'Oil'],
+    'mixed': ['General House Waste', 'Sanitary Waste'],
+  };
+
   String? _selectedWasteType;
+  String? _selectedItem;
   PickupSlot? _selectedSlot;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    final user = Provider.of<AuthService>(context, listen: false).currentUser;
+    _addressController = TextEditingController(text: user?.wardNumber != null ? 'Smart Residence, Ward ${user!.wardNumber}' : 'Default Ward 15');
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<PickupService>(context, listen: false).fetchAvailableSlots();
     });
@@ -51,28 +65,28 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   }
 
   void _selectWasteType(String key) {
-    setState(() => _selectedWasteType = key);
+    setState(() {
+      _selectedWasteType = key;
+      _selectedItem = null; // Reset item when category changes
+    });
+  }
+
+  void _selectItem(String item) {
+    setState(() => _selectedItem = item);
   }
 
   Future<void> _submitPickup() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedWasteType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a waste type'),
-          backgroundColor: AppTheme.error,
-        ),
-      );
+      _showError('Please select a waste category');
       return;
     }
-
+    if (_selectedItem == null) {
+      _showError('Please select a specific item');
+      return;
+    }
     if (_selectedSlot == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a collection slot'),
-          backgroundColor: AppTheme.error,
-        ),
-      );
+      _showError('Please select a collection slot');
       return;
     }
 
@@ -83,36 +97,30 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
       final slotId = int.tryParse(_selectedSlot!.id) ?? 0;
 
       final success = await pickupService.createPickup(
-        item: _selectedWasteType!,
+        item: _selectedItem!,
         address: _addressController.text.trim(),
         date: _selectedSlot!.date,
         slotId: slotId,
         wasteType: _selectedWasteType!,
       );
 
-      if (success) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Pickup scheduled successfully!'),
-              backgroundColor: AppTheme.success,
-            ),
-          );
-          Navigator.of(context).pop();
-        }
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Pickup scheduled successfully!'), backgroundColor: AppTheme.success),
+        );
+        Navigator.of(context).pop();
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error scheduling pickup: $e'),
-            backgroundColor: AppTheme.error,
-          ),
-        );
-      }
+      if (mounted) _showError('Error: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: AppTheme.error),
+    );
   }
 
   @override
@@ -136,55 +144,36 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
               _buildSliverAppBar(),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // Reduced from 24
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildStepHeader('01', 'CLASSIFICATION'),
-                        const SizedBox(height: 6), // Reduced from 8
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: Text(
-                            'Select operational categories for collection',
-                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 11, fontWeight: FontWeight.w600), // Reduced from 12
-                          ),
-                        ),
-                        const SizedBox(height: 20), // Reduced from 24
+                        _buildStepHeader('01', 'CATEGORY'),
+                        const SizedBox(height: 12),
                         _buildWasteTypeGrid(),
-                        const SizedBox(height: 32), // Reduced from 40
+                        
+                        if (_selectedWasteType != null) ...[
+                          const SizedBox(height: 32),
+                          _buildStepHeader('02', 'SPECIFIC ITEM'),
+                          const SizedBox(height: 12),
+                          _buildItemOptions(),
+                        ],
 
-                        _buildStepHeader('02', 'COLLECTION WINDOW'),
-                        const SizedBox(height: 6), // Reduced from 8
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: Text(
-                            'Select an available operational slot',
-                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 11, fontWeight: FontWeight.w600), // Reduced from 12
-                          ),
-                        ),
-                        const SizedBox(height: 16), // Reduced from 20
+                        const SizedBox(height: 32),
+                        _buildStepHeader('03', 'TIME SLOT'),
+                        const SizedBox(height: 12),
                         _buildSlotSelection(),
-                        const SizedBox(height: 32), // Reduced from 40
 
-                        _buildStepHeader('03', 'SERVICE PARAMETERS'),
-                        const SizedBox(height: 6), // Reduced from 8
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: Text(
-                            'Define delivery geometry and logistics',
-                            style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 11, fontWeight: FontWeight.w600), // Reduced from 12
-                          ),
-                        ),
-                        const SizedBox(height: 20), // Reduced from 24
+                        const SizedBox(height: 32),
+                        _buildStepHeader('04', 'PICKUP DETAILS'),
+                        const SizedBox(height: 12),
                         _buildServiceParameters(),
-                        const SizedBox(height: 24), // Reduced from 32
-                        _buildCollectionInfo(),
-                        const SizedBox(height: 32), // Reduced from 48
+                        const SizedBox(height: 40),
 
                         _buildSubmitButton(),
-                        const SizedBox(height: 60), // Reduced from 80
+                        const SizedBox(height: 60),
                       ],
                     ),
                   ),
@@ -192,17 +181,11 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
               ),
             ],
           ),
-          // Back Button
           Positioned(
             top: 50,
             left: 20,
             child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: AppTheme.cardShadow,
-                border: Border.all(color: Colors.white, width: 2),
-              ),
+              decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: AppTheme.cardShadow),
               child: IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 18),
                 onPressed: () => Navigator.pop(context),
@@ -216,60 +199,30 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
 
   Widget _buildSliverAppBar() {
     return SliverAppBar(
-      expandedHeight: 160.0, // Reduced from 200
-      floating: false,
+      expandedHeight: 160.0,
       pinned: true,
       backgroundColor: AppTheme.bgDark,
       automaticallyImplyLeading: false,
       elevation: 0,
-      scrolledUnderElevation: 0,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: const BoxDecoration(
-            color: AppTheme.bgDark,
-            gradient: AppTheme.slateGradient,
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Positioned(
-                right: -30,
-                bottom: -15,
-                child: Icon(
-                  Icons.add_task_rounded,
-                  size: 140, // Reduced from 200
-                  color: Colors.white.withValues(alpha: 0.03),
+          decoration: const BoxDecoration(color: AppTheme.bgDark, gradient: AppTheme.slateGradient),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Book Pickup',
+                  style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -1.2),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Schedule Pickup',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: Colors.white,
-                        fontSize: 28, // Reduced from 36
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'SMART ECO-LOGISTICS DISPATCH',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppTheme.primaryEmerald,
-                        fontSize: 9, // Reduced from 10
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ],
+                Text(
+                  'WASTE MANAGEMENT SYSTEM',
+                  style: GoogleFonts.plusJakartaSans(color: AppTheme.primaryEmerald, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -280,32 +233,13 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     return Row(
       children: [
         Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: AppTheme.bgDark,
-            borderRadius: BorderRadius.circular(8),
-          ),
+          width: 28, height: 28,
+          decoration: BoxDecoration(color: AppTheme.bgDark, borderRadius: BorderRadius.circular(8)),
           alignment: Alignment.center,
-          child: Text(
-            step,
-            style: GoogleFonts.plusJakartaSans(
-              color: AppTheme.primaryEmerald,
-              fontWeight: FontWeight.w900,
-              fontSize: 12,
-            ),
-          ),
+          child: Text(step, style: GoogleFonts.plusJakartaSans(color: AppTheme.primaryEmerald, fontWeight: FontWeight.w900, fontSize: 11)),
         ),
-        const SizedBox(width: 16),
-        Text(
-          title,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-            color: AppTheme.grey900,
-            letterSpacing: 1,
-          ),
-        ),
+        const SizedBox(width: 12),
+        Text(title, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13, color: AppTheme.grey900, letterSpacing: 1.5)),
       ],
     );
   }
@@ -315,46 +249,31 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.4,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+        crossAxisCount: 3, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1,
       ),
       itemCount: _wasteOptions.length,
       itemBuilder: (context, index) {
         final option = _wasteOptions[index];
-        final key = option['key'] as String;
-        final label = option['label'] as String;
-        final icon = option['icon'] as IconData;
-        final isSelected = _selectedWasteType == key;
+        final isSelected = _selectedWasteType == option['key'];
         return GestureDetector(
-          onTap: () => _selectWasteType(key),
+          onTap: () => _selectWasteType(option['key'] as String),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
               color: isSelected ? AppTheme.primaryEmerald : Colors.white,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: isSelected
-                  ? [BoxShadow(color: AppTheme.primaryEmerald.withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 8))]
-                  : AppTheme.cardShadow,
-              border: Border.all(
-                color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey100,
-                width: 1.2,
-              ),
+              border: Border.all(color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey100, width: 1.5),
+              boxShadow: isSelected ? [BoxShadow(color: AppTheme.primaryEmerald.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))] : AppTheme.cardShadow,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 24, color: isSelected ? Colors.white : AppTheme.grey900),
+                Icon(option['icon'] as IconData, color: isSelected ? Colors.white : AppTheme.grey400, size: 28),
                 const SizedBox(height: 8),
                 Text(
-                  label,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: isSelected ? Colors.white : AppTheme.grey900,
-                    letterSpacing: -0.2,
-                  ),
+                  (option['label'] as String).toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.plusJakartaSans(color: isSelected ? Colors.white : AppTheme.grey900, fontWeight: FontWeight.w900, fontSize: 8, letterSpacing: 0.5),
                 ),
               ],
             ),
@@ -364,181 +283,61 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     );
   }
 
-  Widget _buildServiceParameters() {
-    return Column(
-      children: [
-        TextFormField(
-          controller: _addressController,
-          maxLines: 2,
-          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900),
-          decoration: const InputDecoration(
-            hintText: 'Collection address',
-            prefixIcon: Icon(Icons.location_pin, color: AppTheme.primaryEmerald, size: 20),
+  Widget _buildItemOptions() {
+    final items = _itemOptionsMap[_selectedWasteType] ?? [];
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: items.map((item) {
+        final isSelected = _selectedItem == item;
+        return FilterChip(
+          selected: isSelected,
+          label: Text(item),
+          labelStyle: GoogleFonts.plusJakartaSans(
+            fontSize: 12, fontWeight: FontWeight.w700, 
+            color: isSelected ? Colors.white : AppTheme.grey700
           ),
-          validator: (value) => value == null || value.isEmpty ? 'Address required' : null,
-        ),
-        const SizedBox(height: 20),
-        TextFormField(
-          controller: _notesController,
-          maxLines: 3,
-          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900),
-          decoration: const InputDecoration(
-            hintText: 'Operational notes (optional)',
-            prefixIcon: Icon(Icons.note_alt_rounded, color: AppTheme.primaryEmerald, size: 20),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCollectionInfo() {
-    return Container(
-      padding: const EdgeInsets.all(16), // Reduced from 24
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20), // Reduced from 24
-        boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100, width: 1),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8), // Reduced from 10
-            decoration: BoxDecoration(
-              color: AppTheme.info.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10), // Reduced from 12
-            ),
-            child: const Icon(Icons.info_outline_rounded, color: AppTheme.info, size: 18), // Reduced from 20
-          ),
-          const SizedBox(width: 12), // Reduced from 16
-          Expanded(
-            child: Text(
-              'Pickups usually occur between 08:00 AM and 11:00 AM local time.',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 12, // Reduced from 13
-                color: AppTheme.grey500,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubmitButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56, // Reduced from 64
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _submitPickup,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.bgDark,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
-          elevation: 0,
-          padding: EdgeInsets.zero,
-        ),
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: AppTheme.slateGradient,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Container(
-            alignment: Alignment.center,
-            child: _isLoading
-                ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'INITIALIZE DISPATCH',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.5,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Icon(Icons.bolt_rounded, size: 20, color: AppTheme.primaryEmerald),
-                    ],
-                  ),
-          ),
-        ),
-      ),
+          onSelected: (_) => _selectItem(item),
+          backgroundColor: Colors.white,
+          selectedColor: AppTheme.primaryEmerald,
+          checkmarkColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200)),
+        );
+      }).toList(),
     );
   }
 
   Widget _buildSlotSelection() {
     return Consumer<PickupService>(
       builder: (context, service, child) {
-        if (service.isLoading && service.availableSlots.isEmpty) {
-          return _buildSlotShimmer();
-        }
+        if (service.isLoading) return Shimmer.fromColors(baseColor: AppTheme.grey50, highlightColor: Colors.white, child: Container(height: 100, color: Colors.white));
+        if (service.availableSlots.isEmpty) return Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)), child: const Text('No operational slots available right now.'));
 
-        if (service.availableSlots.isEmpty) {
-          return Center(
-            child: Text(
-              'No available slots found for your region.',
-              style: GoogleFonts.inter(color: AppTheme.grey400, fontSize: 13),
-            ),
-          );
-        }
-
-          return SizedBox(
-          height: 88, // Reduced from 100
+        return SizedBox(
+          height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
             itemCount: service.availableSlots.length,
             itemBuilder: (context, index) {
               final slot = service.availableSlots[index];
               final isSelected = _selectedSlot?.id == slot.id;
-              final isToday = DateFormat('yyyy-MM-dd').format(slot.date) == DateFormat('yyyy-MM-dd').format(DateTime.now());
-
               return GestureDetector(
                 onTap: () => setState(() => _selectedSlot = slot),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: 120, // Reduced from 140
-                  margin: const EdgeInsets.only(right: 12), // Reduced from 16
-                  padding: const EdgeInsets.all(12), // Reduced from 16
+                child: Container(
+                  width: 140,
+                  margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
                     color: isSelected ? AppTheme.bgDark : Colors.white,
-                    borderRadius: BorderRadius.circular(20), // Reduced from 24
-                    border: Border.all(
-                      color: isSelected ? AppTheme.bgDark : AppTheme.grey100,
-                      width: 1.2, // Reduced from 1.5
-                    ),
-                    boxShadow: isSelected ? [
-                      BoxShadow(
-                        color: AppTheme.bgDark.withValues(alpha: 0.15),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      )
-                    ] : AppTheme.cardShadow,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: isSelected ? AppTheme.bgDark : AppTheme.grey100, width: 1.5),
+                    boxShadow: AppTheme.cardShadow,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        isToday ? 'TODAY' : DateFormat('EEE, MMM d').format(slot.date).toUpperCase(),
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 8, // Reduced from 9
-                          fontWeight: FontWeight.w900,
-                          color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey400,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                      const SizedBox(height: 6), // Reduced from 8
-                      Text(
-                        slot.formatTime(context),
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12, // Reduced from 13
-                          fontWeight: FontWeight.w800,
-                          color: isSelected ? Colors.white : AppTheme.grey900,
-                        ),
-                      ),
+                      Text(DateFormat('MMM dd').format(slot.date), style: GoogleFonts.plusJakartaSans(color: isSelected ? Colors.white : AppTheme.grey900, fontWeight: FontWeight.w900, fontSize: 16)),
+                      const SizedBox(height: 4),
+                      Text(slot.formatTime(context), style: GoogleFonts.inter(color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey400, fontWeight: FontWeight.w700, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -550,26 +349,57 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
     );
   }
 
-  Widget _buildSlotShimmer() {
+  Widget _buildServiceParameters() {
+    return Column(
+      children: [
+        _buildTextField('PICKUP ADDRESS', _addressController, Icons.location_on_rounded),
+        const SizedBox(height: 20),
+        _buildTextField('PICKUP NOTES', _notesController, Icons.note_add_rounded, maxLines: 3),
+      ],
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, IconData icon, {int maxLines = 1}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 9, fontWeight: FontWeight.w900, color: AppTheme.grey400, letterSpacing: 1.5)),
+        const SizedBox(height: 10),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: AppTheme.grey400, size: 20),
+            filled: true, fillColor: Colors.white,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: AppTheme.grey100)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: AppTheme.grey100)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
     return SizedBox(
-      height: 88, // Reduced from 100
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 3,
-        itemBuilder: (_, __) => Shimmer.fromColors(
-          baseColor: Colors.grey[200]!,
-          highlightColor: Colors.grey[100]!,
+      height: 64,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _submitPickup,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppTheme.bgDark, foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 0, padding: EdgeInsets.zero,
+        ),
+        child: Ink(
+          decoration: BoxDecoration(gradient: AppTheme.slateGradient, borderRadius: BorderRadius.circular(20)),
           child: Container(
-            width: 120, // Reduced from 140
-            margin: const EdgeInsets.only(right: 12), // Reduced from 16
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20), // Reduced from 24
-            ),
+            alignment: Alignment.center,
+            child: _isLoading 
+                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+                : Text('CONFIRM BOOKING', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 14)),
           ),
         ),
       ),
     );
   }
-
 }

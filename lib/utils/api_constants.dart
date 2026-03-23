@@ -44,10 +44,6 @@ class ApiConstants {
 
   // Referrals Endpoints
   static const String referrals = '$baseUrl/api/referrals/';
-  
-  // Support Endpoints
-  static const String supportTickets = '$baseUrl/api/support-tickets/';
-  static const String faqs = '$baseUrl/api/faqs/';
 
   // Schema
   static const String schema = '$baseUrl/api/schema/';

@@ -38,7 +38,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
             title: Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                'System Configuration',
+                'System Settings',
                 style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w900,
                   fontSize: 22,
@@ -79,10 +79,10 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
         children: [
           _buildProfileSection(),
           const SizedBox(height: 32),
-          _buildSection('Operational Core', [
+          _buildSection('Operation Settings', [
             _buildSwitchTile(
-              'Autonomous Dispatch',
-              'AI-driven route optimization and assignment',
+              'Automatic Dispatch',
+              'Automatically assign workers to pickups',
               _autoDispatchEnabled,
               (v) => setState(() => _autoDispatchEnabled = v),
             ),
@@ -97,7 +97,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           _buildSection('Security & Alerting', [
             _buildSwitchTile(
               'Critical System Alerts',
-              'Real-time push notifications for anomalies',
+              'Get notified about system issues',
               _notificationsEnabled,
               (v) => setState(() => _notificationsEnabled = v),
             ),
@@ -109,9 +109,9 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
             ),
           ]),
           const SizedBox(height: 24),
-          _buildSection('Resource Management', [
+          _buildSection('Data Management', [
             _buildActionTile(
-              'Availability Matrices',
+              'Booking Slots',
               'Configure citizen pickup booking slots',
               Icons.event_available_rounded,
               () => Navigator.push(
@@ -120,7 +120,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
               ),
             ),
             _buildActionTile(
-              'Geospatial Zoning',
+              'Ward Boundaries',
               'Modify ward boundaries and coverage areas',
               Icons.map_rounded,
               () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Geospatial Zoning is under development.'))),
@@ -132,7 +132,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
               () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Backup systems are active.'))),
             ),
             _buildActionTile(
-              'Audit Intelligence',
+              'System Logs',
               'Review high-level administrative logs',
               Icons.security_rounded,
               () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminReportsScreen())),
@@ -341,7 +341,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           ),
         ),
         child: Text(
-          'LOGOUT',
+          'LOG OUT',
           style: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w900, 
             fontSize: 13, 

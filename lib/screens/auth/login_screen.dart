@@ -217,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 12),
         Text(
-          'SMART LOGISTICS ECOSYSTEM',
+          'WASTE MANAGEMENT SYSTEM',
           style: GoogleFonts.plusJakartaSans(
             color: AppTheme.primaryEmerald,
             fontSize: 10,
@@ -322,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'LOGIN',
+                        'LOG IN',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,
@@ -343,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextButton(
       onPressed: _navigateToForgotPassword,
       child: Text(
-        'FORGOT PASSWORD?',
+        'Forgot Password?',
         style: GoogleFonts.plusJakartaSans(
           color: AppTheme.grey400, 
           fontWeight: FontWeight.w800,

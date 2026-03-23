@@ -77,7 +77,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'RECOVERY CENTER',
+          'Forgot Password',
           style: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w800, 
             fontSize: 12,
@@ -134,7 +134,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           const SizedBox(height: 48),
                           Text(
-                            'Access Recovery',
+                            'Reset Password',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.plusJakartaSans(
                               color: Colors.white,
@@ -145,7 +145,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'Enter your registered logistics email to receive a secure recovery sequence.',
+                            'Enter your email to receive a password reset link.',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.inter(
                               color: Colors.white.withValues(alpha: 0.5),
@@ -160,7 +160,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             keyboardType: TextInputType.emailAddress,
                             style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w600),
                             decoration: InputDecoration(
-                              hintText: 'Logistics Email Address',
+                              hintText: 'Email Address',
                               hintStyle: GoogleFonts.inter(color: Colors.white.withValues(alpha: 0.3)),
                               prefixIcon: Icon(Icons.alternate_email_rounded, color: Colors.white.withValues(alpha: 0.5), size: 20),
                               border: OutlineInputBorder(
@@ -180,8 +180,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Access email required';
-                              if (!value.contains('@')) return 'Invalid email signature';
+                              if (value == null || value.isEmpty) return 'Email is required';
+                              if (!value.contains('@')) return 'Invalid email address';
                               return null;
                             },
                           ),
@@ -208,7 +208,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                       ),
                                     )
                                   : Text(
-                                      'TRANSMIT RECOVERY LINK',
+                                      'SEND RESET LINK',
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w800,
