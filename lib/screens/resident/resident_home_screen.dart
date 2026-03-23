@@ -223,30 +223,6 @@ class _DashboardTab extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Reduced
-                      decoration: BoxDecoration(
-                        color: AppTheme.success.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppTheme.success.withValues(alpha: 0.2)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.stars_rounded, color: AppTheme.success, size: 12),
-                          const SizedBox(width: 6),
-                          Text(
-                            'CERTIFIED ECO CITIZEN',
-                            style: GoogleFonts.plusJakartaSans(
-                              color: AppTheme.success,
-                              fontSize: 9, // Reduced from 10
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     const SizedBox(height: 16),
                     Text(
                       'Welcome back,',
@@ -424,7 +400,7 @@ class _DashboardTab extends StatelessWidget {
                             const Icon(Icons.access_time_filled_rounded, color: Colors.white, size: 11),
                             const SizedBox(width: 6),
                             Text(
-                              'UPCOMING DISPATCH',
+                              'NEXT COLLECTION',
                               style: GoogleFonts.plusJakartaSans(
                                   color: Colors.white, 
                                   fontWeight: FontWeight.w900, 
@@ -451,7 +427,7 @@ class _DashboardTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'ETA: ${pickup.formattedTime ?? '09:30 AM'} • RESIDENTIAL WARD',
+                    'Time: ${pickup.formattedTime ?? '09:30 AM'} • ${pickup.address}',
                     style: GoogleFonts.plusJakartaSans(
                       color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 12, // Reduced from 13
@@ -658,7 +634,7 @@ class _DashboardTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'OPERATIONAL MODULES',
+          'MENU',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 10,
             fontWeight: FontWeight.w900,
@@ -726,7 +702,7 @@ class _DashboardTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'NETWORK LOG',
+              'RECENT ACTIVITY',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
@@ -756,103 +732,65 @@ class _DashboardTab extends StatelessWidget {
             boxShadow: AppTheme.smoothShadow,
             border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
           ),
-          child: ListView.separated(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(vertical: 4), // Reduced from 8
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: activities.isEmpty ? 2 : activities.length,
-            separatorBuilder: (_, __) => Divider(color: AppTheme.grey200, height: 1, indent: 20, endIndent: 20), // Reduced indent
-            itemBuilder: (context, index) {
-              if (activities.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.all(24), // Reduced from 32
+          child: activities.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.all(32),
                   child: Center(
                     child: Column(
                       children: [
-                        Icon(Icons.hub_rounded, size: 40, color: AppTheme.grey200), // Reduced from 48
-                        const SizedBox(height: 10), // Reduced from 12
-                        Text('No network activity detected', style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w600, fontSize: 12)), // Reduced
+                        Icon(Icons.hub_rounded, size: 40, color: AppTheme.grey200),
+                        const SizedBox(height: 12),
+                        Text('No activity detected', style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w600, fontSize: 13)),
                       ],
                     ),
                   ),
-                );
-              }
-              final item = activities[index];
-              final isPaid = item.amount > 0;
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Reduced from 24, 16
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40, // Reduced from 48
-                      height: 40, // Reduced from 48
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12), // Reduced from 16
-                      ),
-                      child: const Icon(Icons.person_add_rounded, color: AppTheme.primaryEmerald, size: 18), // Reduced from 20
-                    ),
-                    const SizedBox(width: 12), // Reduced from 16
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: activities.length,
+                  separatorBuilder: (_, __) => Divider(color: AppTheme.grey200, height: 1, indent: 20, endIndent: 20),
+                  itemBuilder: (context, index) {
+                    final item = activities[index];
+                    final isPaid = item.amount > 0;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      child: Row(
                         children: [
-                          Text(
-                            item.name,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13, // Reduced from 15
-                              color: AppTheme.grey900,
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryEmerald.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.person_add_rounded, color: AppTheme.primaryEmerald, size: 20),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(item.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800, fontSize: 14, color: AppTheme.grey900)),
+                                const SizedBox(height: 2),
+                                Text(item.date, style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppTheme.grey500, fontWeight: FontWeight.w600)),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 2), // Reduced from 4
-                          Text(
-                            item.date,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 11, // Reduced from 12
-                              color: AppTheme.grey500,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              if (isPaid) 
+                                Text('+₹${item.amount.toStringAsFixed(0)}', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13, color: AppTheme.success)),
+                              Text(item.status.toUpperCase(), style: GoogleFonts.plusJakartaSans(fontSize: 8, fontWeight: FontWeight.w900, color: isPaid ? AppTheme.success : AppTheme.grey500)),
+                            ],
                           ),
                         ],
                       ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        if (isPaid)
-                          Text(
-                            '+₹${item.amount.toStringAsFixed(0)}',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 14, // Reduced from 16
-                              color: AppTheme.success,
-                            ),
-                          ),
-                        const SizedBox(height: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: (isPaid ? AppTheme.success : AppTheme.grey400).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            item.status.toUpperCase(),
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w900,
-                              color: isPaid ? AppTheme.success : AppTheme.grey500,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         ),
       ],
     );

@@ -8,6 +8,7 @@ class User {
   final UserType userType;
   final String phone;
   final String ward;
+  final String address;  // Registered address
   final String? latitude;
   final String? longitude;
   final bool isActive;
@@ -19,6 +20,7 @@ class User {
     required this.userType,
     required this.phone,
     required this.ward,
+    required this.address,
     this.latitude,
     this.longitude,
     this.isActive = true,
@@ -35,7 +37,6 @@ class User {
   /// Convenience getters for compatibility
   String get phoneNumber => phone;
   String get wardNumber => ward;
-  String get address => ward.isNotEmpty ? 'Ward $ward' : '';
 
   factory User.fromJson(Map<String, dynamic> json) {
     String userTypeStr = (json['role'] ?? 'resident').toString().toLowerCase();
@@ -55,6 +56,7 @@ class User {
       ),
       phone: json['phone'] ?? '',
       ward: json['ward'] ?? '',
+      address: json['address'] ?? (json['ward'] != null ? 'Ward ${json['ward']}' : ''),
       latitude: json['latitude']?.toString(),
       longitude: json['longitude']?.toString(),
       isActive: json['is_active'] ?? json['isActive'] ?? true,
@@ -69,6 +71,7 @@ class User {
       'role': userType.name,
       'phone': phone,
       'ward': ward,
+      'address': address,
       'latitude': latitude,
       'longitude': longitude,
       'is_active': isActive,
@@ -82,6 +85,7 @@ class User {
     UserType? userType,
     String? phone,
     String? ward,
+    String? address,
     String? latitude,
     String? longitude,
     bool? isActive,
@@ -93,6 +97,7 @@ class User {
       userType: userType ?? this.userType,
       phone: phone ?? this.phone,
       ward: ward ?? this.ward,
+      address: address ?? this.address,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       isActive: isActive ?? this.isActive,

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../theme/app_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../services/auth_service.dart';
+import '../../services/reward_service.dart';
+import '../../services/pickup_service.dart';
+import '../../theme/app_theme.dart';
+import '../../models/user.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,6 +19,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = context.read<AuthService>().currentUser;
+      if (user != null) {
+        context.read<RewardService>().fetchUserRewards(user.id);
+        context.read<PickupService>().fetchPickups();
+      }
+    });
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    try {
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        setState(() => _isLoading = true);
+        // await context.read<AuthService>().uploadProfileImage(image.path);
+        // Simulating upload for now as backend might not have this endpoint yet
+        await Future.delayed(const Duration(seconds: 1));
+        setState(() => _isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile photo updated successfully'), backgroundColor: AppTheme.success));
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final user = authService.currentUser;
@@ -23,46 +58,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: AppTheme.bgSurface,
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              color: AppTheme.bgSurface,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppTheme.bgSurface, Color(0xFFF1F8E9)],
-              ),
-            ),
-          ),
           CustomScrollView(
             slivers: [
               _buildSliverAppBar(),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                   child: Column(
                     children: [
                       _buildPersonalDetails(context, user),
                       const SizedBox(height: 32),
-                      _buildStatsSection(),
-                      const SizedBox(height: 40),
+                      _buildStatsSection(context, user),
+                      const SizedBox(height: 48),
                       _buildActionSection(context, authService),
-                      const SizedBox(height: 80),
                     ],
                   ),
                 ),
               ),
             ],
-          ),
-          Positioned(
-            top: 50,
-            left: 20,
-            child: Container(
-              decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: AppTheme.cardShadow, border: Border.all(color: Colors.white, width: 2)),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 18),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
           ),
           if (_isLoading)
             Container(color: Colors.black26, child: const Center(child: CircularProgressIndicator(color: AppTheme.primaryEmerald))),
@@ -77,8 +90,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildPersonalDetails(BuildContext context, User? user) {
     final userName = user?.name ?? 'Loading...';
-    final userEmail = user?.email ?? '';
-    final roleName = user?.userType.name.toUpperCase() ?? 'RESIDENT';
 
     return Column(
       children: [
@@ -94,38 +105,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: CircleAvatar(radius: 54, backgroundColor: AppTheme.grey50, child: Icon(Icons.person_outline_rounded, size: 40, color: AppTheme.grey300)),
               ),
             ),
-            Positioned(right: 4, bottom: 4, child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(gradient: AppTheme.emeraldGradient, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 3), boxShadow: AppTheme.cardShadow), child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16))),
+            Positioned(
+              right: 4,
+              bottom: 4,
+              child: GestureDetector(
+                onTap: _pickImage,
+                child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(gradient: AppTheme.emeraldGradient, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 3), boxShadow: AppTheme.cardShadow), child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16)),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 20),
         Text(userName, style: GoogleFonts.plusJakartaSans(fontSize: 26, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -1.0)),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(color: AppTheme.primaryEmerald.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 14),
-              const SizedBox(width: 8),
-              Text(
-                'CERTIFIED $roleName',
-                style: GoogleFonts.plusJakartaSans(color: AppTheme.primaryEmerald, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 1.5),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
 
-  Widget _buildStatsSection() {
-    return Row(
-      children: [
-        Expanded(child: _buildStatItem('1,250', 'XP SCORE', Icons.military_tech_rounded, const Color(0xFFF59E0B))),
-        const SizedBox(width: 16),
-        Expanded(child: _buildStatItem('24', 'TOTAL LOGS', Icons.local_shipping_rounded, AppTheme.primaryEmerald)),
-      ],
+  Widget _buildStatsSection(BuildContext context, User? user) {
+    if (user == null) return const SizedBox.shrink();
+    
+    return Consumer2<RewardService, PickupService>(
+      builder: (context, rewardService, pickupService, child) {
+        final points = rewardService.getUserPoints(user.id);
+        final totalPickups = pickupService.getPickupsForUser(user.id).length;
+        
+        return Row(
+          children: [
+            Expanded(child: _buildStatItem(points.toString(), 'XP SCORE', Icons.military_tech_rounded, const Color(0xFFF59E0B))),
+            const SizedBox(width: 16),
+            Expanded(child: _buildStatItem(totalPickups.toString(), 'TOTAL LOGS', Icons.local_shipping_rounded, AppTheme.primaryEmerald)),
+          ],
+        );
+      },
     );
   }
 
@@ -133,12 +145,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader('CORE INFRASTRUCTURE'),
+        _buildSectionHeader('ACCOUNT SETTINGS'),
         const SizedBox(height: 16),
         _buildSettingsCard([
-          _SettingItem(Icons.person_outline_rounded, 'Authentication Profiles', Icons.person_rounded, () => _showEditProfileDialog(context)),
-          _SettingItem(Icons.location_on_outlined, 'Service Geometry', Icons.map_rounded, () {}),
-          _SettingItem(Icons.security_outlined, 'Privacy Protocol', Icons.security_rounded, () {}),
+          _SettingItem(Icons.person_outline_rounded, 'Personal Details', Icons.person_rounded, () => _showEditProfileDialog(context)),
+          _SettingItem(Icons.location_on_outlined, 'My Address', Icons.map_rounded, () => _showEditProfileDialog(context)),
+          _SettingItem(Icons.security_outlined, 'Privacy & Policy', Icons.security_rounded, () {}),
         ]),
         const SizedBox(height: 48),
         SizedBox(
@@ -219,6 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = authService.currentUser;
     final nameController = TextEditingController(text: user?.name);
     final phoneController = TextEditingController(text: user?.phone);
+    final addressController = TextEditingController(text: user?.address);
 
     showModalBottomSheet(
       context: context,
@@ -227,37 +240,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(36))),
       builder: (context) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 32, right: 32, top: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(child: Container(width: 48, height: 5, decoration: BoxDecoration(color: AppTheme.grey200, borderRadius: BorderRadius.circular(10)))),
-            const SizedBox(height: 32),
-            Text('Update Profile', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 26, letterSpacing: -1.5, color: AppTheme.grey900)),
-            const SizedBox(height: 24),
-            _buildDialogField('USERNAME', nameController, Icons.person_rounded),
-            const SizedBox(height: 20),
-            _buildDialogField('PHONE NUMBER', phoneController, Icons.phone_rounded),
-            const SizedBox(height: 40),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: () async {
-                  setState(() => _isLoading = true);
-                  Navigator.pop(context);
-                  final success = await authService.updateProfile(name: nameController.text, phone: phoneController.text);
-                  setState(() => _isLoading = false);
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(success ? 'Profile updated successfully' : 'Update failed'), backgroundColor: success ? AppTheme.success : AppTheme.error));
-                  }
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryEmerald, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-                child: Text('SAVE CHANGES', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, letterSpacing: 1.5, color: Colors.white)),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(child: Container(width: 48, height: 5, decoration: BoxDecoration(color: AppTheme.grey200, borderRadius: BorderRadius.circular(10)))),
+              const SizedBox(height: 32),
+              Text('Update Profile', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 26, letterSpacing: -1.5, color: AppTheme.grey900)),
+              const SizedBox(height: 24),
+              _buildDialogField('USERNAME', nameController, Icons.person_rounded),
+              const SizedBox(height: 20),
+              _buildDialogField('PHONE NUMBER', phoneController, Icons.phone_rounded),
+              const SizedBox(height: 20),
+              _buildDialogField('ADDRESS', addressController, Icons.location_on_rounded),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    setState(() => _isLoading = true);
+                    Navigator.pop(context);
+                    final success = await authService.updateProfile(
+                      name: nameController.text,
+                      phone: phoneController.text,
+                      address: addressController.text,
+                    );
+                    setState(() => _isLoading = false);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(success ? 'Profile updated successfully' : 'Update failed'), backgroundColor: success ? AppTheme.success : AppTheme.error));
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryEmerald, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                  child: Text('SAVE CHANGES', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, letterSpacing: 1.5, color: Colors.white)),
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-          ],
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );

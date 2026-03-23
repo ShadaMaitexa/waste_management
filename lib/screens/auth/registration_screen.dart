@@ -51,6 +51,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         password: _passwordController.text,
         phoneNumber: _phoneController.text.trim(),
         ward: _selectedUserType == UserType.resident ? _wardController.text.trim() : null,
+        address: _addressController.text.trim(),
         userType: _selectedUserType,
       );
 

@@ -38,6 +38,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> {
                 color: AppTheme.bgSurface,
               ),
               child: AppBar(
+                automaticallyImplyLeading: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 scrolledUnderElevation: 0,

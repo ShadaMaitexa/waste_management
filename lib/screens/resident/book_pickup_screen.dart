@@ -50,7 +50,7 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   void initState() {
     super.initState();
     final user = Provider.of<AuthService>(context, listen: false).currentUser;
-    _addressController = TextEditingController(text: user?.wardNumber != null ? 'Smart Residence, Ward ${user!.wardNumber}' : 'Default Ward 15');
+    _addressController = TextEditingController(text: (user?.address != null && user!.address.isNotEmpty) ? user.address : (user?.wardNumber != null ? 'Smart Residence, Ward ${user!.wardNumber}' : 'Default Ward 15'));
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<PickupService>(context, listen: false).fetchAvailableSlots();
@@ -180,17 +180,6 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                 ),
               ),
             ],
-          ),
-          Positioned(
-            top: 50,
-            left: 20,
-            child: Container(
-              decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: AppTheme.cardShadow),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 18),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
           ),
         ],
       ),

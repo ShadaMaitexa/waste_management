@@ -47,12 +47,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                 ),
               ),
             ),
-            centerTitle: true,
-            foregroundColor: AppTheme.grey900,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 20),
-              onPressed: () => Navigator.pop(context),
-            ),
+            automaticallyImplyLeading: false,
             actions: [
               Container(
                 margin: const EdgeInsets.only(right: 16),

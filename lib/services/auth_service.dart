@@ -131,6 +131,7 @@ class AuthService extends ChangeNotifier {
     required String password,
     required String phoneNumber,
     String? ward,
+    String? address,
     required UserType userType,
   }) async {
     _isLoading = true;
@@ -148,6 +149,7 @@ class AuthService extends ChangeNotifier {
           'password': password,
           'phone': phoneNumber.trim(),
           'ward': finalWard,
+          'address': address ?? '',
           'role': userType.name,     // 'resident' | 'recycler'
         }),
       );
@@ -228,6 +230,7 @@ class AuthService extends ChangeNotifier {
     String? name,
     String? phone,
     String? ward,
+    String? address,
     String? latitude,
     String? longitude,
   }) async {
@@ -244,6 +247,7 @@ class AuthService extends ChangeNotifier {
           if (name != null) 'username': name,
           if (phone != null) 'phone': phone,
           if (ward != null) 'ward': ward,
+          if (address != null) 'address': address,
           if (latitude != null) 'latitude': latitude,
           if (longitude != null) 'longitude': longitude,
         }),

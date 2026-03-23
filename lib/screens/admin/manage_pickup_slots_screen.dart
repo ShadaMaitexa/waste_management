@@ -250,10 +250,7 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
                 ),
               ),
             ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 20),
-              onPressed: () => Navigator.pop(context),
-            ),
+            automaticallyImplyLeading: false,
             actions: [
               Container(
                 margin: const EdgeInsets.only(right: 16),

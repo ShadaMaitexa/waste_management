@@ -262,7 +262,7 @@ class _DashboardTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 4), // Reduced
                     Text(
-                      'LOGISTICS COMMAND • WARD 15',
+                      'WORKER DASHBOARD • WARD 15',
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white.withOpacity(0.5),
                         fontSize: 12, // Reduced from 13
@@ -394,7 +394,7 @@ class _DashboardTab extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 4),
           child: Text(
-            'CURRENT OPERATIONAL UNIT',
+            'ONGOING JOB',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -556,7 +556,7 @@ class _DashboardTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'OPERATIONAL TOOLS',
+          'MENU',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 10,
             fontWeight: FontWeight.w900,

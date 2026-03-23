@@ -159,10 +159,7 @@ class _AdminDashboardTabState extends State<AdminDashboardTab> {
           ],
         ),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.grey900),
-        onPressed: () => Navigator.pushReplacementNamed(context, '/splash'),
-      ),
+      automaticallyImplyLeading: false,
       actions: [
         Container(
           height: 44,

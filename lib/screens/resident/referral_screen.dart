@@ -196,7 +196,7 @@ class ReferralScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'PERSONAL ACCESS TOKEN',
+                    'MY REFERRAL CODE',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
@@ -343,7 +343,7 @@ class ReferralScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'OPERATIONAL PROTOCOL',
+            'HOW IT WORKS',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 9,
               fontWeight: FontWeight.w900,

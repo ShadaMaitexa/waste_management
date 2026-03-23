@@ -41,6 +41,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                 color: AppTheme.bgSurface,
               ),
               child: AppBar(
+                automaticallyImplyLeading: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 scrolledUnderElevation: 0,
@@ -61,7 +62,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'LOGISTICS & FIELD ASSET DEPLOYMENT',
+                        'MONITORING & ASSIGNMENTS',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 8,
                           color: AppTheme.grey400,
@@ -138,7 +139,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'No pending collection units requiring assignment.', 
+            'No pending bookings requiring assignment.', 
             style: GoogleFonts.inter(
               color: AppTheme.grey400, 
               fontSize: 14,
@@ -158,7 +159,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
     if (assignedWorkerName == null && pickup.assignedWorkerId != null) {
       final worker = workers.firstWhere(
         (w) => w.id == pickup.assignedWorkerId,
-        orElse: () => User(id: '', username: 'Inactive Resource', email: '', phone: '', userType: UserType.worker, ward: 'N/A')
+        orElse: () => User(id: '', username: 'Inactive Resource', email: '', phone: '', userType: UserType.worker, ward: 'N/A', address: '')
       );
       assignedWorkerName = worker.name;
     }

@@ -59,7 +59,7 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
                       style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 28, color: AppTheme.grey900, letterSpacing: -1.5),
                     ),
                   ),
-                  leading: IconButton(icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.grey900), onPressed: () => Navigator.pop(context)),
+                  automaticallyImplyLeading: false,
                   actions: [
                     Container(
                       margin: const EdgeInsets.only(right: 20, top: 12),

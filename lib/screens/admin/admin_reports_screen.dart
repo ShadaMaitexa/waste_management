@@ -64,10 +64,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             scrolledUnderElevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.grey900),
-              onPressed: () => Navigator.pushReplacementNamed(context, '/splash'),
-            ),
+            automaticallyImplyLeading: false,
             centerTitle: false,
             title: Padding(
               padding: const EdgeInsets.only(top: 8),

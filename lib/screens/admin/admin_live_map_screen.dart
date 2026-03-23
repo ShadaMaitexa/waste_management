@@ -84,14 +84,7 @@ class _AdminLiveMapScreenState extends State<AdminLiveMapScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 16, top: 8),
-          decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: AppTheme.cardShadow),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.grey900),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
+        automaticallyImplyLeading: false,
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16, top: 8),
