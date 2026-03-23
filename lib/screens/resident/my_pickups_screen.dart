@@ -35,7 +35,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bgSurface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           'Service Registry',
@@ -162,7 +162,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
             Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 shape: BoxShape.circle,
                 boxShadow: AppTheme.smoothShadow,
               ),
@@ -212,10 +212,10 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(40),
         boxShadow: AppTheme.smoothShadow,
-        border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         children: [
@@ -268,7 +268,7 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 18,
                             fontWeight: FontWeight.w900,
-                            color: AppTheme.grey900,
+                            color: Theme.of(context).textTheme.titleLarge?.color ?? AppTheme.grey900,
                             letterSpacing: -0.5,
                           ),
                         ),
@@ -294,9 +294,9 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                          Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
-                            color: AppTheme.bgSurface,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.grey100),
+                            border: Border.all(color: Theme.of(context).dividerColor),
                           ),
                           child: Text(
                             pickup.itemDisplay.toUpperCase(),
@@ -311,9 +311,9 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
-                            color: AppTheme.bgSurface,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.grey100),
+                            border: Border.all(color: Theme.of(context).dividerColor),
                           ),
                           child: Text(
                             pickup.wasteType.toUpperCase(),

@@ -11,16 +11,16 @@ class ReferralScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bgSurface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              color: AppTheme.bgSurface,
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppTheme.bgSurface, Color(0xFFF1F8E9)],
+                colors: [Theme.of(context).scaffoldBackgroundColor, Theme.of(context).colorScheme.surface.withOpacity(0.5)],
               ),
             ),
           ),
@@ -35,15 +35,15 @@ class ReferralScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHeroSection(),
+                          _buildHeroSection(context),
                           const SizedBox(height: 32),
                           _buildReferralCodeCard(context, referralService),
                           const SizedBox(height: 40),
-                          _buildStatsSection(referralService),
+                          _buildStatsSection(context, referralService),
                           const SizedBox(height: 48),
-                          _buildHowItWorks(),
+                          _buildHowItWorks(context),
                           const SizedBox(height: 48),
-                          _buildHistorySection(referralService),
+                          _buildHistorySection(context, referralService),
                           const SizedBox(height: 140),
                         ],
                       ),
@@ -59,10 +59,10 @@ class ReferralScreen extends StatelessWidget {
             left: 20,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 shape: BoxShape.circle,
                 boxShadow: AppTheme.cardShadow,
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: Theme.of(context).dividerColor, width: 2),
               ),
               child: IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.grey900, size: 18),
@@ -102,7 +102,7 @@ class ReferralScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection() {
+  Widget _buildHeroSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -136,7 +136,7 @@ class ReferralScreen extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.w900,
-            color: AppTheme.grey900,
+            color: Theme.of(context).textTheme.headlineLarge?.color ?? AppTheme.grey900,
             letterSpacing: -1.5,
             height: 1.0,
           ),
@@ -261,11 +261,12 @@ class ReferralScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsSection(ReferralService service) {
+  Widget _buildStatsSection(BuildContext context, ReferralService service) {
     return Row(
       children: [
         Expanded(
           child: _buildStatCard(
+            context,
             'Acquisitions',
             service.referralCount.toString(),
             Icons.people_alt_rounded,
@@ -275,6 +276,7 @@ class ReferralScreen extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
+            context,
             'Dividends',
             '₹${service.totalEarned.toStringAsFixed(0)}',
             Icons.account_balance_wallet_rounded,
@@ -285,14 +287,14 @@ class ReferralScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(BuildContext context, String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100, width: 1),
+        border: Border.all(color: Theme.of(context).dividerColor, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +313,7 @@ class ReferralScreen extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 22,
               fontWeight: FontWeight.w900,
-              color: AppTheme.grey900,
+              color: Theme.of(context).textTheme.titleLarge?.color ?? AppTheme.grey900,
               letterSpacing: -0.5,
             ),
           ),
@@ -330,14 +332,14 @@ class ReferralScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHowItWorks() {
+  Widget _buildHowItWorks(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: AppTheme.grey100, width: 1),
+        border: Border.all(color: Theme.of(context).dividerColor, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,6 +355,7 @@ class ReferralScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           _buildHowItWorksStep(
+            context,
             '01',
             'Distribute Token',
             'Transmit identifier to network.',
@@ -360,6 +363,7 @@ class ReferralScreen extends StatelessWidget {
             AppTheme.accentIndigo,
           ),
           _buildHowItWorksStep(
+            context,
             '02',
             'Network Conversion',
             'Peers register and schedule collections.',
@@ -367,6 +371,7 @@ class ReferralScreen extends StatelessWidget {
             const Color(0xFF8B5CF6),
           ),
           _buildHowItWorksStep(
+            context,
             '03',
             'Mutual Dividend',
             'Receive ₹50 for every verified deployment.',
@@ -379,7 +384,7 @@ class ReferralScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHowItWorksStep(String step, String title, String desc, IconData icon, Color color, {bool isLast = false}) {
+  Widget _buildHowItWorksStep(BuildContext context, String step, String title, String desc, IconData icon, Color color, {bool isLast = false}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -428,7 +433,7 @@ class ReferralScreen extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w900,
                         fontSize: 11,
-                        color: AppTheme.grey900,
+                        color: Theme.of(context).textTheme.labelLarge?.color ?? AppTheme.grey900,
                         letterSpacing: 0.4,
                       ),
                     ),
@@ -451,7 +456,7 @@ class ReferralScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHistorySection(ReferralService service) {
+  Widget _buildHistorySection(BuildContext context, ReferralService service) {
     final history = service.getReferralHistory();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,10 +473,10 @@ class ReferralScreen extends StatelessWidget {
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(24),
             boxShadow: AppTheme.cardShadow,
-            border: Border.all(color: AppTheme.grey100, width: 1),
+            border: Border.all(color: Theme.of(context).dividerColor, width: 1),
           ),
           child: ListView.separated(
             shrinkWrap: true,
@@ -519,7 +524,7 @@ class ReferralScreen extends StatelessWidget {
                             style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.w800,
                               fontSize: 14,
-                              color: AppTheme.grey900,
+                              color: Theme.of(context).textTheme.bodyLarge?.color ?? AppTheme.grey900,
                             ),
                           ),
                           Text(

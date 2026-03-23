@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../services/auth_service.dart';
 import '../../services/reward_service.dart';
 import '../../services/pickup_service.dart';
@@ -31,24 +30,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    try {
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        setState(() => _isLoading = true);
-        // await context.read<AuthService>().uploadProfileImage(image.path);
-        // Simulating upload for now as backend might not have this endpoint yet
-        await Future.delayed(const Duration(seconds: 1));
-        setState(() => _isLoading = false);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile photo updated successfully'), backgroundColor: AppTheme.success));
-        }
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = authService.currentUser;
 
     return Scaffold(
-      backgroundColor: AppTheme.bgSurface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           CustomScrollView(
@@ -120,14 +101,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(color: Theme.of(context).cardColor, shape: BoxShape.circle, boxShadow: AppTheme.cardShadow),
                 child: CircleAvatar(radius: 54, backgroundColor: Theme.of(context).colorScheme.surface, child: Icon(Icons.person_outline_rounded, size: 40, color: AppTheme.grey300)),
-              ),
-            ),
-            Positioned(
-              right: 4,
-              bottom: 4,
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(gradient: AppTheme.emeraldGradient, shape: BoxShape.circle, border: Border.all(color: Theme.of(context).cardColor, width: 3), boxShadow: AppTheme.cardShadow), child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16)),
               ),
             ),
           ],
@@ -194,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _buildSettingsCard([
           _SettingItem(Icons.person_outline_rounded, 'Personal Details', Icons.person_rounded, () => _showEditProfileDialog(context)),
           _SettingItem(Icons.help_outline_rounded, 'FAQs', Icons.help_rounded, () => _showFAQDialog(context)),
-          _SettingItem(Icons.security_outlined, 'Privacy & Policy', Icons.security_rounded, () {}),
+          _SettingItem(Icons.security_outlined, 'Privacy & Policy', Icons.security_rounded, () => _showPrivacyPolicyDialog(context)),
           _SettingItem(
             Icons.dark_mode_outlined,
             'Dark Mode',
@@ -235,6 +208,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 48),
       ],
+    );
+  }
+  void _showPrivacyPolicyDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(36))),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Padding(
+          padding: const EdgeInsets.all(32),
+          child: ListView(
+            controller: scrollController,
+            children: [
+              Text('Privacy Policy', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 24, color: Theme.of(context).textTheme.titleLarge?.color)),
+              const SizedBox(height: 24),
+              Text(
+                'Your privacy is important to us. It is GreenLoop\'s policy to respect your privacy regarding any information we may collect from you across our website, and other sites we own and operate.\n\n'
+                'We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.\n\n'
+                'We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use or modification.\n\n'
+                'We don’t share any personally identifying information publicly or with third-parties, except when required to by law.',
+                style: GoogleFonts.inter(fontSize: 14, color: AppTheme.grey500, height: 1.6),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

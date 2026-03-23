@@ -13,108 +13,128 @@ class AdminUserManagementScreen extends StatefulWidget {
   State<AdminUserManagementScreen> createState() => _AdminUserManagementScreenState();
 }
 
-class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
+class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+    
     _searchController.addListener(() {
       setState(() => _searchQuery = _searchController.text.toLowerCase());
     });
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AdminService>(context, listen: false).fetchUsers();
+      _fetchUsersPerTab();
     });
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      _fetchUsersPerTab();
+    }
+  }
+
+  void _fetchUsersPerTab() {
+    final roles = ['resident', 'hks_worker', 'driver', 'recycler'];
+    Provider.of<AdminService>(context, listen: false).fetchUsers(role: roles[_tabController.index]);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4, // Added Drivers tab
-      child: Scaffold(
-        backgroundColor: AppTheme.bgSurface,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(170),
-          child: Container(
-            padding: const EdgeInsets.only(top: 20),
-            decoration: const BoxDecoration(color: AppTheme.bgSurface),
-            child: Column(
-              children: [
-                AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  centerTitle: false,
-                  title: Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      'User Management',
-                      style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 28, color: AppTheme.grey900, letterSpacing: -1.5),
+    return Scaffold(
+      backgroundColor: AppTheme.bgSurface,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(170),
+        child: Container(
+          padding: const EdgeInsets.only(top: 20),
+          decoration: const BoxDecoration(color: AppTheme.bgSurface),
+          child: Column(
+            children: [
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                centerTitle: false,
+                title: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    'User Management',
+                    style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 28, color: AppTheme.grey900, letterSpacing: -1.5),
+                  ),
+                ),
+                automaticallyImplyLeading: false,
+                actions: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 20, top: 12),
+                    child: ElevatedButton.icon(
+                      onPressed: _showAddUserDialog,
+                      icon: const Icon(Icons.add_rounded, size: 18, color: Colors.white),
+                      label: Text('ADD WORKER', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5, fontSize: 11)),
+                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryEmerald, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
                     ),
                   ),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    Container(
-                      margin: const EdgeInsets.only(right: 20, top: 12),
-                      child: ElevatedButton.icon(
-                        onPressed: _showAddUserDialog,
-                        icon: const Icon(Icons.add_rounded, size: 18, color: Colors.white),
-                        label: Text('ADD WORKER', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5, fontSize: 11)),
-                        style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryEmerald, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                TabBar(
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  indicatorColor: AppTheme.primaryEmerald,
-                  indicatorWeight: 4,
-                  labelColor: AppTheme.grey900,
-                  unselectedLabelColor: AppTheme.grey400,
-                  labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1.5),
-                  dividerColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  tabs: const [
-                    Tab(text: 'RESIDENTS'),
-                    Tab(text: 'WORKERS'),
-                    Tab(text: 'DRIVERS'),
-                    Tab(text: 'RECYCLERS'),
-                  ],
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
+                ],
+              ),
+              const Spacer(),
+              TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                indicatorColor: AppTheme.primaryEmerald,
+                indicatorWeight: 4,
+                labelColor: AppTheme.grey900,
+                unselectedLabelColor: AppTheme.grey400,
+                labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1.5),
+                dividerColor: Colors.transparent,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                tabs: const [
+                  Tab(text: 'RESIDENTS'),
+                  Tab(text: 'WORKERS'),
+                  Tab(text: 'DRIVERS'),
+                  Tab(text: 'RECYCLERS'),
+                ],
+              ),
+              const SizedBox(height: 12),
+            ],
           ),
         ),
-        body: Consumer2<AdminService, AuthService>(
-          builder: (context, adminService, authService, child) {
-            final rawUsers = adminService.allUsers.where((u) => u.id != authService.currentUser?.id).toList();
-            return Column(
-              children: [
-                _buildSearchField(),
+      ),
+      body: Consumer2<AdminService, AuthService>(
+        builder: (context, adminService, authService, child) {
+          final users = adminService.allUsers.where((u) => u.id != authService.currentUser?.id).toList();
+          
+          return Column(
+            children: [
+              _buildSearchField(),
+              if (adminService.isLoading)
+                const Expanded(child: Center(child: CircularProgressIndicator(color: AppTheme.primaryEmerald)))
+              else
                 Expanded(
                   child: TabBarView(
+                    controller: _tabController,
                     children: [
-                      _buildUserTable(rawUsers, UserType.resident),
-                      _buildUserTable(rawUsers, UserType.worker), // Collection Workers
-                      _buildUserTable(rawUsers, UserType.worker, roleLabel: 'driver'), // Treated as worker for now
-                      _buildUserTable(rawUsers, UserType.recycler),
+                      _buildUserView(users), // Residents
+                      _buildUserView(users), // Workers
+                      _buildUserView(users), // Drivers
+                      _buildUserView(users), // Recyclers
                     ],
                   ),
                 ),
-              ],
-            );
-          },
-        ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -136,12 +156,10 @@ class _AdminUserManagementScreenState extends State<AdminUserManagementScreen> {
     );
   }
 
-  Widget _buildUserTable(List<User> users, UserType type, {String? roleLabel}) {
+  Widget _buildUserView(List<User> users) {
     final filteredUsers = users.where((u) {
-      final matchesType = u.userType == type;
-      // If roleLabel is provided, further filter if needed. For now role is 'worker' for both.
       final matchesSearch = _searchQuery.isEmpty || u.name.toLowerCase().contains(_searchQuery) || u.email.toLowerCase().contains(_searchQuery);
-      return matchesType && matchesSearch;
+      return matchesSearch;
     }).toList();
 
     if (filteredUsers.isEmpty) return const Center(child: Text('No records found.'));

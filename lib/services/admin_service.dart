@@ -85,21 +85,34 @@ class AdminService extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchUsers() async {
+  Future<void> fetchUsers({String? role}) async {
     if (!_authService.isAuthenticated) return;
+    _isLoading = true;
+    notifyListeners();
+
     try {
+      String url = ApiConstants.users;
+      if (role != null) {
+        url = '$url?role=$role';
+      }
+      
       final response = await http.get(
-        Uri.parse(ApiConstants.users),
-        headers: {'Authorization': 'Bearer ${_authService.token}'},
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer ${_authService.token}',
+          'Content-Type': 'application/json',
+        },
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         _users = data.map((json) => User.fromJson(json)).toList();
-        notifyListeners();
       }
     } catch (e) {
       debugPrint('Error fetching users: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

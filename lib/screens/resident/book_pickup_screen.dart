@@ -126,16 +126,16 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bgSurface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              color: AppTheme.bgSurface,
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppTheme.bgSurface, Color(0xFFF1F8E9)],
+                colors: [Theme.of(context).scaffoldBackgroundColor, Theme.of(context).colorScheme.surface.withOpacity(0.5)],
               ),
             ),
           ),
@@ -249,9 +249,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.primaryEmerald : Colors.white,
+              color: isSelected ? AppTheme.primaryEmerald : Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey100, width: 1.5),
+              border: Border.all(color: isSelected ? AppTheme.primaryEmerald : Theme.of(context).dividerColor, width: 1.5),
               boxShadow: isSelected ? [BoxShadow(color: AppTheme.primaryEmerald.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))] : AppTheme.cardShadow,
             ),
             child: Column(
@@ -262,7 +262,7 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                 Text(
                   (option['label'] as String).toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.plusJakartaSans(color: isSelected ? Colors.white : AppTheme.grey900, fontWeight: FontWeight.w900, fontSize: 8, letterSpacing: 0.5),
+                  style: GoogleFonts.plusJakartaSans(color: isSelected ? Colors.white : Theme.of(context).textTheme.bodySmall?.color ?? AppTheme.grey900, fontWeight: FontWeight.w900, fontSize: 8, letterSpacing: 0.5),
                 ),
               ],
             ),
@@ -287,10 +287,10 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
             color: isSelected ? Colors.white : AppTheme.grey700
           ),
           onSelected: (_) => _selectItem(item),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).cardColor,
           selectedColor: AppTheme.primaryEmerald,
           checkmarkColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: isSelected ? AppTheme.primaryEmerald : AppTheme.grey200)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: isSelected ? AppTheme.primaryEmerald : Theme.of(context).dividerColor)),
         );
       }).toList(),
     );
@@ -316,9 +316,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
                   width: 140,
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.bgDark : Colors.white,
+                    color: isSelected ? AppTheme.bgDark : Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: isSelected ? AppTheme.bgDark : AppTheme.grey100, width: 1.5),
+                    border: Border.all(color: isSelected ? AppTheme.bgDark : Theme.of(context).dividerColor, width: 1.5),
                     boxShadow: AppTheme.cardShadow,
                   ),
                   child: Column(
@@ -360,9 +360,9 @@ class _BookPickupScreenState extends State<BookPickupScreen> {
           style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
           decoration: InputDecoration(
             prefixIcon: Icon(icon, color: AppTheme.grey400, size: 20),
-            filled: true, fillColor: Colors.white,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: AppTheme.grey100)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: AppTheme.grey100)),
+            filled: true, fillColor: Theme.of(context).cardColor,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
           ),
         ),
       ],
