@@ -7,6 +7,7 @@ import '../../services/reward_service.dart';
 import '../../services/pickup_service.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user.dart';
+import '../../services/theme_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -59,6 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Stack(
         children: [
           CustomScrollView(
+            key: const PageStorageKey('profile_scroll'),
             slivers: [
               _buildSliverAppBar(),
               SliverToBoxAdapter(
@@ -77,8 +79,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
-          if (_isLoading)
-            Container(color: Colors.black26, child: const Center(child: CircularProgressIndicator(color: AppTheme.primaryEmerald))),
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: !_isLoading,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _isLoading ? 1.0 : 0.0,
+                child: Container(
+                  color: Colors.black26,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: AppTheme.primaryEmerald),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -90,6 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildPersonalDetails(BuildContext context, User? user) {
     final userName = user?.name ?? 'Loading...';
+    final ward = user?.ward ?? '15';
+    final address = user?.address ?? 'No address set';
 
     return Column(
       children: [
@@ -101,8 +118,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: AppTheme.primaryEmerald.withOpacity(0.1), width: 2)),
               child: Container(
                 padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: AppTheme.cardShadow),
-                child: CircleAvatar(radius: 54, backgroundColor: AppTheme.grey50, child: Icon(Icons.person_outline_rounded, size: 40, color: AppTheme.grey300)),
+                decoration: BoxDecoration(color: Theme.of(context).cardColor, shape: BoxShape.circle, boxShadow: AppTheme.cardShadow),
+                child: CircleAvatar(radius: 54, backgroundColor: Theme.of(context).colorScheme.surface, child: Icon(Icons.person_outline_rounded, size: 40, color: AppTheme.grey300)),
               ),
             ),
             Positioned(
@@ -110,14 +127,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
               bottom: 4,
               child: GestureDetector(
                 onTap: _pickImage,
-                child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(gradient: AppTheme.emeraldGradient, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 3), boxShadow: AppTheme.cardShadow), child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16)),
+                child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(gradient: AppTheme.emeraldGradient, shape: BoxShape.circle, border: Border.all(color: Theme.of(context).cardColor, width: 3), boxShadow: AppTheme.cardShadow), child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16)),
               ),
             ),
           ],
         ),
         const SizedBox(height: 20),
-        Text(userName, style: GoogleFonts.plusJakartaSans(fontSize: 26, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -1.0)),
+        Text(userName, style: GoogleFonts.plusJakartaSans(fontSize: 26, fontWeight: FontWeight.w900, color: Theme.of(context).textTheme.titleLarge?.color ?? AppTheme.grey900, letterSpacing: -1.0)),
         const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryEmerald.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.location_on_rounded, color: AppTheme.primaryEmerald, size: 12),
+              const SizedBox(width: 8),
+              Text(
+                'WARD $ward • $address',
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.primaryEmerald,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -142,6 +184,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildActionSection(BuildContext context, AuthService authService) {
+    final themeService = Provider.of<ThemeService>(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,10 +193,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 16),
         _buildSettingsCard([
           _SettingItem(Icons.person_outline_rounded, 'Personal Details', Icons.person_rounded, () => _showEditProfileDialog(context)),
-          _SettingItem(Icons.location_on_outlined, 'My Address', Icons.map_rounded, () => _showEditProfileDialog(context)),
+          _SettingItem(Icons.help_outline_rounded, 'FAQs', Icons.help_rounded, () => _showFAQDialog(context)),
           _SettingItem(Icons.security_outlined, 'Privacy & Policy', Icons.security_rounded, () {}),
+          _SettingItem(
+            Icons.dark_mode_outlined,
+            'Dark Mode',
+            Icons.dark_mode_rounded,
+            () => themeService.toggleTheme(!themeService.isDarkMode),
+            trailing: Switch(
+              value: themeService.isDarkMode,
+              onChanged: (v) => themeService.toggleTheme(v),
+              activeColor: AppTheme.primaryEmerald,
+            ),
+          ),
         ]),
-        const SizedBox(height: 48),
+        const SizedBox(height: 32),
         SizedBox(
           width: double.infinity,
           height: 56,
@@ -178,7 +233,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
+        const SizedBox(height: 48),
       ],
+    );
+  }
+
+
+  void _showFAQDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(36))),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 48, height: 5, decoration: BoxDecoration(color: AppTheme.grey200, borderRadius: BorderRadius.circular(10))),
+              const SizedBox(height: 32),
+              Text('Frequently Asked Questions', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: -1.0, color: AppTheme.grey900)),
+              const SizedBox(height: 24),
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  children: [
+                    _buildFAQItem('How to book a pickup?', 'Navigate to the BOOK tab, select the waste type, date, and time slot, then click Confirm.'),
+                    _buildFAQItem('What are XP Scores?', 'XP are rewarded for every successful waste collection and referral. They can be redeemed for rewards.'),
+                    _buildFAQItem('How to update my address?', 'Go to Personal Details in your profile and edit the address field.'),
+                    _buildFAQItem('Can I cancel a booking?', 'Yes, go to your History and select the booking to see cancellation options.'),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFAQItem(String question, String answer) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: AppTheme.grey50,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          title: Text(question, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 14, color: AppTheme.grey900)),
+          iconColor: AppTheme.primaryEmerald,
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          children: [
+            Text(answer, style: GoogleFonts.inter(fontSize: 13, color: AppTheme.grey600, height: 1.5)),
+          ],
+        ),
+      ),
     );
   }
 
@@ -189,13 +305,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildStatItem(String value, String label, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24), boxShadow: AppTheme.cardShadow, border: Border.all(color: AppTheme.grey100, width: 1)),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(24), boxShadow: AppTheme.cardShadow, border: Border.all(color: Theme.of(context).dividerColor, width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(icon, color: color, size: 18)),
           const SizedBox(height: 16),
-          Text(value, style: GoogleFonts.plusJakartaSans(fontSize: 24, fontWeight: FontWeight.w900, color: AppTheme.grey900, letterSpacing: -0.8)),
+          Text(value, style: GoogleFonts.plusJakartaSans(fontSize: 24, fontWeight: FontWeight.w900, color: Theme.of(context).textTheme.titleLarge?.color ?? AppTheme.grey900, letterSpacing: -0.8)),
           const SizedBox(height: 1),
           Text(label, style: GoogleFonts.plusJakartaSans(color: AppTheme.grey400, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.8)),
         ],
@@ -205,7 +321,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildSettingsCard(List<_SettingItem> items) {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24), boxShadow: AppTheme.cardShadow, border: Border.all(color: AppTheme.grey100, width: 1.2)),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(24), boxShadow: AppTheme.cardShadow, border: Border.all(color: Theme.of(context).dividerColor, width: 1.2)),
       child: Column(
         children: items.asMap().entries.map((entry) {
           final index = entry.key;
@@ -214,8 +330,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               ListTile(
                 leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppTheme.primaryEmerald.withOpacity(0.1), shape: BoxShape.circle), child: Icon(item.activeIcon, color: AppTheme.primaryEmerald, size: 16)),
-                title: Text(item.title, style: GoogleFonts.plusJakartaSans(color: AppTheme.grey900, fontWeight: FontWeight.w700, fontSize: 14)),
-                trailing: const Icon(Icons.chevron_right_rounded, size: 18, color: AppTheme.grey300),
+                title: Text(item.title, style: GoogleFonts.plusJakartaSans(color: Theme.of(context).textTheme.titleLarge?.color ?? AppTheme.grey900, fontWeight: FontWeight.w700, fontSize: 14)),
+                trailing: item.trailing ?? const Icon(Icons.chevron_right_rounded, size: 18, color: AppTheme.grey300),
                 onTap: item.onTap,
               ),
               if (index != items.length - 1) Divider(height: 1, color: AppTheme.grey100, indent: 60, endIndent: 16),
@@ -231,15 +347,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = authService.currentUser;
     final nameController = TextEditingController(text: user?.name);
     final phoneController = TextEditingController(text: user?.phone);
+    final wardController = TextEditingController(text: user?.ward);
     final addressController = TextEditingController(text: user?.address);
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(36))),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 32, right: 32, top: 20),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (modalContext) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(modalContext).viewInsets.bottom, left: 32, right: 32, top: 20),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -253,6 +369,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
               _buildDialogField('PHONE NUMBER', phoneController, Icons.phone_rounded),
               const SizedBox(height: 20),
+              _buildDialogField('WARD NUMBER', wardController, Icons.map_outlined),
+              const SizedBox(height: 20),
               _buildDialogField('ADDRESS', addressController, Icons.location_on_rounded),
               const SizedBox(height: 40),
               SizedBox(
@@ -261,10 +379,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     setState(() => _isLoading = true);
-                    Navigator.pop(context);
+                    Navigator.pop(modalContext);
                     final success = await authService.updateProfile(
                       name: nameController.text,
                       phone: phoneController.text,
+                      ward: wardController.text,
                       address: addressController.text,
                     );
                     setState(() => _isLoading = false);
@@ -309,5 +428,6 @@ class _SettingItem {
   final String title;
   final IconData activeIcon;
   final VoidCallback onTap;
-  _SettingItem(this.icon, this.title, this.activeIcon, this.onTap);
+  final Widget? trailing;
+  _SettingItem(this.icon, this.title, this.activeIcon, this.onTap, {this.trailing});
 }

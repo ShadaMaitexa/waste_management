@@ -226,10 +226,49 @@ class AppTheme {
     );
   }
 
-  static ThemeData get darkTheme => lightTheme.copyWith(
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: bgDark,
-  );
+  static ThemeData get darkTheme {
+    return lightTheme.copyWith(
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: bgDark,
+      cardTheme: CardThemeData(
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+          side: BorderSide(color: Colors.white.withOpacity(0.05), width: 1.5),
+        ),
+        color: const Color(0xFF212F3C), // Slightly lighter than bgDark
+      ),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primaryEmerald,
+        brightness: Brightness.dark,
+        primary: primaryEmerald,
+        secondary: grey300,
+        surface: const Color(0xFF2C3E50),
+        onSurface: Colors.white,
+      ),
+      appBarTheme: lightTheme.appBarTheme.copyWith(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        titleTextStyle: GoogleFonts.plusJakartaSans(
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+          color: Colors.white,
+        ),
+      ),
+      inputDecorationTheme: lightTheme.inputDecorationTheme.copyWith(
+        fillColor: const Color(0xFF212F3C),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.1), width: 1.5),
+        ),
+      ),
+      navigationBarTheme: lightTheme.navigationBarTheme.copyWith(
+        backgroundColor: bgDark,
+        indicatorColor: primaryEmerald.withOpacity(0.2),
+      ),
+    );
+  }
 
   // Reusable Component Helpers
   static Widget statusTag(String label, Color color) {

@@ -36,6 +36,8 @@ import 'services/complaint_service.dart';
 import 'services/worker_service.dart'; // Added WorkerService
 import 'services/notification_service.dart';
 
+import 'services/theme_service.dart';
+
 void main() {
   runApp(const GreenLoopApp());
 }
@@ -47,6 +49,7 @@ class GreenLoopApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeService()),
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProxyProvider<AuthService, PickupService>(
           create: (context) => PickupService(context.read<AuthService>()),
@@ -77,12 +80,15 @@ class GreenLoopApp extends StatelessWidget {
           update: (_, auth, notification) => NotificationService(auth),
         ),
       ],
-      child: MaterialApp(
-        title: 'GreenLoop - Smart Waste Management',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        initialRoute: '/splash',
+      child: Consumer<ThemeService>(
+        builder: (context, themeService, _) {
+          return MaterialApp(
+            title: 'GreenLoop - Smart Waste Management',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeService.themeMode,
+            initialRoute: '/splash',
         onGenerateRoute: (settings) {
           final uri = Uri.parse(settings.name ?? '/');
           
@@ -163,7 +169,9 @@ class GreenLoopApp extends StatelessWidget {
               return MaterialPageRoute(builder: (_) => const SplashScreen(), settings: settings);
           }
         },
-      ),
-    );
+            );
+          },
+        ),
+      );
   }
 }

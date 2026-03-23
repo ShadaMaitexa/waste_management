@@ -40,43 +40,36 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bgSurface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
-          setState(() => _selectedIndex = index);
+          if (mounted) setState(() => _selectedIndex = index);
         },
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          _DashboardTab(onNavigate: _onItemTapped),
-          const BookPickupScreen(),
-          const ReferralScreen(),
-          const ProfileScreen(),
+          _DashboardTab(onNavigate: _onItemTapped, key: const ValueKey('dash_tab')),
+          const BookPickupScreen(key: ValueKey('book_tab')),
+          const ReferralScreen(key: ValueKey('earn_tab')),
+          const ProfileScreen(key: ValueKey('self_tab')),
         ],
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20), // Reduced
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
         decoration: BoxDecoration(
           color: Colors.transparent,
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.bgDark.withValues(alpha: 0.08),
-              blurRadius: 30,
-              offset: const Offset(0, 8),
-            ),
-          ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20), // Reduced from 24
+          borderRadius: BorderRadius.circular(20),
           child: Container(
-            height: 60, // Reduced from 68
+            height: 60,
             decoration: BoxDecoration(
               color: AppTheme.bgDark.withValues(alpha: 0.98),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12), // Reduced from 16
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -100,31 +93,39 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), // Reduced from 18, 10
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
-          borderRadius: BorderRadius.circular(16), // Reduced from 20
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
+              key: ValueKey('icon_$index'),
               color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.3),
-              size: 18, // Reduced from 20
+              size: 18,
             ),
-            if (isSelected) ...[
-              const SizedBox(width: 8), // Reduced from 10
-              Text(
-                label,
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppTheme.primaryEmerald,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 9, // Reduced from 10
-                  letterSpacing: 1.5, // Reduced from 2
+            if (isSelected) 
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 8),
+                    Text(
+                      label,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppTheme.primaryEmerald,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 9,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
           ],
         ),
       ),
@@ -135,7 +136,7 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
 class _DashboardTab extends StatelessWidget {
   final Function(int) onNavigate;
 
-  const _DashboardTab({required this.onNavigate});
+  const _DashboardTab({super.key, required this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +156,7 @@ class _DashboardTab extends StatelessWidget {
         };
 
         return Scaffold(
-          backgroundColor: AppTheme.bgSurface,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: RefreshIndicator(
             color: AppTheme.primaryEmerald,
             onRefresh: () async {
@@ -287,7 +288,7 @@ class _DashboardTab extends StatelessWidget {
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(24), // Reduced
           boxShadow: AppTheme.cardShadow,
           border: Border.all(color: AppTheme.grey100, width: 1.2),
@@ -327,7 +328,7 @@ class _DashboardTab extends StatelessWidget {
                             style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.w900,
                               fontSize: 16, // Reduced from 18
-                              color: AppTheme.grey900,
+                              color: Theme.of(context).textTheme.headlineLarge?.color ?? AppTheme.grey900,
                               letterSpacing: -0.4,
                             ),
                           ),
@@ -502,7 +503,7 @@ class _DashboardTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18), // Reduced from 24
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24), // Reduced from 28
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100, width: 1),
@@ -581,7 +582,7 @@ class _DashboardTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18), // Reduced from 24
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24), // Reduced from 28
         boxShadow: AppTheme.cardShadow,
         border: Border.all(color: AppTheme.grey100, width: 1),
@@ -656,7 +657,7 @@ class _DashboardTab extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 4), // Reduced from 6
                   padding: const EdgeInsets.symmetric(vertical: 16), // Reduced from 20
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(20), // Reduced from 24
                     boxShadow: AppTheme.cardShadow,
                     border: Border.all(color: AppTheme.grey100, width: 1),
@@ -727,7 +728,7 @@ class _DashboardTab extends StatelessWidget {
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(32),
             boxShadow: AppTheme.smoothShadow,
             border: Border.all(color: AppTheme.grey200.withValues(alpha: 0.5)),
