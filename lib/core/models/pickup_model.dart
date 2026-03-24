@@ -5,7 +5,7 @@ part 'pickup_model.freezed.dart';
 part 'pickup_model.g.dart';
 
 @freezed
-class PickupModel with _$PickupModel {
+abstract class PickupModel with _$PickupModel {
   const factory PickupModel({
     required String id,
     @JsonKey(name: 'resident') required AppUser resident,

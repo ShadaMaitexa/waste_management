@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:waste_management/l10n/app_localizations.dart';
 import '../../services/auth_service.dart';
+import '../../services/locale_provider.dart';
+import '../../services/theme_service.dart';
 import '../../theme/app_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -14,16 +17,21 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _locationEnabled = true;
-  String _selectedLanguage = 'English';
-  String _selectedTheme = 'Light';
 
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
+    final themeProvider = Provider.of<ThemeService>(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    String currentLangName = localeProvider.locale.languageCode == 'ml' ? l10n.malayalam : l10n.english;
+    String currentThemeName = themeProvider.themeMode == ThemeMode.light ? l10n.light : (themeProvider.themeMode == ThemeMode.dark ? l10n.dark : l10n.system);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(l10n.settings),
         elevation: 0,
-        backgroundColor: AppTheme.primaryGreen,
+        backgroundColor: AppTheme.primaryEmerald,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -38,12 +46,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Profile Section
-            _buildSectionHeader('Profile'),
+            _buildSectionHeader(l10n.profile),
             _buildProfileCard(),
             const SizedBox(height: AppTheme.spacingL),
 
             // Preferences Section
-            _buildSectionHeader('Preferences'),
+            _buildSectionHeader(l10n.preferences),
             _buildSettingTile(
               'Notifications',
               'Receive updates about pickups and rewards',
@@ -77,33 +85,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             _buildDropdownTile(
-              'Language',
-              'Select app language',
+              l10n.language,
+              l10n.selectLanguage,
               Icons.language,
-              _selectedLanguage,
-              ['English', 'Malayalam', 'Tamil'],
+              currentLangName,
+              [l10n.english, l10n.malayalam],
               (value) {
-                setState(() {
-                  _selectedLanguage = value!;
-                });
+                if (value == l10n.english) {
+                  localeProvider.setLocale(const Locale('en'));
+                } else {
+                  localeProvider.setLocale(const Locale('ml'));
+                }
               },
             ),
             _buildDropdownTile(
-              'Theme',
-              'Choose app theme',
+              l10n.theme,
+              'Choose app theme', // Add to l10n if needed
               Icons.palette_outlined,
-              _selectedTheme,
-              ['Light', 'Dark', 'System'],
+              currentThemeName,
+              [l10n.light, l10n.dark, l10n.system],
               (value) {
-                setState(() {
-                  _selectedTheme = value!;
-                });
+                if (value == l10n.light) themeProvider.setThemeMode(ThemeMode.light);
+                else if (value == l10n.dark) themeProvider.setThemeMode(ThemeMode.dark);
+                else themeProvider.setThemeMode(ThemeMode.system);
               },
             ),
             const SizedBox(height: AppTheme.spacingL),
 
             // Account Section
-            _buildSectionHeader('Account'),
+            _buildSectionHeader(l10n.account),
             _buildActionTile(
               'Change Password',
               'Update your account password',
@@ -125,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: AppTheme.spacingL),
 
             // Support Section
-            _buildSectionHeader('Support'),
+            _buildSectionHeader(l10n.support),
             _buildActionTile(
               'Help & FAQ',
               'Get help and find answers',
@@ -151,7 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: ElevatedButton.icon(
                 onPressed: _logout,
                 icon: const Icon(Icons.logout),
-                label: const Text('Sign Out'),
+                label: Text(l10n.signOut),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.error,
                   foregroundColor: Colors.white,

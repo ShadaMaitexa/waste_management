@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:waste_management/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
 import 'screens/splash_screen.dart';
@@ -39,6 +41,7 @@ import 'services/notification_service.dart';
 
 import 'services/theme_service.dart';
 import 'services/location_service.dart';
+import 'services/locale_provider.dart';
 
 void main() {
   runApp(const GreenLoopApp());
@@ -52,6 +55,7 @@ class GreenLoopApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeService()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProxyProvider<AuthService, PickupService>(
           create: (context) => PickupService(context.read<AuthService>()),
@@ -86,14 +90,25 @@ class GreenLoopApp extends StatelessWidget {
           update: (_, auth, location) => LocationService(auth),
         ),
       ],
-      child: Consumer<ThemeService>(
-        builder: (context, themeService, _) {
+      child: Consumer2<ThemeService, LocaleProvider>(
+        builder: (context, themeService, localeProvider, _) {
           return MaterialApp(
             title: 'GreenLoop - Smart Waste Management',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeService.themeMode,
+            locale: localeProvider.locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('ml'),
+            ],
             initialRoute: '/splash',
         onGenerateRoute: (settings) {
           final uri = Uri.parse(settings.name ?? '/');

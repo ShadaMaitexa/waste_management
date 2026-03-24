@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:waste_management/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
@@ -58,8 +59,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (success && mounted) {
         // Success notification
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Registration successful!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.regSuccess),
             backgroundColor: AppTheme.success,
           ),
         );
@@ -86,10 +87,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         
         Navigator.pushReplacementNamed(context, route);
       } else {
-        _showErrorSnackBar('Registration failed. Please try again.');
+        _showErrorSnackBar(AppLocalizations.of(context)!.regFailed);
       }
     } catch (e) {
-      _showErrorSnackBar('An error occurred: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.errorOccurred} $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -225,7 +226,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         const SizedBox(height: 24), // Reduced from 32
         Text(
-          'Join the Movement',
+          AppLocalizations.of(context)!.onboard4Title, // Join the Movement
           style: GoogleFonts.plusJakartaSans(
             fontSize: 28, // Reduced from 36
             fontWeight: FontWeight.w900,
@@ -236,7 +237,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         const SizedBox(height: 12),
         Text(
-          'Fill in your details',
+          AppLocalizations.of(context)!.fillDetails,
           style: GoogleFonts.plusJakartaSans(
             color: AppTheme.primaryEmerald,
             fontSize: 10,
@@ -251,15 +252,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String _getUserTypeTitle(UserType type) {
     switch (type) {
       case UserType.resident:
-        return 'Resident';
+        return AppLocalizations.of(context)!.roleResident;
       case UserType.worker:
-        return 'Worker';
+        return AppLocalizations.of(context)!.roleWorker;
       case UserType.admin:
-        return 'Admin';
+        return AppLocalizations.of(context)!.roleAdmin;
       case UserType.recycler:
-        return 'Recycler';
+        return AppLocalizations.of(context)!.roleRecycler;
       case UserType.driver:
-        return 'Driver';
+        return AppLocalizations.of(context)!.roleDriver;
     }
   }
 
@@ -270,18 +271,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         const SizedBox(height: 20),
         _buildTextField(
           controller: _nameController,
-          label: 'Full Name',
+          label: AppLocalizations.of(context)!.fullName,
           icon: Icons.person_outline_rounded,
           validator: (value) => value == null || value.isEmpty ? 'Please enter your name' : null,
         ),
         const SizedBox(height: 20),
         _buildTextField(
           controller: _emailController,
-          label: 'Email',
+          label: AppLocalizations.of(context)!.emailHint,
           icon: Icons.alternate_email_rounded,
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Please enter your email';
+            if (value == null || value.isEmpty) return AppLocalizations.of(context)!.emailRequired;
             if (!value.contains('@')) return 'Please enter a valid email';
             return null;
           },
@@ -289,7 +290,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         const SizedBox(height: 20),
         _buildTextField(
           controller: _phoneController,
-          label: 'Phone Number',
+          label: AppLocalizations.of(context)!.phoneNumber,
           icon: Icons.phone_android_rounded,
           keyboardType: TextInputType.phone,
           validator: (value) => value == null || value.isEmpty ? 'Please enter your phone number' : null,
@@ -313,7 +314,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         const SizedBox(height: 20),
         _buildTextField(
           controller: _addressController,
-          label: 'Address',
+          label: AppLocalizations.of(context)!.address,
           icon: Icons.location_on_outlined,
           maxLines: 2,
           validator: (value) => value == null || value.isEmpty ? 'Please enter your address' : null,
@@ -322,7 +323,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           const SizedBox(height: 20),
           _buildTextField(
             controller: _wardController,
-            label: 'Ward Number',
+            label: AppLocalizations.of(context)!.wardNumber,
             icon: Icons.map_outlined,
             keyboardType: TextInputType.number,
             validator: (value) => value == null || value.isEmpty ? 'Please enter your ward number' : null,
@@ -339,9 +340,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       borderRadius: BorderRadius.circular(20),
       style: GoogleFonts.plusJakartaSans(color: AppTheme.grey900, fontSize: 15, fontWeight: FontWeight.w700),
       iconEnabledColor: AppTheme.grey400,
-      decoration: const InputDecoration(
-        hintText: 'Select Role',
-        prefixIcon: Icon(Icons.badge_outlined, size: 20, color: AppTheme.primaryEmerald),
+      decoration: InputDecoration(
+        hintText: AppLocalizations.of(context)!.selectRole,
+        prefixIcon: const Icon(Icons.badge_outlined, size: 20, color: AppTheme.primaryEmerald),
       ),
       items: UserType.values.map<DropdownMenuItem<UserType>>((UserType type) {
         return DropdownMenuItem<UserType>(
@@ -428,7 +429,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'SIGN UP',
+                        AppLocalizations.of(context)!.signUpButton,
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,
@@ -450,7 +451,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Already have an account?',
+          AppLocalizations.of(context)!.alreadyHaveAccount,
           style: GoogleFonts.inter(color: AppTheme.grey400, fontWeight: FontWeight.w600, fontSize: 13),
         ),
         TextButton(
@@ -460,7 +461,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             foregroundColor: AppTheme.primaryEmerald,
           ),
           child: Text(
-            'Login',
+            AppLocalizations.of(context)!.loginLink,
             style: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w900,
               fontSize: 13,

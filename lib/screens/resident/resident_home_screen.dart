@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:waste_management/l10n/app_localizations.dart';
 
 import '../../services/auth_service.dart';
 import '../../services/pickup_service.dart';
@@ -74,10 +75,10 @@ class _ResidentHomeScreenState extends State<ResidentHomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildNavItem(0, Icons.grid_view_rounded, 'DASH'),
-                  _buildNavItem(1, Icons.add_circle_outline_rounded, 'BOOK'),
-                  _buildNavItem(2, Icons.auto_awesome_rounded, 'EARN'),
-                  _buildNavItem(3, Icons.account_circle_rounded, 'SELF'),
+                  _buildNavItem(0, Icons.grid_view_rounded, AppLocalizations.of(context)!.navDash),
+                  _buildNavItem(1, Icons.add_circle_outline_rounded, AppLocalizations.of(context)!.navBook),
+                  _buildNavItem(2, Icons.auto_awesome_rounded, AppLocalizations.of(context)!.navEarn),
+                  _buildNavItem(3, Icons.account_circle_rounded, AppLocalizations.of(context)!.navSelf),
                 ],
               ),
             ),
@@ -225,7 +226,7 @@ class _DashboardTab extends StatelessWidget {
                   children: [
                     const SizedBox(height: 16),
                     Text(
-                      'Welcome back,',
+                      AppLocalizations.of(context)!.welcomeBack,
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white.withValues(alpha: 0.4),
                         fontSize: 13, // Reduced from 14
@@ -249,7 +250,7 @@ class _DashboardTab extends StatelessWidget {
                         const Icon(Icons.location_on_rounded, color: AppTheme.primaryEmerald, size: 14),
                         const SizedBox(width: 6),
                         Text(
-                          'Ward ${wardNumber ?? "15"} • Smart City District',
+                          '${AppLocalizations.of(context)!.ward} ${wardNumber ?? "15"} • ${AppLocalizations.of(context)!.smartCityDistrict}',
                           style: GoogleFonts.plusJakartaSans(
                             color: Colors.white.withValues(alpha: 0.6),
                             fontSize: 13,
@@ -323,7 +324,7 @@ class _DashboardTab extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Plan Next Collection',
+                            AppLocalizations.of(context)!.planNextCollection,
                             style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.w900,
                               fontSize: 16, // Reduced from 18
@@ -333,7 +334,7 @@ class _DashboardTab extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Ready to recycle? Schedule now.',
+                            AppLocalizations.of(context)!.readyToRecycle,
                             style: GoogleFonts.plusJakartaSans(
                               color: AppTheme.grey500, 
                               fontSize: 12, // Reduced from 13
@@ -400,7 +401,7 @@ class _DashboardTab extends StatelessWidget {
                             const Icon(Icons.access_time_filled_rounded, color: Colors.white, size: 11),
                             const SizedBox(width: 6),
                             Text(
-                              'NEXT COLLECTION',
+                              AppLocalizations.of(context)!.nextCollection,
                               style: GoogleFonts.plusJakartaSans(
                                   color: Colors.white, 
                                   fontWeight: FontWeight.w900, 
@@ -631,7 +632,7 @@ class _DashboardTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'RECENT ACTIVITY',
+              AppLocalizations.of(context)!.recentActivity,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
@@ -642,7 +643,7 @@ class _DashboardTab extends StatelessWidget {
             GestureDetector(
               onTap: () => Navigator.pushNamed(context, '/resident/my-pickups'),
               child: Text(
-                'VIEW ALL',
+                AppLocalizations.of(context)!.viewAll,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
@@ -669,7 +670,7 @@ class _DashboardTab extends StatelessWidget {
                       children: [
                         Icon(Icons.hub_rounded, size: 40, color: AppTheme.grey200),
                         const SizedBox(height: 12),
-                        Text('No activity detected', style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w600, fontSize: 13)),
+                        Text(AppLocalizations.of(context)!.noActivity, style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w600, fontSize: 13)),
                       ],
                     ),
                   ),

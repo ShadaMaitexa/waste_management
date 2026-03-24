@@ -4,8 +4,10 @@ import 'user_role.dart';
 part 'app_user.freezed.dart';
 part 'app_user.g.dart';
 
+/// AppUser — matches Django's CustomUser model (18 Django models requirement).
+/// UserRole values match Django TextChoices exactly (e.g. 'hks_worker').
 @freezed
-class AppUser with _$AppUser {
+abstract class AppUser with _$AppUser {
   const factory AppUser({
     required String id,
     required String email,

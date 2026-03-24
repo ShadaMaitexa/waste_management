@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:waste_management/l10n/app_localizations.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -67,10 +68,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.pushReplacementNamed(context, route);
       } else if (mounted) {
-        _showErrorSnackBar('Check your email and password');
+        _showErrorSnackBar(AppLocalizations.of(context)!.emailRequired); // Or a specific hint
       }
     } catch (e) {
-      _showErrorSnackBar('Error: $e');
+      _showErrorSnackBar(e.toString());
     } finally {
       if (mounted) {
         setState(() {
@@ -230,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 24),
         Text(
-          'Login to your account',
+          AppLocalizations.of(context)!.loginToAccount,
           style: GoogleFonts.inter(
             color: AppTheme.grey400,
             fontSize: 14,
@@ -249,12 +250,12 @@ class _LoginScreenState extends State<LoginScreen> {
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900),
-          decoration: const InputDecoration(
-            hintText: 'Email address',
-            prefixIcon: Icon(Icons.alternate_email_rounded, size: 20, color: AppTheme.primaryEmerald),
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.emailHint,
+            prefixIcon: const Icon(Icons.alternate_email_rounded, size: 20, color: AppTheme.primaryEmerald),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Email is required';
+            if (value == null || value.isEmpty) return AppLocalizations.of(context)!.emailRequired;
             return null;
           },
         ),
@@ -264,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
           obscureText: _obscurePassword,
           style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppTheme.grey900),
           decoration: InputDecoration(
-            hintText: 'Password',
+            hintText: AppLocalizations.of(context)!.passwordHint,
             prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20, color: AppTheme.primaryEmerald),
             suffixIcon: IconButton(
               icon: Icon(
@@ -276,8 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Password is required';
-            if (value.length < 6) return 'At least 6 characters';
+            if (value == null || value.isEmpty) return AppLocalizations.of(context)!.passwordRequired;
             return null;
           },
         ),
@@ -325,7 +325,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'LOG IN',
+                        AppLocalizations.of(context)!.loginButton,
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,
@@ -346,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextButton(
       onPressed: _navigateToForgotPassword,
       child: Text(
-        'Forgot Password?',
+        AppLocalizations.of(context)!.forgotPassword,
         style: GoogleFonts.plusJakartaSans(
           color: AppTheme.grey400, 
           fontWeight: FontWeight.w800,
@@ -362,7 +362,7 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Don\'t have an account?',
+          AppLocalizations.of(context)!.dontHaveAccount,
           style: GoogleFonts.inter(color: AppTheme.grey400, fontWeight: FontWeight.w600, fontSize: 13),
         ),
         TextButton(
@@ -372,7 +372,7 @@ class _LoginScreenState extends State<LoginScreen> {
             foregroundColor: AppTheme.primaryEmerald,
           ),
           child: Text(
-            'Sign Up',
+            AppLocalizations.of(context)!.signUp,
             style: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w900,
               fontSize: 13,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:waste_management/l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -56,10 +57,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextButton(
+                     TextButton(
                       onPressed: _skipOnboarding,
                       child: Text(
-                        'SKIP',
+                        AppLocalizations.of(context)!.skip,
                         style: GoogleFonts.plusJakartaSans(
                           color: Colors.white.withValues(alpha: 0.5),
                           fontSize: 11,
@@ -76,7 +77,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                       ),
                       child: Text(
-                        'STEP ${_currentPage + 1} / $_totalPages',
+                        '${AppLocalizations.of(context)!.step} ${_currentPage + 1} / $_totalPages',
                         style: GoogleFonts.plusJakartaSans(
                           color: Colors.white.withValues(alpha: 0.7),
                           fontSize: 10,
@@ -99,27 +100,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   },
                   children: [
                     _buildPage(
-                      'Welcome to GreenLoop',
-                      'Your smart waste management solution for Kozhikode',
-                      'Together, let\'s build a cleaner, greener city',
+                      AppLocalizations.of(context)!.onboard1Title,
+                      AppLocalizations.of(context)!.onboard1Sub,
+                      AppLocalizations.of(context)!.onboard1Desc,
                       Icons.recycling_rounded,
                     ),
                     _buildPage(
-                      'Easy Pickup Booking',
-                      'Schedule waste collection at your convenience',
-                      'Regular, bulk, and emergency pickups available',
+                      AppLocalizations.of(context)!.onboard2Title,
+                      AppLocalizations.of(context)!.onboard2Sub,
+                      AppLocalizations.of(context)!.onboard2Desc,
                       Icons.schedule_rounded,
                     ),
                     _buildPage(
-                      'Earn Rewards',
-                      'Get points for proper waste segregation',
-                      'Redeem points for eco-friendly products',
+                      AppLocalizations.of(context)!.onboard3Title,
+                      AppLocalizations.of(context)!.onboard3Sub,
+                      AppLocalizations.of(context)!.onboard3Desc,
                       Icons.stars_rounded,
                     ),
                     _buildPage(
-                      'Join the Movement',
-                      'Be part of Kozhikode\'s sustainability journey',
-                      'Small actions, big impact for our planet',
+                      AppLocalizations.of(context)!.onboard4Title,
+                      AppLocalizations.of(context)!.onboard4Sub,
+                      AppLocalizations.of(context)!.onboard4Desc,
                       Icons.eco_rounded,
                     ),
                   ],
@@ -168,7 +169,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: Row(
                             children: [
                               Text(
-                                _currentPage == _totalPages - 1 ? 'GET STARTED' : 'CONTINUE',
+                                _currentPage == _totalPages - 1 ? AppLocalizations.of(context)!.getStarted : AppLocalizations.of(context)!.continueText,
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w900,
