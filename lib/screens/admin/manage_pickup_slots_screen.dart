@@ -140,16 +140,30 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    final normalizedDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
                     final newSlot = PickupSlot(
-                      id: 'slot_${DateTime.now().millisecondsSinceEpoch}',
-                      date: _selectedDate,
+                      id: '0', // Temporary ID, backend should assign
+                      date: normalizedDate,
                       startTime: startTime,
                       endTime: endTime,
                       capacity: capacity,
                     );
-                    Provider.of<PickupService>(context, listen: false).createPickupSlot(newSlot);
-                    Navigator.pop(context);
+                    
+                    final success = await Provider.of<PickupService>(context, listen: false).createPickupSlot(newSlot);
+                    
+                    if (context.mounted) {
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Pickup slot created successfully'), backgroundColor: AppTheme.success),
+                        );
+                        Navigator.pop(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Failed to create slot. Please check backend compatibility.'), backgroundColor: AppTheme.error),
+                        );
+                      }
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryEmerald,
@@ -322,7 +336,8 @@ class _ManagePickupSlotsScreenState extends State<ManagePickupSlotsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         itemCount: 14,
         itemBuilder: (context, index) {
-          final date = DateTime.now().add(Duration(days: index));
+          final now = DateTime.now();
+          final date = DateTime(now.year, now.month, now.day).add(Duration(days: index));
           final isSelected = DateUtils.isSameDay(date, _selectedDate);
           final isToday = DateUtils.isSameDay(date, DateTime.now());
           

@@ -6,6 +6,7 @@ import '../../services/pickup_service.dart';
 import '../../services/auth_service.dart';
 import '../../models/pickup.dart';
 import '../../theme/app_theme.dart';
+import 'pickup_qr_screen.dart';
 
 class MyPickupsScreen extends StatefulWidget {
   const MyPickupsScreen({super.key});
@@ -340,14 +341,19 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
                   child: SizedBox(
                     height: 56,
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => PickupQRScreen(pickup: pickup)),
+                        );
+                      },
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        side: BorderSide(color: AppTheme.grey200.withValues(alpha: 0.5), width: 1.5),
-                        foregroundColor: AppTheme.grey700,
+                        side: BorderSide(color: AppTheme.primaryEmerald.withOpacity(0.5), width: 1.5),
+                        foregroundColor: AppTheme.primaryEmerald,
                       ),
                       child: Text(
-                        'CONFIGURE',
+                        'SHOW QR',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w900, 
                           fontSize: 12, 

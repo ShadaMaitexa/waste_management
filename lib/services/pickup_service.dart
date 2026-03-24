@@ -230,7 +230,16 @@ class PickupService extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        _availableSlots = data.map((json) => PickupSlot.fromJson(json)).toList();
+        _availableSlots = data.map((json) {
+           try {
+             return PickupSlot.fromJson(json);
+           } catch (e) {
+             debugPrint('Error parsing individual slot: $e \n JSON: $json');
+             return null;
+           }
+        }).whereType<PickupSlot>().toList();
+      } else {
+        debugPrint('Failed to fetch slots: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       debugPrint('Error fetching slots: $e');
@@ -242,20 +251,27 @@ class PickupService extends ChangeNotifier {
 
   Future<bool> createPickupSlot(PickupSlot slot) async {
     try {
+      final payload = slot.toJson();
+      // Remove local temp ID if it's '0' to let backend decide
+      if (payload['id'] == '0') payload.remove('id');
+
       final response = await http.post(
         Uri.parse(ApiConstants.pickupSlots),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${_authService.token}',
         },
-        body: jsonEncode(slot.toJson()),
+        body: jsonEncode(payload),
       );
-      if (response.statusCode == 201) {
+      
+      if (response.statusCode == 201 || response.statusCode == 200) {
         await fetchAvailableSlots();
         return true;
       }
+      debugPrint('Create slot failed: ${response.statusCode} - ${response.body}');
       return false;
     } catch (e) {
+      debugPrint('Create slot exception: $e');
       return false;
     }
   }

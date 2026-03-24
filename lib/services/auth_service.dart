@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user.dart';
 import '../utils/api_constants.dart';
 export '../models/user.dart';
@@ -9,7 +9,9 @@ export '../models/user.dart';
 class AuthService extends ChangeNotifier {
   User? _currentUser;
   String? _token;
+  String? _refreshToken;
   bool _isLoading = false;
+  final _storage = const FlutterSecureStorage();
 
   User? get currentUser => _currentUser;
   UserType? get currentUserType => _currentUser?.userType;
@@ -18,32 +20,36 @@ class AuthService extends ChangeNotifier {
   bool get isAuthenticated => _token != null;
   bool get isLoading => _isLoading;
   String? get token => _token;
+  String? get refreshToken => _refreshToken;
 
   AuthService() {
     _loadToken();
   }
 
   Future<void> _loadToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('auth_token');
+    _token = await _storage.read(key: 'access_token');
+    _refreshToken = await _storage.read(key: 'refresh_token');
     if (_token != null) {
       await getProfile();
     }
     notifyListeners();
   }
 
-  Future<void> _saveToken(String token) async {
-    _token = token;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('auth_token', token);
+  Future<void> _saveToken(String access, String? refresh) async {
+    _token = access;
+    await _storage.write(key: 'access_token', value: access);
+    if (refresh != null) {
+      _refreshToken = refresh;
+      await _storage.write(key: 'refresh_token', value: refresh);
+    }
     notifyListeners();
   }
 
   Future<void> _clearToken() async {
     _token = null;
+    _refreshToken = null;
     _currentUser = null;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
+    await _storage.deleteAll();
     notifyListeners();
   }
 
@@ -74,15 +80,15 @@ class AuthService extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
 
-        // Extract token — backend returns tokens.access
         final String? token = data['tokens']?['access'] ?? data['access'];
+        final String? refresh = data['tokens']?['refresh'] ?? data['refresh'];
         if (token == null) {
           debugPrint('[AuthService] No token in response');
           notifyListeners();
           return false;
         }
 
-        await _saveToken(token);
+        await _saveToken(token, refresh);
 
         // Build user from login response: {username, email, role}
         // Note: login response has username/email/role but not phone/ward
@@ -162,8 +168,9 @@ class AuthService extends ChangeNotifier {
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
         final String? token = data['tokens']?['access'] ?? data['access'];
+        final String? refresh = data['tokens']?['refresh'] ?? data['refresh'];
         if (token != null) {
-          await _saveToken(token);
+          await _saveToken(token, refresh);
           _currentUser = User.fromJson(data);
           notifyListeners();
           await getProfile();

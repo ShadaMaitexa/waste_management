@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../services/complaint_service.dart';
 import '../../services/auth_service.dart';
 import '../../models/complaint.dart';
@@ -34,6 +36,34 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
     super.dispose();
   }
 
+  bool _isLocating = false;
+  String? _locationString;
+  String? _photoPath;
+
+  Future<void> _attachPhoto() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
+    if (image != null) {
+      setState(() => _photoPath = image.path);
+    }
+  }
+
+  Future<void> _captureLocation() async {
+    setState(() => _isLocating = true);
+    try {
+      final locPrefs = await Geolocator.checkPermission();
+      if (locPrefs == LocationPermission.denied) {
+        await Geolocator.requestPermission();
+      }
+      final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
+      setState(() => _locationString = '${pos.latitude}, ${pos.longitude}');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to get location: $e'), backgroundColor: AppTheme.error));
+    } finally {
+      setState(() => _isLocating = false);
+    }
+  }
+
   Future<void> _submitComplaint() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -42,7 +72,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
       residentName: context.read<AuthService>().currentUserName ?? 'Resident',
       assignedWorkerName: '',
       title: _titleController.text,
-      description: _descriptionController.text,
+      description: _descriptionController.text + (_locationString != null ? '\n[Location: $_locationString]' : '') + (_photoPath != null ? '\n[Photo Attached]' : ''),
       status: ComplaintStatus.pending,
       createdAt: DateTime.now(),
       wardNumber: context.read<AuthService>().currentUser?.wardNumber,
@@ -53,6 +83,10 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
     if (success && mounted) {
       _titleController.clear();
       _descriptionController.clear();
+      setState(() {
+        _photoPath = null;
+        _locationString = null;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Complaint submitted successfully')),
       );
@@ -65,64 +99,108 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'File a Complaint',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
-                  color: Theme.of(context).textTheme.headlineLarge?.color ?? AppTheme.grey900,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Our team will review your report within 24 hours.',
-                style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 32),
-              _buildFieldLabel('TITLE'),
-              TextFormField(
-                controller: _titleController,
-                decoration: _buildInputDecoration('Subject of issue...'),
-                validator: (v) => v!.isEmpty ? 'Please enter a title' : null,
-              ),
-              const SizedBox(height: 20),
-              _buildFieldLabel('DESCRIPTION'),
-              TextFormField(
-                controller: _descriptionController,
-                maxLines: 4,
-                decoration: _buildInputDecoration('Detailed description...'),
-                validator: (v) => v!.isEmpty ? 'Please describe the issue' : null,
-              ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _submitComplaint,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryEmerald,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'TRANSMIT REPORT',
-                    style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13, color: Colors.white, letterSpacing: 1),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateModal) => Container(
+          padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'File a Complaint',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: Theme.of(context).textTheme.headlineLarge?.color ?? AppTheme.grey900,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 8),
+                Text(
+                  'Our team will review your report within 24 hours.',
+                  style: GoogleFonts.plusJakartaSans(color: AppTheme.grey500, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 32),
+                _buildFieldLabel('TITLE'),
+                TextFormField(
+                  controller: _titleController,
+                  decoration: _buildInputDecoration('Subject of issue...'),
+                  validator: (v) => v!.isEmpty ? 'Please enter a title' : null,
+                ),
+                const SizedBox(height: 20),
+                _buildFieldLabel('DESCRIPTION'),
+                TextFormField(
+                  controller: _descriptionController,
+                  maxLines: 4,
+                  decoration: _buildInputDecoration('Detailed description...'),
+                  validator: (v) => v!.isEmpty ? 'Please describe the issue' : null,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () async {
+                          await _attachPhoto();
+                          setStateModal(() {});
+                        },
+                        icon: Icon(_photoPath != null ? Icons.check_circle_rounded : Icons.camera_alt_rounded, size: 18),
+                        label: Text(_photoPath != null ? 'Photo Added' : 'Add Photo'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: _photoPath != null ? AppTheme.success : AppTheme.primaryEmerald,
+                          side: BorderSide(color: _photoPath != null ? AppTheme.success : AppTheme.primaryEmerald),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () async {
+                          if (_locationString == null) {
+                            await _captureLocation();
+                            setStateModal(() {});
+                          }
+                        },
+                        icon: _isLocating 
+                            ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                            : Icon(_locationString != null ? Icons.location_on_rounded : Icons.add_location_alt_rounded, size: 18),
+                        label: Text(_locationString != null ? 'Location Added' : 'Add Location'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: _locationString != null ? AppTheme.info : AppTheme.primaryEmerald,
+                          side: BorderSide(color: _locationString != null ? AppTheme.info : AppTheme.primaryEmerald),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _submitComplaint,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryEmerald,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'TRANSMIT REPORT',
+                      style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w900, fontSize: 13, color: Colors.white, letterSpacing: 1),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

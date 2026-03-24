@@ -1,0 +1,12 @@
+{
+  "@@locale": "en",
+  "appTitle": "GreenLoop Waste Management",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "loginTitle": "Login",
+  "loginSubtitle": "Welcome back",
+  "emailHint": "Email Address",
+  "passwordHint": "Password",
+  "dashboardTitle": "Dashboard"
+}

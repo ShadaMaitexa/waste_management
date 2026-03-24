@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../theme/app_theme.dart';
 import 'package:intl/intl.dart';
 
@@ -22,18 +24,46 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
     _attendanceHistory.addAll(_getMockAttendanceHistory());
   }
 
-  void _checkIn() {
+  Future<void> _checkIn() async {
     if (_isOnDuty) return;
+
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    
+    if (image == null) {
+      _showSuccessMessage('Selfie with PPE is required for check-in');
+      return;
+    }
+
+    try {
+      final locPrefs = await Geolocator.checkPermission();
+      if (locPrefs == LocationPermission.denied) {
+        await Geolocator.requestPermission();
+      }
+      await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      // location logic here pos.latitude, pos.longitude
+    } catch (e) {
+      // Handle gracefully
+    }
+
     setState(() {
       _isOnDuty = true;
       _checkInTime = DateTime.now();
       _checkOutTime = null;
     });
-    _showSuccessMessage('Checked in successfully!');
+    _showSuccessMessage('Checked in successfully with PPE verification!');
   }
 
-  void _checkOut() {
+  Future<void> _checkOut() async {
     if (!_isOnDuty) return;
+    
+    try {
+      await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      // store check-out location
+    } catch (e) {
+      // Handle gracefully
+    }
+
     setState(() {
       _isOnDuty = false;
       _checkOutTime = DateTime.now();

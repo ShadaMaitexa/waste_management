@@ -234,7 +234,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
             ),
             child: Row(
               children: [
-                _buildInfoBit(Icons.calendar_today_rounded, DateFormat('MMM d, h:mm a').format(pickup.scheduledDate)),
+                _buildInfoBit(Icons.calendar_today_rounded, '${DateFormat('MMM d').format(pickup.scheduledDate)} • ${pickup.slotDisplay}'),
                 const SizedBox(width: 28),
                 _buildInfoBit(Icons.location_on_rounded, 'Ward ${pickup.wardNumber}'),
               ],

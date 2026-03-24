@@ -3,12 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../services/pickup_service.dart';
-import '../../services/worker_service.dart';
 import '../../models/pickup.dart';
 import '../../theme/app_theme.dart';
 import 'worker_route_planner_screen.dart';
 import 'worker_attendance_screen.dart';
 import 'worker_profile_screen.dart';
+import 'worker_qr_scanner_screen.dart';
+import 'worker_fee_collection_screen.dart';
 
 import '../../services/location_service.dart';
 
@@ -492,16 +493,11 @@ class _DashboardTab extends StatelessWidget {
                 height: 52, // Reduced from 60
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () async {
-                    final workerService = Provider.of<WorkerService>(context, listen: false);
-                    final success = await workerService.updatePickupStatus(pickup.id, 'completed');
-                    if (success && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Pickup completed successfully!')),
-                      );
-                      // Refresh pickups
-                      await Provider.of<PickupService>(context, listen: false).fetchPickups();
-                    }
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const WorkerQRScannerScreen()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
@@ -584,24 +580,31 @@ class _DashboardTab extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         GridView.count(
-          crossAxisCount: 3,
+          crossAxisCount: 2,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          childAspectRatio: 0.85,
+          childAspectRatio: 1.2,
           children: [
-            _actionCard('Reporting', Icons.camera_alt_rounded, AppTheme.accentIndigo),
-            _actionCard('Manifest', Icons.history_edu_rounded, AppTheme.info),
-            _actionCard('Signal Command', Icons.headset_mic_rounded, const Color(0xFFF59E0B)),
+            _actionCard('QR Scanner', Icons.qr_code_scanner_rounded, AppTheme.primaryEmerald, () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkerQRScannerScreen()));
+            }),
+            _actionCard('Fee Collection', Icons.payments_rounded, AppTheme.accentIndigo, () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkerFeeCollectionScreen()));
+            }),
+            _actionCard('Reporting', Icons.camera_alt_rounded, AppTheme.info, () {}),
+            _actionCard('Manifest', Icons.history_edu_rounded, const Color(0xFFF59E0B), () {}),
           ],
         ),
       ],
     );
   }
 
-  Widget _actionCard(String label, IconData icon, Color color) {
-    return Container(
+  Widget _actionCard(String label, IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24), // Reduced from 28
@@ -631,6 +634,7 @@ class _DashboardTab extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
+
