@@ -1,5 +1,6 @@
 class ApiConstants {
   static const String baseUrl = 'https://waste-management-backend-1.onrender.com';
+  static const String wards = '$baseUrl/api/wards/';
   
   // Auth Endpoints
   static const String login = '$baseUrl/api/auth/login/';
@@ -20,6 +21,7 @@ class ApiConstants {
   
   // Complaints Endpoints
   static const String complaints = '$baseUrl/api/complaints/';
+  static const String complaintsPresignedUrl = '$baseUrl/api/complaints/presigned-url/';
   
   // Notifications Endpoints
   static const String notifications = '$baseUrl/api/notifications/';

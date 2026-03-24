@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/complaint.dart';
@@ -59,6 +60,49 @@ class ComplaintService extends ChangeNotifier {
       return false;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<String?> uploadImage(String filePath) async {
+    try {
+      // 1. Get pre-signed URL
+      final presignedResponse = await http.post(
+        Uri.parse(ApiConstants.complaintsPresignedUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authService.token}',
+        },
+        body: jsonEncode({
+          'file_name': filePath.split('/').last,
+          'content_type': 'image/jpeg',
+        }),
+      );
+
+      if (presignedResponse.statusCode != 200) return null;
+      
+      final Map<String, dynamic> data = jsonDecode(presignedResponse.body);
+      final String uploadUrl = data['url'];
+      final String finalImageUrl = data['image_url'] ?? uploadUrl.split('?').first;
+
+      // 2. Upload to S3
+      final file = File(filePath);
+      final bytes = await file.readAsBytes();
+      
+      final uploadResponse = await http.put(
+        Uri.parse(uploadUrl),
+        body: bytes,
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+      );
+
+      if (uploadResponse.statusCode == 200) {
+        return finalImageUrl;
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error uploading image: $e');
+      return null;
     }
   }
 

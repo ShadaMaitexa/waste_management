@@ -89,9 +89,9 @@ class _MyPickupsScreenState extends State<MyPickupsScreen> with SingleTickerProv
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,
               tabs: const [
-                Tab(text: 'ACTIVE'),
-                Tab(text: 'HISTORY'),
-                Tab(text: 'ABORTED'),
+                Tab(text: 'UPCOMING'),
+                Tab(text: 'COMPLETED'),
+                Tab(text: 'CANCELLED'),
               ],
             ),
           ),

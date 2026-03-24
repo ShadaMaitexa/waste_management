@@ -17,6 +17,8 @@ class Complaint {
   final String? imageUrl;
   final String? wardNumber;
   final String? response;
+  final String? latitude;
+  final String? longitude;
 
   Complaint({
     required this.id,
@@ -31,6 +33,8 @@ class Complaint {
     this.imageUrl,
     this.wardNumber,
     this.response,
+    this.latitude,
+    this.longitude,
   });
 
   factory Complaint.fromJson(Map<String, dynamic> json) {
@@ -67,6 +71,8 @@ class Complaint {
       imageUrl: json['imageUrl'] ?? json['image_url'] ?? json['image'],
       wardNumber: json['ward_number']?.toString() ?? json['ward']?.toString(),
       response: json['response_text'] ?? json['response'],
+      latitude: json['latitude']?.toString(),
+      longitude: json['longitude']?.toString(),
     );
   }
 
@@ -81,6 +87,8 @@ class Complaint {
       if (imageUrl != null) 'image_url': imageUrl,
       if (wardNumber != null) 'ward_number': wardNumber,
       if (response != null) 'response': response,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
     };
   }
 }

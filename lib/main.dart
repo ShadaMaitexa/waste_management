@@ -42,6 +42,9 @@ import 'services/notification_service.dart';
 import 'services/theme_service.dart';
 import 'services/location_service.dart';
 import 'services/locale_provider.dart';
+import 'services/ward_service.dart';
+import 'services/websocket_service.dart';
+import 'screens/resident/complete_profile_screen.dart';
 
 void main() {
   runApp(const GreenLoopApp());
@@ -88,6 +91,14 @@ class GreenLoopApp extends StatelessWidget {
         ChangeNotifierProxyProvider<AuthService, LocationService>(
           create: (context) => LocationService(context.read<AuthService>()),
           update: (_, auth, location) => LocationService(auth),
+        ),
+        ChangeNotifierProxyProvider<AuthService, WardService>(
+          create: (context) => WardService(context.read<AuthService>()),
+          update: (_, auth, ward) => WardService(auth),
+        ),
+        ChangeNotifierProxyProvider2<AuthService, PickupService, WebSocketService>(
+          create: (context) => WebSocketService(context.read<AuthService>(), context.read<PickupService>()),
+          update: (_, auth, pickup, ws) => WebSocketService(auth, pickup),
         ),
       ],
       child: Consumer2<ThemeService, LocaleProvider>(
@@ -139,6 +150,8 @@ class GreenLoopApp extends StatelessWidget {
             // Resident Routes
             case '/resident':
               return MaterialPageRoute(builder: (_) => const ResidentHomeScreen(), settings: settings);
+            case '/resident/complete-profile':
+              return MaterialPageRoute(builder: (_) => const CompleteProfileScreen(), settings: settings);
             case '/resident/book-pickup':
               return MaterialPageRoute(builder: (_) => const BookPickupScreen(), settings: settings);
             case '/resident/my-pickups':

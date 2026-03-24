@@ -69,7 +69,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         String route;
         switch (_selectedUserType) {
           case UserType.resident:
-            route = '/resident';
+            route = '/resident/complete-profile';
             break;
           case UserType.worker:
             route = '/worker';
