@@ -14,20 +14,26 @@ class WorkerProfileScreen extends StatefulWidget {
 class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
   bool _isEditing = false;
   
-  // Profile data
-  final String _workerName = 'Mohammed Rafi';
-  final String _employeeId = 'HKS-2024-001';
-  final String _phoneNumber = '+91 9876543210';
-  final String _email = 'rafi.mohammed@hks.gov.in';
-  final String _ward = 'Ward 15';
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final user = authService.currentUser;
+    final isHks = user?.rawRole.contains('hks') ?? false;
+
+    final String workerName = user?.name ?? 'Mohammed Rafi';
+    final String employeeId = user?.id != null ? (isHks ? 'HKS-${user!.id}' : 'EMP-${user!.id}') : 'HKS-2024-001';
+    final String phoneNumber = user?.phone ?? '+91 9876543210';
+    final String email = user?.email ?? 'rafi.mohammed@hks.gov.in';
+    final String ward = 'Ward ${user?.ward ?? "15"}';
     return Scaffold(
       backgroundColor: AppTheme.bgSurface,
       appBar: AppBar(
         title: Text(
-          'Identity & Access',
+          isHks ? 'HKS Identity & Access' : 'Identity & Access',
           style: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w900, 
             fontSize: 18,
@@ -43,10 +49,10 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
             gradient: AppTheme.slateGradient,
           ),
         ),
-        leading: IconButton(
+        leading: Navigator.canPop(context) ? IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
-        ),
+        ) : null,
         actions: [
           IconButton(
             icon: Icon(
@@ -69,13 +75,13 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         child: Column(
           children: [
             const SizedBox(height: 32),
-            _buildProfileHeader(),
+            _buildProfileHeader(workerName, isHks, ward, employeeId),
             const SizedBox(height: 40),
             _buildPerformanceGrid(),
             const SizedBox(height: 48),
             _buildSectionHeader('CORE CREDENTIALS'),
             const SizedBox(height: 16),
-            _buildCredentialCard(),
+            _buildCredentialCard(phoneNumber, email),
             const SizedBox(height: 32),
             _buildSectionHeader('SYSTEM PREFERENCES'),
             const SizedBox(height: 16),
@@ -154,7 +160,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(String workerName, bool isHks, String ward, String employeeId) {
     return Column(
       children: [
         Stack(
@@ -198,7 +204,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         ),
         const SizedBox(height: 32),
         Text(
-          _workerName,
+          workerName,
           style: GoogleFonts.plusJakartaSans(
             fontSize: 36,
             fontWeight: FontWeight.w900,
@@ -209,7 +215,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         ),
         const SizedBox(height: 10),
         Text(
-          'Logistics Specialist • $_ward',
+          '${isHks ? "HKS Specialist" : "Logistics Specialist"} • $ward',
           style: GoogleFonts.plusJakartaSans(
             color: AppTheme.grey400,
             fontSize: 15,
@@ -237,7 +243,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
               const Icon(Icons.verified_rounded, color: AppTheme.primaryEmerald, size: 16),
               const SizedBox(width: 12),
               Text(
-                'UNIT ID: ${_employeeId.toUpperCase()}',
+                'UNIT ID: ${employeeId.toUpperCase()}',
                 style: GoogleFonts.plusJakartaSans(
                   color: Colors.white,
                   fontWeight: FontWeight.w900,
@@ -308,7 +314,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
     );
   }
 
-  Widget _buildCredentialCard() {
+  Widget _buildCredentialCard(String phoneNumber, String email) {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -319,12 +325,12 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
       ),
       child: Column(
         children: [
-          _credentialRow(Icons.phone_iphone_rounded, 'CONTACT', _phoneNumber),
+          _credentialRow(Icons.phone_iphone_rounded, 'CONTACT', phoneNumber),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
             child: Divider(height: 1, color: AppTheme.grey100),
           ),
-          _credentialRow(Icons.alternate_email_rounded, 'SECURE EMAIL', _email),
+          _credentialRow(Icons.alternate_email_rounded, 'SECURE EMAIL', email),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
             child: Divider(height: 1, color: AppTheme.grey100),

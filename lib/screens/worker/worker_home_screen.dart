@@ -86,12 +86,12 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
           borderRadius: BorderRadius.circular(24), // Reduced from 32
           child: Container(
             decoration: BoxDecoration(
-              color: AppTheme.bgDark.withOpacity(0.95),
+              color: AppTheme.bgDark.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.2), // Reduced
+              border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1.2), // Reduced
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 )
@@ -122,7 +122,7 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
         curve: Curves.fastOutSlowIn,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryEmerald.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? AppTheme.primaryEmerald.withValues(alpha: 0.15) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -130,7 +130,7 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withOpacity(0.3),
+              color: isSelected ? AppTheme.primaryEmerald : Colors.white.withValues(alpha: 0.15),
               size: 20,
             ),
             if (isSelected) ...[
@@ -163,6 +163,8 @@ class _DashboardTab extends StatelessWidget {
       builder: (context, authService, pickupService, _) {
         final workerName = authService.currentUserName ?? 'Technician';
         final workerId = authService.currentUser?.id ?? '';
+        final isHks = authService.currentUser?.rawRole.contains('hks') ?? false;
+        
         final todaysPickups = pickupService.getTodaysPickupsForWorker(workerId);
         final pendingCount = todaysPickups.where((p) => p.status == PickupStatus.scheduled).length;
         final completedCount = todaysPickups.where((p) => p.status == PickupStatus.completed).length;
@@ -177,7 +179,7 @@ class _DashboardTab extends StatelessWidget {
             },
             child: CustomScrollView(
               slivers: [
-                _buildSliverAppBar(context, workerName),
+                _buildSliverAppBar(context, workerName, isHks),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // Reduced from spacingL
                   sliver: SliverList(
@@ -199,7 +201,7 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context, String name) {
+  Widget _buildSliverAppBar(BuildContext context, String name, bool isHks) {
     return SliverAppBar(
       expandedHeight: 200.0, // Reduced from 280
       pinned: true,
@@ -224,7 +226,7 @@ class _DashboardTab extends StatelessWidget {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.white.withOpacity(0.05),
+                        Colors.white.withValues(alpha: 0.15),
                         Colors.transparent,
                       ],
                     ),
@@ -240,9 +242,9 @@ class _DashboardTab extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Reduced
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryEmerald.withOpacity(0.1),
+                        color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10), // Reduced
-                        border: Border.all(color: AppTheme.primaryEmerald.withOpacity(0.1), width: 1.2), // Reduced
+                        border: Border.all(color: AppTheme.primaryEmerald.withValues(alpha: 0.15), width: 1.2), // Reduced
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -257,7 +259,7 @@ class _DashboardTab extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'OPERATIVE ACTIVE',
+                            isHks ? 'HKS OPERATIVE ACTIVE' : 'OPERATIVE ACTIVE',
                             style: GoogleFonts.plusJakartaSans(
                               color: Colors.white,
                               fontSize: 9, // Reduced from 10
@@ -281,9 +283,9 @@ class _DashboardTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 4), // Reduced
                     Text(
-                      'WORKER DASHBOARD • WARD 15',
+                      isHks ? 'HKS DASHBOARD • WARD 15' : 'WORKER DASHBOARD • WARD 15',
                       style: GoogleFonts.plusJakartaSans(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.15),
                         fontSize: 12, // Reduced from 13
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.5,
@@ -298,14 +300,16 @@ class _DashboardTab extends StatelessWidget {
       ),
       actions: [
         IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 20), // Reduced
+          onPressed: () {
+            Provider.of<AuthService>(context, listen: false).logout();
+            Navigator.pushReplacementNamed(context, '/login');
+          },
+          icon: const Icon(Icons.power_settings_new_rounded, color: Colors.white, size: 20),
           style: IconButton.styleFrom(
-            backgroundColor: Colors.white.withOpacity(0.05),
+            backgroundColor: const Color(0xFFF43F5E).withValues(alpha: 0.15),
           ),
         ),
-        const SizedBox(width: 12), // Reduced
-      ],
+        const SizedBox(width: 12),      ],
     );
   }
 
@@ -348,7 +352,7 @@ class _DashboardTab extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8), // Reduced from 10
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10), // Reduced
             ),
             child: Icon(icon, color: color, size: 18), // Reduced from 20
@@ -430,7 +434,7 @@ class _DashboardTab extends StatelessWidget {
             borderRadius: BorderRadius.circular(28), // Reduced from 36
             boxShadow: [
               BoxShadow(
-                color: AppTheme.bgDark.withOpacity(0.2),
+                color: AppTheme.bgDark.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -449,9 +453,9 @@ class _DashboardTab extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Reduced
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
+                            color: Colors.white.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10), // Reduced
-                            border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.2), // Reduced
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1.2), // Reduced
                           ),
                           child: Text(
                             'WARD ${pickup.wardNumber}',
@@ -512,7 +516,7 @@ class _DashboardTab extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.primaryEmerald.withOpacity(0.2),
+                          color: AppTheme.primaryEmerald.withValues(alpha: 0.15),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         )
@@ -543,9 +547,9 @@ class _DashboardTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.08), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1),
       ),
       child: Row(
         children: [
@@ -593,8 +597,12 @@ class _DashboardTab extends StatelessWidget {
             _actionCard('Fee Collection', Icons.payments_rounded, AppTheme.accentIndigo, () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkerFeeCollectionScreen()));
             }),
-            _actionCard('Reporting', Icons.camera_alt_rounded, AppTheme.info, () {}),
-            _actionCard('Manifest', Icons.history_edu_rounded, const Color(0xFFF59E0B), () {}),
+            _actionCard('Reporting', Icons.camera_alt_rounded, AppTheme.info, () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Field Reporting Module initialized...'), backgroundColor: AppTheme.info));
+            }),
+            _actionCard('Manifest', Icons.history_edu_rounded, const Color(0xFFF59E0B), () {
+              onNavigate(2); // Go to LOGS tab
+            }),
           ],
         ),
       ],
@@ -617,7 +625,7 @@ class _DashboardTab extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10), // Reduced from 12
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12), // Reduced from 14
             ),
             child: Icon(icon, color: color, size: 20), // Reduced from 24

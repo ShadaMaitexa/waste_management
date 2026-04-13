@@ -39,6 +39,30 @@ class ApiConstants {
   static const String workerAttendance = '$baseUrl/api/worker-attendance/';
   static const String workerStats = '$baseUrl/api/worker-stats/';
 
+  // HKS API: Attendance & Daily Tracking
+  static const String hksAttendance = '$baseUrl/api/v1/hks/attendance/';
+  static const String hksActiveRoute = '$baseUrl/api/v1/hks/routes/today/';
+
+  // HKS API: Waste Pickup & Verification
+  static const String hksPickups = '$baseUrl/api/v1/pickups/';
+  static String hksPickupComplete(String id) => '$baseUrl/api/v1/pickups/$id/complete/';
+  static String hksPickupCancel(String id) => '$baseUrl/api/v1/pickups/$id/cancel/';
+  static String hksPickupVerify(String id) => '$baseUrl/api/v1/pickups/$id/verify_scan/';
+
+  // HKS API: Complaints & Issue Reporting
+  static const String hksComplaints = '$baseUrl/api/v1/complaints/';
+  static String hksComplaintResolve(String id) => '$baseUrl/api/v1/complaints/$id/advance_status/';
+
+  // HKS API: Payments & Fee Collection
+  static const String hksPayments = '$baseUrl/api/v1/payments/';
+  static const String hksPaymentsSummary = '$baseUrl/api/v1/payments/summary/';
+  static String hksPaymentCorrect(String id) => '$baseUrl/api/v1/payments/$id/';
+
+  // HKS API: Authentication & Worker Login
+  static const String hksWorkerLogin = '$baseUrl/api/v1/auth/worker-login/';
+  static const String hksAuthPing = '$baseUrl/api/v1/auth/ping/';
+  static const String hksLogout = '$baseUrl/api/v1/auth/logout/';
+
   // Rewards Endpoints
   static const String rewards = '$baseUrl/api/rewards/';
   static const String rewardsHistory = '$baseUrl/api/rewards/history/';

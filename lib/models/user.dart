@@ -12,6 +12,7 @@ class User {
   final String? latitude;
   final String? longitude;
   final bool isActive;
+  final String rawRole; // Original role string from backend (e.g., 'hks')
 
   User({
     required this.id,
@@ -24,6 +25,7 @@ class User {
     this.latitude,
     this.longitude,
     this.isActive = true,
+    this.rawRole = '',
   });
 
   /// Display name: prefer username if it doesn't look like an email/token
@@ -39,10 +41,11 @@ class User {
   String get wardNumber => ward;
 
   factory User.fromJson(Map<String, dynamic> json) {
-    String userTypeStr = (json['role'] ?? 'resident').toString().toLowerCase();
+    final rawRole = (json['role'] ?? 'resident').toString().toLowerCase();
+    String userTypeStr = rawRole;
     
     // Robust mapping for worker variations
-    if (userTypeStr == 'hks' || userTypeStr == 'staff' || userTypeStr == 'hks_worker') {
+    if (userTypeStr.contains('hks') || userTypeStr == 'staff' || userTypeStr == 'worker') {
       userTypeStr = 'worker';
     }
 
@@ -60,6 +63,7 @@ class User {
       latitude: json['latitude']?.toString(),
       longitude: json['longitude']?.toString(),
       isActive: json['is_active'] ?? json['isActive'] ?? true,
+      rawRole: rawRole,
     );
   }
 
@@ -75,6 +79,7 @@ class User {
       'latitude': latitude,
       'longitude': longitude,
       'is_active': isActive,
+      'raw_role': rawRole,
     };
   }
 
@@ -89,6 +94,7 @@ class User {
     String? latitude,
     String? longitude,
     bool? isActive,
+    String? rawRole,
   }) {
     return User(
       id: id ?? this.id,
@@ -101,6 +107,7 @@ class User {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       isActive: isActive ?? this.isActive,
+      rawRole: rawRole ?? this.rawRole,
     );
   }
 }

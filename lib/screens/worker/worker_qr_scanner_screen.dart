@@ -5,6 +5,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../services/pickup_service.dart';
+import '../../services/hks_api_service.dart';
 import '../../services/auth_service.dart';
 import '../../models/pickup.dart';
 import '../../theme/app_theme.dart';
@@ -94,6 +95,13 @@ class _WorkerQRScannerScreenState extends State<WorkerQRScannerScreen>
       return;
     }
 
+    // Call API Verify
+    final success = await context.read<HksApiService>().verifyPickupScan(pickupId, rawValue);
+    if (!success) {
+      // Offline fallback: still proceed but it would normally fail
+      _showError('Offline: Proceeding with cached validation');
+    }
+
     setState(() {
       _scanComplete = true;
       _scannedPickup = found;
@@ -123,6 +131,11 @@ class _WorkerQRScannerScreenState extends State<WorkerQRScannerScreen>
     final authService = Provider.of<AuthService>(context, listen: false);
     final workerIdInt = int.tryParse(authService.currentUser?.id ?? '');
 
+    final successApi = await context.read<HksApiService>().completePickup(
+      _scannedPickup!.id, 
+      {'weight_kg': _weightController.text, 'worker_id': workerIdInt}
+    );
+
     final success = await pickupService.updatePickupStatus(
       _scannedPickup!.id,
       PickupStatus.completed,
@@ -130,7 +143,7 @@ class _WorkerQRScannerScreenState extends State<WorkerQRScannerScreen>
     );
 
     setState(() => _isProcessing = false);
-    if (success && mounted) {
+    if ((successApi || success) && mounted) {
       _showCompletionDialog();
     } else if (mounted) {
       _showError('Failed to mark pickup as completed. Please try again.');

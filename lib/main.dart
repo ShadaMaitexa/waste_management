@@ -37,6 +37,7 @@ import 'services/referral_service.dart';
 import 'services/admin_service.dart';
 import 'services/complaint_service.dart';
 import 'services/worker_service.dart'; // Added WorkerService
+import 'services/hks_api_service.dart';
 import 'services/notification_service.dart';
 
 import 'services/theme_service.dart';
@@ -83,6 +84,10 @@ class GreenLoopApp extends StatelessWidget {
         ChangeNotifierProxyProvider<AuthService, WorkerService>(
           create: (context) => WorkerService(context.read<AuthService>()),
           update: (_, auth, worker) => WorkerService(auth),
+        ),
+        ChangeNotifierProxyProvider<AuthService, HksApiService>(
+          create: (context) => HksApiService(context.read<AuthService>()),
+          update: (_, auth, hks) => HksApiService(auth),
         ),
         ChangeNotifierProxyProvider<AuthService, NotificationService>(
           create: (context) => NotificationService(context.read<AuthService>()),

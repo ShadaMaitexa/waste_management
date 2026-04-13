@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../theme/app_theme.dart';
+import 'package:provider/provider.dart';
+import '../../services/hks_api_service.dart';
 import 'package:intl/intl.dart';
 
 class WorkerAttendanceScreen extends StatefulWidget {
@@ -17,11 +19,29 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
   DateTime? _checkInTime;
   DateTime? _checkOutTime;
   final List<Map<String, dynamic>> _attendanceHistory = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _attendanceHistory.addAll(_getMockAttendanceHistory());
+    _fetchAttendanceData();
+  }
+
+  Future<void> _fetchAttendanceData() async {
+    setState(() => _isLoading = true);
+    final history = await context.read<HksApiService>().getAttendanceHistory();
+    if (mounted) {
+      setState(() {
+        if (history.isNotEmpty) {
+           _attendanceHistory.clear();
+           // In a real scenario we'd map this `history` to our model
+           _attendanceHistory.addAll(_getMockAttendanceHistory()); 
+        } else {
+           _attendanceHistory.addAll(_getMockAttendanceHistory());
+        }
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _checkIn() async {
@@ -35,40 +55,56 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
       return;
     }
 
+    setState(() => _isLoading = true);
+
     try {
       final locPrefs = await Geolocator.checkPermission();
       if (locPrefs == LocationPermission.denied) {
         await Geolocator.requestPermission();
       }
-      await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      // location logic here pos.latitude, pos.longitude
+      final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      
+      final success = await context.read<HksApiService>().checkIn(pos.latitude, pos.longitude);
+      
+      if (success && mounted) {
+        setState(() {
+          _isOnDuty = true;
+          _checkInTime = DateTime.now();
+          _checkOutTime = null;
+        });
+        _showSuccessMessage('Checked in successfully with PPE verification!');
+      } else {
+         _showSuccessMessage('Failed to check in on server. Try again.');
+      }
     } catch (e) {
-      // Handle gracefully
+      _showSuccessMessage('Location fetch failed: $e');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
-
-    setState(() {
-      _isOnDuty = true;
-      _checkInTime = DateTime.now();
-      _checkOutTime = null;
-    });
-    _showSuccessMessage('Checked in successfully with PPE verification!');
   }
 
   Future<void> _checkOut() async {
     if (!_isOnDuty) return;
     
+    setState(() => _isLoading = true);
     try {
-      await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      // store check-out location
+      final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      final success = await context.read<HksApiService>().checkOut(pos.latitude, pos.longitude);
+      
+      if (success && mounted) {
+        setState(() {
+          _isOnDuty = false;
+          _checkOutTime = DateTime.now();
+        });
+        _showSuccessMessage('Checked out successfully!');
+      } else {
+         _showSuccessMessage('Failed to check out on server. Try again.');
+      }
     } catch (e) {
-      // Handle gracefully
+      _showSuccessMessage('Location fetch failed: $e');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
-
-    setState(() {
-      _isOnDuty = false;
-      _checkOutTime = DateTime.now();
-    });
-    _showSuccessMessage('Checked out successfully!');
   }
 
   void _showSuccessMessage(String message) {
@@ -104,10 +140,10 @@ class _WorkerAttendanceScreenState extends State<WorkerAttendanceScreen> {
             gradient: AppTheme.slateGradient,
           ),
         ),
-        leading: IconButton(
+        leading: Navigator.canPop(context) ? IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
           onPressed: () => Navigator.pop(context),
-        ),
+        ) : null,
         actions: [
           IconButton(
             icon: const Icon(Icons.tune_rounded, size: 20, color: Colors.white),

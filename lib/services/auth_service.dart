@@ -126,6 +126,51 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  // ==================== WORKER LOGIN ====================
+  // POST /api/v1/auth/worker-login/
+
+  Future<bool> workerLogin(String phone, String password) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.hksWorkerLogin),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'phone': phone.trim(),
+          'password': password,
+        }),
+      );
+
+      debugPrint('[AuthService] Worker Login status: ${response.statusCode}');
+
+      _isLoading = false;
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final String? token = data['tokens']?['access'] ?? data['access'];
+        final String? refresh = data['tokens']?['refresh'] ?? data['refresh'];
+        if (token == null) {
+          notifyListeners();
+          return false;
+        }
+
+        await _saveToken(token, refresh);
+        _currentUser = User.fromJson(data);
+        notifyListeners();
+        await getProfile();
+        return true;
+      }
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   // ==================== REGISTER ====================
   // POST /api/auth/register/
   // Body: { username, email, password, phone, ward, role }
@@ -305,8 +350,35 @@ class AuthService extends ChangeNotifier {
   }
 
   // ==================== LOGOUT ====================
+  // POST /api/v1/auth/logout/
 
   Future<void> logout() async {
+    if (_token != null && _refreshToken != null) {
+      try {
+        await http.post(
+          Uri.parse(ApiConstants.hksLogout),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $_token',
+          },
+          body: jsonEncode({'refresh': _refreshToken}),
+        );
+      } catch (e) {
+        debugPrint('[AuthService] Logout api error: $e');
+      }
+    }
     await _clearToken();
+  }
+
+  // ==================== PING ====================
+  // GET /api/v1/auth/ping/
+
+  Future<bool> pingServer() async {
+    try {
+      final response = await http.get(Uri.parse(ApiConstants.hksAuthPing));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 }
