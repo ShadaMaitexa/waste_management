@@ -4,6 +4,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../services/hks_api_service.dart';
+import 'worker_payment_history_screen.dart';
 
 /// FR-H-030, FR-H-031: Fee Collection (Offline Support)
 class WorkerFeeCollectionScreen extends StatefulWidget {
@@ -112,6 +113,13 @@ class _WorkerFeeCollectionScreenState extends State<WorkerFeeCollectionScreen> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.receipt_long_rounded, color: AppTheme.primaryEmerald),
+            tooltip: 'Payment History',
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkerPaymentHistoryScreen())),
+          )
+        ],
         flexibleSpace: Container(decoration: const BoxDecoration(gradient: AppTheme.slateGradient)),
       ),
       body: SingleChildScrollView(

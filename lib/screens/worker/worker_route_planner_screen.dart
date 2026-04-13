@@ -902,6 +902,35 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
     }
   }
 
+  void _cancelPickup(String id) async {
+    setState(() => _isLoading = true);
+    final success = await context.read<HksApiService>().cancelPickup(id);
+    if (mounted) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(success ? 'Pickup Cancelled.' : 'Offline: Marked as cancelled.'), backgroundColor: AppTheme.info),
+      );
+      if (!success) {
+        // mock UI removal or status change:
+        final idx = _routePoints.indexWhere((p) => p.id == id);
+        if (idx != -1) {
+          setState(() => _routePoints[idx].completed = true);
+        }
+      }
+    }
+  }
+
+  void _forceCreatePickup() async {
+    setState(() => _isLoading = true);
+    final success = await context.read<HksApiService>().forceCreatePickup({'address': 'Emergency Pickup', 'waste_type': 'Mixed'});
+    if (mounted) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(success ? 'Unscheduled Pickup Created!' : 'Offline: Request Cached.'), backgroundColor: AppTheme.success),
+      );
+    }
+  }
+
   void _showPointOptions(RoutePickupPoint point) {
     showModalBottomSheet(
       context: context,
@@ -919,11 +948,11 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
               },
             ),
             ListTile(
-              leading: const Icon(Icons.skip_next, color: AppTheme.info),
-              title: const Text('Skip Pickup'),
+              leading: const Icon(Icons.cancel_rounded, color: AppTheme.error),
+              title: const Text('Cancel Pickup'),
               onTap: () {
                 Navigator.pop(context);
-                // Handle skip
+                _cancelPickup(point.id);
               },
             ),
              ListTile(
@@ -954,6 +983,14 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
               onTap: () {
                 Navigator.pop(context);
                 _optimizeRoute();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add_location_alt_rounded, color: AppTheme.primaryEmerald),
+              title: const Text('Force Create Pickup'),
+              onTap: () {
+                Navigator.pop(context);
+                _forceCreatePickup();
               },
             ),
             ListTile(

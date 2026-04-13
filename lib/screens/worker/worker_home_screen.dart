@@ -10,6 +10,8 @@ import 'worker_attendance_screen.dart';
 import 'worker_profile_screen.dart';
 import 'worker_qr_scanner_screen.dart';
 import 'worker_fee_collection_screen.dart';
+import 'worker_attendance_screen.dart';
+import 'worker_complaints_screen.dart';
 
 import '../../services/location_service.dart';
 
@@ -598,7 +600,7 @@ class _DashboardTab extends StatelessWidget {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkerFeeCollectionScreen()));
             }),
             _actionCard('Reporting', Icons.camera_alt_rounded, AppTheme.info, () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Field Reporting Module initialized...'), backgroundColor: AppTheme.info));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkerComplaintsScreen()));
             }),
             _actionCard('Manifest', Icons.history_edu_rounded, const Color(0xFFF59E0B), () {
               onNavigate(2); // Go to LOGS tab
