@@ -269,6 +269,23 @@ class HksApiService extends ChangeNotifier {
     }
   }
 
+  Future<bool> correctPaymentEntry(String id, Map<String, dynamic> data) async {
+    _setLoading(true);
+    try {
+      final response = await http.patch(
+        Uri.parse(ApiConstants.hksPaymentCorrect(id)),
+        headers: _headers,
+        body: jsonEncode(data),
+      );
+      return response.statusCode == 200 || response.statusCode == 204;
+    } catch (e) {
+      debugPrint('CorrectPaymentEntry Error: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   Future<List<dynamic>> getPaymentHistory() async {
     _setLoading(true);
     try {

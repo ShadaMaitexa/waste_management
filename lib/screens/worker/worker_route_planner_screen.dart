@@ -904,7 +904,7 @@ class _WorkerRoutePlannerScreenState extends State<WorkerRoutePlannerScreen>
 
   void _cancelPickup(String id) async {
     setState(() => _isLoading = true);
-    final success = await context.read<HksApiService>().cancelPickup(id);
+    final success = await context.read<HksApiService>().cancelPickup(id, 'Cancelled locally by worker');
     if (mounted) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
